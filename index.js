@@ -46,7 +46,7 @@ wss.on('connection', async (ws, response) => {
 	ws.send(JSON.stringify({ type: "log", content: `Successfully connected as ${ws.connection_id}` }));
 	console.log(`Client connected: ${ws.connection_id}`);
 
-	ws.send(JSON.stringify({ type: "create_board", size: 2 }))
+	ws.send(JSON.stringify({ type: "create_board", size: 3 }))
 
 	for (const file of events) {
 		const event = await import((`${EVENTS_DIR}/${file}`));

@@ -1,27 +1,64 @@
+:root {
+    --background: #eff1f5;
+    --text: #4c4f69;
+    --c1: #4c4f6980;
+    --c2: #5c5f77C0;
+    --c3: #6c6f85;
+    --rosewater: #dc8a78;
+    --rosewater-trans: #dc8a7830;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #1e1e2e;
+        --text: #cdd6f4;
+        --c1: #cdd6f480;
+        --c2: #bac2deC0;
+        --c3: #a6adc8;
+        --rosewater: #f5e0dc;
+        --rosewater-trans: #f5e0dc30;
+    }
+}
+
 body {
+    background-color: var(--background);
+    color: var(--text);
     display: flex;
     justify-content: center;
     align-content: center;
     height: 100vh;
     margin: 0;
+    overflow: hidden;
 }
 
-.cell {
+.grid {
+    box-sizing: border-box;
+    align-self: stretch;
     flex-direction: row;
     flex-wrap: wrap;
     display: flex;
     justify-content: center;
     align-content: center;
-    width: 30.5%;
-    height: 30.5%;
-    /*align-self: stretch;*/
-    margin: 1%;
-    border-color: black;
+    width: 33.3%;
+    height: 33.3%;
+    padding: 1.5%;
+    margin: 0;
+    border-style: solid;
+    transition: background-color 0.25s ease-out;
+}
+
+.cell:hover {
+    background-color: var(--rosewater) !important;
+}
+
+.grid:not(#board):hover{
+    background-color: var(--rosewater-trans);
 }
 
 #board {
+    border-style: none;
     margin: auto;
-    width: 95vmin;
-    height: 95vmin;
+    width: 98vmin;
+    height: 98vmin;
     aspect-ratio: 1 / 1;
 }
