@@ -21,29 +21,43 @@
 }
 
 body {
-    background-color: var(--background);
     color: var(--text);
+    background-color: var(--background);
+
     display: flex;
     justify-content: center;
     align-content: center;
+    flex-direction: column;
+
     height: 100vh;
-    margin: 0;
+
     overflow: hidden;
+}
+
+#board {
+    margin: auto;
+    width: 98vmin;
+    height: 98vmin;
+    aspect-ratio: 1 / 1;
+
+    border-style: none;
 }
 
 .grid {
     box-sizing: border-box;
-    align-self: stretch;
+
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    display: flex;
     justify-content: center;
     align-content: center;
+
     width: 33.3%;
     height: 33.3%;
     padding: 1.5%;
-    margin: 0;
+
     border-style: solid;
+
     transition: background-color 0.25s ease-out;
 }
 
@@ -53,12 +67,4 @@ body {
 
 .grid:not(#board):hover{
     background-color: var(--rosewater-trans);
-}
-
-#board {
-    border-style: none;
-    margin: auto;
-    width: 98vmin;
-    height: 98vmin;
-    aspect-ratio: 1 / 1;
 }

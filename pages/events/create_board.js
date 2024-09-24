@@ -4,23 +4,11 @@ export default async (ws, payload) => {
 
 	const board = document.getElementById('board');
 	board.innerHTML = "";
-	fillBoard(board, size, size);
 
-	// const cellItems = board.querySelectorAll('.cell, .grid');
-	// console.log(cellItems)
-	// cellItems.forEach((cell) => {
-	// 	console.log("Added")
-	// 	cell.addEventListener('mouseover', () => {
-	// 		cell.classList.add('hover');
-	// 	});
-	// 	cell.addEventListener('mouseout', () => {
-	// 		cell.classList.remove('hover');
-	// 	});
-	// });
+	fillBoard(board, size, size);
 }
 
 var cellVals = {};
-
 function fillBoard(element, size, maxSize) {
 	if (!cellVals[size]) cellVals[size] = 0;
 
@@ -33,7 +21,6 @@ function fillBoard(element, size, maxSize) {
 			if (size === 1) cell.classList.add('cell');
 
 			cell.style.borderWidth = size/2 + 'px';
-			// cell.style.margin = -size/2 + 'px';
 			cell.style.borderColor = `var(--c${size})`
 
 			if (i === 0) cell.style.borderTop = 'none';

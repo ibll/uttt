@@ -26,6 +26,6 @@ ws.onmessage = (event) => {
 	}
 };
 
-document.getElementById("increment").addEventListener("click", () => {
-	ws.send(JSON.stringify({type: "increment", by: 1}));
+document.getElementById("start").addEventListener("click", () => {
+	ws.send(JSON.stringify({type: "start"}));
 });

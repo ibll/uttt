@@ -8,6 +8,7 @@ import {v4 as uuidv4 } from 'uuid';
 const __dirname = import.meta.dirname;
 const EVENTS_DIR = './events';
 
+// load static files from the pages directory
 const server = http.createServer((req, res) => {
 	const filePath = path.join(__dirname, 'pages', req.url === '/' ? 'index.html' : req.url);
 	let contentType = mime.getType(filePath) || 'text/html';
@@ -46,8 +47,7 @@ wss.on('connection', async (ws, response) => {
 	ws.send(JSON.stringify({ type: "log", content: `Successfully connected as ${ws.connection_id}` }));
 	console.log(`Client connected: ${ws.connection_id}`);
 
-	ws.send(JSON.stringify({ type: "create_board", size: 3 }))
-
+	// Add event listeners for the connection
 	for (const file of events) {
 		const event = await import((`${EVENTS_DIR}/${file}`));
 		ws.on(file.split('.')[0], (eventData) => event.default(ws, eventData));
