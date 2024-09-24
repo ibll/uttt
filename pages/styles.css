@@ -1,0 +1,27 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.cell {
+    flex-direction: row;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width: 30.5%;
+    height: 30.5%;
+    /*align-self: stretch;*/
+    margin: 1%;
+    border-color: black;
+}
+
+#board {
+    margin: auto;
+    width: 95vmin;
+    height: 95vmin;
+    aspect-ratio: 1 / 1;
+}

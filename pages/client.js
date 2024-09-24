@@ -1,25 +1,31 @@
-const ws = new WebSocket('ws://localhost:3000');
+const host = window.location.hostname;
+const port = window.location.port;
+const ws = new WebSocket(`ws://${host}:${port}`);
 
 ws.onopen = () => {
 	console.log('Connected to server');
-};
-
-ws.onmessage = (event) => {
-	console.log('Message from server:', event.data);
-
-	const message = document.createElement('div');
-	message.textContent = event.data;
-	document.body.appendChild(message);
 };
 
 ws.onclose = () => {
 	console.log('Disconnected from server');
 };
 
-function send(json) {
-	ws.send(JSON.stringify(json));
-}
+ws.onmessage = (event) => {
+	try {
+		const payload = JSON.parse(event.data);
+		const events = ['create_board', 'increment', 'log', 'set_connection_id']
+		if (events.includes(payload.type)) {
+			import(`./events/${payload.type}.js`)
+				.then((event) => {
+					event.default(ws, payload);
+				});
+		}
 
-function increment(amount) {
-	send({type: 'increment', by: amount});
-}
+	} catch {
+		console.error('Invalid JSON:', event.data);
+	}
+};
+
+document.getElementById("increment").addEventListener("click", () => {
+	ws.send(JSON.stringify({type: "increment", by: 1}));
+});

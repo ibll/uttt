@@ -27,18 +27,32 @@ const server = http.createServer((req, res) => {
 	});
 });
 
-const wss = new WebSocketServer({ server });
+export const wss = new WebSocketServer({ server });
 const events = fs.readdirSync(EVENTS_DIR).filter(file => file.endsWith('.js'));
 
-wss.on('connection', async (ws) => {
-	ws.id = uuidv4();
+wss.on('connection', async (ws, response) => {
+
+	// Find or set a unique connection_id to the client.
+	response.headers?.cookie?.split('; ' ).forEach((cookie) => {
+		const [key, value] = cookie.split('=');
+		if (key === 'connection_id') ws.connection_id = value;
+	});
+	if (!ws.connection_id) {
+		ws.connection_id = uuidv4();
+		ws.send(JSON.stringify({ type: "set_connection_id", connection_id: ws.connection_id }));
+	}
+
+	// Log connection
+	ws.send(JSON.stringify({ type: "log", content: `Successfully connected as ${ws.connection_id}` }));
+	console.log(`Client connected: ${ws.connection_id}`);
+
+	ws.send(JSON.stringify({ type: "create_board", size: 2 }))
 
 	for (const file of events) {
 		const event = await import((`${EVENTS_DIR}/${file}`));
 		ws.on(file.split('.')[0], (eventData) => event.default(ws, eventData));
 	}
 
-	console.log(`Client connected: ${ws.id}`);
 });
 
 const PORT = process.env.PORT || 3000;
