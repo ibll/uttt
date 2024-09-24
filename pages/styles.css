@@ -61,10 +61,10 @@ body {
     transition: background-color 0.25s ease-out;
 }
 
-.cell:hover {
-    background-color: var(--rosewater) !important;
-}
-
 .grid:not(#board):hover{
     background-color: var(--rosewater-trans);
+}
+
+.cell:hover {
+    background-color: var(--rosewater) !important;
 }
