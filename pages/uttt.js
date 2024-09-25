@@ -1,9 +1,13 @@
 import { ws } from './client.js';
 export let board_state = {};
+let cell_count = {};
 
 export function start(depth) {
 	const board = document.getElementById('board');
 	board.innerHTML = '';
+
+	board_state = {};
+	cell_count = {};
 
 	console.log(`Creating board of size ${depth}`);
 	createBoardInCell(board, depth, depth);
@@ -22,13 +26,11 @@ export function updateBoard(depth, new_state) {
 	for (const layer in board_state) {
 		for (const cell_id in board_state[layer]) {
 			const player_num = board_state[layer][cell_id];
-			console.log(player_num);
 			place(cell_id, player_num);
 		}
 	}
 }
 
-let cell_count = {};
 function createBoardInCell(outerCell, layer, depth) {
 	if (!board_state[layer]) board_state[layer] = {};
 

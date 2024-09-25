@@ -40,9 +40,13 @@ const server = http.createServer((req, res) => {
 
 export const wss = new WebSocketServer({ server });
 
+export function prepareClient(ws) {
+	ws.send(JSON.stringify({ type: "prepare_client", client_events, board_size, board_state }));
+}
+
 wss.on('connection', async (ws, response) => {
 	// Tell the client what events it can listen for
-	ws.send(JSON.stringify({ type: "prepare_client", client_events, board_size, board_state }));
+	prepareClient(ws);
 
 	// Find or set a unique connection_id to the client.
 	response.headers?.cookie?.split('; ' ).forEach((cookie) => {
@@ -65,8 +69,8 @@ wss.on('connection', async (ws, response) => {
 	}
 
 });
-
 const PORT = process.env.PORT || 3000;
+
 server.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });

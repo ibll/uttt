@@ -4,8 +4,8 @@ const DEPTH = 2;
 
 export let board_size;
 export let board_state = {};
-let active_player;
-let players;
+let active_player = 0;
+let players = [];
 
 export function start() {
 	board_size = DEPTH;
