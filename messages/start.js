@@ -1,7 +1,5 @@
-import { wss } from '../index.js';
+import { start } from '../uttt.js';
 
 export default async () => {
-	wss.clients.forEach(client => {
-		client.send(JSON.stringify({ type: "create_board", size: 2 }))
-	});
+	start();
 }

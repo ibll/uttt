@@ -5,10 +5,20 @@ import { WebSocketServer } from 'ws';
 import mime from 'mime';
 import {v4 as uuidv4 } from 'uuid';
 
+import {board_size } from "./uttt.js";
+import { board_state } from "./uttt.js";
+
 const __dirname = import.meta.dirname;
 const EVENTS_DIR = './events';
+const CLIENT_EVENTS_DIR = './pages/client_events';
 
-// load static files from the pages directory
+function loadEvents(dir) {
+	return fs.readdirSync(dir).filter(file => file.endsWith('.js')).map(file => file.slice(0, -3));
+}
+const server_events = loadEvents(EVENTS_DIR);
+const client_events = loadEvents(CLIENT_EVENTS_DIR);
+
+// Load static files from the pages directory
 const server = http.createServer((req, res) => {
 	const filePath = path.join(__dirname, 'pages', req.url === '/' ? 'index.html' : req.url);
 	let contentType = mime.getType(filePath) || 'text/html';
@@ -29,9 +39,10 @@ const server = http.createServer((req, res) => {
 });
 
 export const wss = new WebSocketServer({ server });
-const events = fs.readdirSync(EVENTS_DIR).filter(file => file.endsWith('.js'));
 
 wss.on('connection', async (ws, response) => {
+	// Tell the client what events it can listen for
+	ws.send(JSON.stringify({ type: "prepare_client", client_events, board_size, board_state }));
 
 	// Find or set a unique connection_id to the client.
 	response.headers?.cookie?.split('; ' ).forEach((cookie) => {
@@ -48,9 +59,9 @@ wss.on('connection', async (ws, response) => {
 	console.log(`Client connected: ${ws.connection_id}`);
 
 	// Add event listeners for the connection
-	for (const file of events) {
-		const event = await import((`${EVENTS_DIR}/${file}`));
-		ws.on(file.split('.')[0], (eventData) => event.default(ws, eventData));
+	for (const file of server_events) {
+		const event = await import((`${EVENTS_DIR}/${file}.js`));
+		ws.on(file.split('.')[0], (event_data) => event.default(ws, event_data));
 	}
 
 });

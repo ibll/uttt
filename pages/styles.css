@@ -6,6 +6,8 @@
     --c3: #6c6f85;
     --rosewater: #dc8a78;
     --rosewater-trans: #dc8a7830;
+    --blue: #7287fd;
+    --red: #dd7878;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,6 +19,8 @@
         --c3: #a6adc8;
         --rosewater: #f5e0dc;
         --rosewater-trans: #f5e0dc30;
+        --blue: #89b4fa;
+        --red: #f38ba8;
     }
 }
 
@@ -57,14 +61,23 @@ body {
     padding: 1.5%;
 
     border-style: solid;
+    .top { border-top: none; }
+    .bottom { border-bottom: none; }
+    .left { border-left: none; }
+    .right { border-right: none; }
 
     transition: background-color 0.25s ease-out;
 }
 
-.grid:not(#board):hover{
+.grid:not(#board, .played):hover{
     background-color: var(--rosewater-trans);
 }
 
-.cell:hover {
+.cell:not(.played):hover {
     background-color: var(--rosewater) !important;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
 }
