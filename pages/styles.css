@@ -8,6 +8,7 @@
     --rosewater-trans: #dc8a7830;
     --blue: #7287fd;
     --red: #dd7878;
+    --green: #40a02b40;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -21,6 +22,7 @@
         --rosewater-trans: #f5e0dc30;
         --blue: #89b4fa;
         --red: #f38ba8;
+        --green: #a6e3a140;
     }
 }
 
@@ -67,6 +69,10 @@ body {
     .right { border-right: none; }
 
     transition: background-color 0.25s ease-out;
+
+    .active {
+        background-color: var(--green) !important;
+    }
 }
 
 .grid:not(#board, .played):hover{

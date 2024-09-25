@@ -84,3 +84,18 @@ export function place(cell_num, player) {
 
 	cell.classList.add('played');
 }
+
+export function setActive(active_cells) {
+	document.querySelectorAll('.grid').forEach(cell => {
+		cell.classList.remove('active');
+	})
+
+	if (!active_cells) return;
+
+	for (const layer in active_cells) {
+		for (const cell_num in active_cells[layer]) {
+			const cell = document.getElementById(`cell.${layer}.${cell_num}`);
+			cell.classList.add('active');
+		}
+	}
+}
