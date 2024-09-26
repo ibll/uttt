@@ -63,8 +63,6 @@ function createBoardInCell(outerCell, layer, depth) {
 }
 
 export function place(layer, cell_num, player) {
-	if (layer !== 1) console.log(layer, cell_num, player);
-
 	let pieces = {};
 	pieces.cross = `
 		<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">

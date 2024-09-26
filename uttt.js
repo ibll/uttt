@@ -45,14 +45,16 @@ export function place(cell_layer, cell_number, connection_id, force) {
 
 		active_grids = {};
 
-		if ((cell_layer + 1) > board_depth) return;
-		if (!active_grids[cell_layer + 1]) active_grids[cell_layer + 1] = {};
+		if ((cell_layer + 1) <= board_depth) {
+			if (!active_grids[cell_layer + 1]) active_grids[cell_layer + 1] = {};
+			active_grids[cell_layer + 1][parent_cell] = true;
 
-		active_grids[cell_layer + 1][parent_cell] = true;
-
-		wss.clients.forEach(client => {
-			client.send(JSON.stringify({ type: "set_active", active_cells: active_grids }))
-		});
+			wss.clients.forEach(client => {
+				client.send(JSON.stringify({ type: "set_active", active_cells: active_grids }))
+			});
+		} else {
+			active_grids = undefined;
+		}
 	}
 
 	board_state[cell_layer][cell_number] = active_player;
