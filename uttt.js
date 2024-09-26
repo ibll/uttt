@@ -1,16 +1,17 @@
 import {wss} from "./index.js";
 
-const DEPTH = 2;
+const DEPTH = 3;
 
-export let board_size = 0;
+export let board_depth;
 export let board_state = {};
-let active_cells;
+export let active_grids;
 let active_player = 0;
 let players = [];
 
 export function start() {
-	board_size = DEPTH;
+	board_depth = DEPTH;
 	board_state = {};
+	active_grids = undefined;
 	active_player = 0;
 	players = [];
 
@@ -19,16 +20,17 @@ export function start() {
 	});
 }
 
-export function place(cell_id, connection_id) {
-	const cell_num = cell_id.split('.')[2];
-	if (!board_state[1]) board_state[1] = {};
-	if (board_state[1][cell_num] !== undefined) return;
+export function place(cell_layer, cell_number, connection_id, force) {
+	console.log(`${connection_id} requested to place at ${cell_layer}.${cell_number}`);
 
-	if (active_cells) {
-		if (!active_cells) active_cells = {};
-		if (!active_cells[1 + 1]) active_cells[1 + 1] = {};
+	if (!board_state[cell_layer]) board_state[cell_layer] = {};
+	if (board_state[cell_layer][cell_number] !== undefined) return;
 
-		if (active_cells[1 + 1][Math.floor(cell_num / 9)] !== true) return;
+	if (active_grids && !force) {
+		if (!active_grids) active_grids = {};
+		if (!active_grids[cell_layer + 1]) active_grids[cell_layer + 1] = {};
+
+		if (active_grids[cell_layer + 1][Math.floor(cell_number / 9)] !== true) return;
 	}
 
 	// Join if empty slot
@@ -37,24 +39,67 @@ export function place(cell_id, connection_id) {
 
 	if (connection_id !== players[active_player]) return;
 
-	if (board_size > 1) {
-		const parent_cell = cell_num % 9
-		active_cells = {};
-		if (!active_cells[1 + 1]) active_cells[1 + 1] = {};
-		active_cells[1 + 1][parent_cell] = true;
+	if (board_depth > 1) {
+		const next_layer_size = Math.pow(9, cell_layer + 1);
+		const parent_cell = Math.floor(cell_number / (next_layer_size))*9 + cell_number % 9;
+
+		active_grids = {};
+
+		if ((cell_layer + 1) > board_depth) return;
+		if (!active_grids[cell_layer + 1]) active_grids[cell_layer + 1] = {};
+
+		active_grids[cell_layer + 1][parent_cell] = true;
 
 		wss.clients.forEach(client => {
-			client.send(JSON.stringify({ type: "set_active", active_cells }))
+			client.send(JSON.stringify({ type: "set_active", active_cells: active_grids }))
 		});
 	}
 
-	board_state[1][cell_num] = active_player;
-	console.log(`${active_player} placed at ${cell_num}`);
+	board_state[cell_layer][cell_number] = active_player;
+	console.log(`${active_player} placed at ${cell_number}`);
 
-	wss.clients.forEach(client => {
-		client.send(JSON.stringify({ type: "place", cell_num, player: active_player }));
-	});
+	const grid = Math.floor(cell_number / 9);
+	const winner = checkWhoWonGrid(cell_layer + 1, grid);
+	if (winner !== null) {
+		console.log(`${winner} won grid ${cell_layer + 1}.${grid}!`);
+		place(cell_layer + 1, grid, players[winner], true);
+	} else {
+		wss.clients.forEach(client => {
+			client.send(JSON.stringify({ type: "place", layer: cell_layer, cell_num: cell_number, player: active_player }));
+		});
+	}
 
 	active_player++;
 	active_player %= 2;
+}
+
+function checkWhoWonGrid(grid_layer, grid_number) {
+	const cell_layer = grid_layer - 1;
+	const first_cell_number = grid_number * 9;
+
+	for (let row = 0; row < 3; row++) {
+		const c0 = board_state[cell_layer]?.[first_cell_number + row*3];
+		const c1 = board_state[cell_layer]?.[first_cell_number + row*3 + 1];
+		const c2 = board_state[cell_layer]?.[first_cell_number + row*3 + 2];
+		if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
+	}
+
+	for (let col = 0; col < 3; col++) {
+		const c0 = board_state[cell_layer]?.[first_cell_number + col];
+		const c1 = board_state[cell_layer]?.[first_cell_number + col + 3];
+		const c2 = board_state[cell_layer]?.[first_cell_number + col + 6];
+		if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
+	}
+
+	const c0 = board_state[cell_layer]?.[first_cell_number];
+	const c1 = board_state[cell_layer]?.[first_cell_number + 4];
+	const c2 = board_state[cell_layer]?.[first_cell_number + 8];
+	if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
+
+	const c3 = board_state[cell_layer]?.[first_cell_number + 2];
+	const c4 = board_state[cell_layer]?.[first_cell_number + 4];
+	const c5 = board_state[cell_layer]?.[first_cell_number + 6];
+	if (c3 === c4 && c4 === c5 && c3 !== undefined) return c3;
+
+	return null;
 }

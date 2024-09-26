@@ -1,5 +1,6 @@
 import { ws } from './client.js';
 export let board_state = {};
+export let active_grids = {};
 let cell_count = {};
 
 export function start(depth) {
@@ -19,16 +20,19 @@ export function start(depth) {
 	})
 }
 
-export function updateBoard(depth, new_state) {
+export function updateBoard(depth, new_board_state, new_active_grids) {
 	start(depth)
-	board_state = new_state;
+	board_state = new_board_state;
+	active_grids = new_active_grids;
 
 	for (const layer in board_state) {
 		for (const cell_id in board_state[layer]) {
 			const player_num = board_state[layer][cell_id];
-			place(cell_id, player_num);
+			place(layer, cell_id, player_num);
 		}
 	}
+
+	setActive(active_grids);
 }
 
 function createBoardInCell(outerCell, layer, depth) {
@@ -58,7 +62,9 @@ function createBoardInCell(outerCell, layer, depth) {
 	}
 }
 
-export function place(cell_num, player) {
+export function place(layer, cell_num, player) {
+	if (layer !== 1) console.log(layer, cell_num, player);
+
 	let pieces = {};
 	pieces.cross = `
 		<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -79,7 +85,8 @@ export function place(cell_num, player) {
 		</svg>
 	`
 
-	const cell = document.getElementById(`cell.1.${cell_num}`);
+	console.log(`Requesting server place at cell.${layer}.${cell_num}`);
+	const cell = document.getElementById(`cell.${layer}.${cell_num}`);
 	cell.innerHTML = pieces[player === 0 ? 'cross' : 'nought'];
 
 	cell.classList.add('played');

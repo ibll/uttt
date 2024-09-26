@@ -5,8 +5,7 @@ import { WebSocketServer } from 'ws';
 import mime from 'mime';
 import {v4 as uuidv4 } from 'uuid';
 
-import {board_size } from "./uttt.js";
-import { board_state } from "./uttt.js";
+import { board_depth, board_state, active_grids } from "./uttt.js";
 
 const __dirname = import.meta.dirname;
 const EVENTS_DIR = './events';
@@ -40,10 +39,6 @@ const server = http.createServer((req, res) => {
 
 export const wss = new WebSocketServer({ server });
 
-export function prepareClient(ws) {
-	ws.send(JSON.stringify({ type: "prepare_client", client_events, board_size, board_state }));
-}
-
 wss.on('connection', async (ws, response) => {
 	// Tell the client what events it can listen for
 	prepareClient(ws);
@@ -67,8 +62,11 @@ wss.on('connection', async (ws, response) => {
 		const event = await import((`${EVENTS_DIR}/${file}.js`));
 		ws.on(file.split('.')[0], (event_data) => event.default(ws, event_data));
 	}
-
 });
+
+export function prepareClient(ws) {
+	ws.send(JSON.stringify({ type: "prepare_client", client_events, board_size: board_depth, board_state, active_grids }));
+}
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {

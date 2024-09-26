@@ -8,7 +8,11 @@
     --rosewater-trans: #dc8a7830;
     --blue: #7287fd;
     --red: #dd7878;
-    --green: #40a02b40;
+    --green: #40a02b;
+    --green-trans: #40a02b40;
+
+    --highlight: var(--rosewater);
+    --highlight-trans: var(--rosewater-trans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,7 +26,8 @@
         --rosewater-trans: #f5e0dc30;
         --blue: #89b4fa;
         --red: #f38ba8;
-        --green: #a6e3a140;
+        --green: #a6e3a1;
+        --green-trans: #a6e3a140;
     }
 }
 
@@ -63,24 +68,38 @@ body {
     padding: 1.5%;
 
     border-style: solid;
-    .top { border-top: none; }
-    .bottom { border-bottom: none; }
-    .left { border-left: none; }
-    .right { border-right: none; }
+
+    .top {
+        border-top: none;
+    }
+
+    .bottom {
+        border-bottom: none;
+    }
+
+    .left {
+        border-left: none;
+    }
+
+    .right {
+        border-right: none;
+    }
 
     transition: background-color 0.25s ease-out;
 
     .active {
-        background-color: var(--green) !important;
+        background-color: var(--green-trans) !important;
+        --highlight: var(--green);
+        --highlight-trans: var(--green-trans);
     }
 }
 
 .grid:not(#board, .played):hover{
-    background-color: var(--rosewater-trans);
+    background-color: var(--highlight-trans);
 }
 
 .cell:not(.played):hover {
-    background-color: var(--rosewater) !important;
+    background-color: var(--highlight) !important;
 }
 
 svg {

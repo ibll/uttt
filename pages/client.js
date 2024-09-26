@@ -16,7 +16,7 @@ ws.onmessage = (event) => {
 
 	if (payload.type === 'prepare_client') {
 		client_events = payload.client_events;
-		if (payload.board_size) updateBoard(payload.board_size, payload.board_state);
+		if (payload.board_size) updateBoard(payload.board_size, payload.board_state, payload.active_grids);
 		return;
 	}
 
