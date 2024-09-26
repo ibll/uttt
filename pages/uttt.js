@@ -1,9 +1,11 @@
 import { ws } from './client.js';
+export let board_depth;
 export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
 
 export function start(depth) {
+	board_depth = depth;
 	const board = document.getElementById('board');
 	board.innerHTML = '';
 
@@ -32,7 +34,7 @@ export function updateBoard(depth, new_board_state, new_active_grids) {
 		}
 	}
 
-	setActive(active_grids);
+	setActiveGrids(active_grids);
 }
 
 function createBoardInCell(outerCell, layer, depth) {
@@ -90,17 +92,40 @@ export function place(layer, cell_num, player) {
 	cell.classList.add('played');
 }
 
-export function setActive(active_cells) {
+export function setActiveGrids(active_grids) {
 	document.querySelectorAll('.grid').forEach(cell => {
 		cell.classList.remove('active');
 	})
 
-	if (!active_cells) return;
+	if (!active_grids) return;
 
-	for (const layer in active_cells) {
-		for (const cell_num in active_cells[layer]) {
-			const cell = document.getElementById(`cell.${layer}.${cell_num}`);
-			cell.classList.add('active');
+	for (const layer in active_grids) {
+		for (const grid_num in active_grids[layer]) {
+			makeGridActive(parseInt(layer), parseInt(grid_num));
+		}
+	}
+}
+
+function makeGridActive(level, grid_num) {
+	console.log(`level: ${level}, grid_num: ${grid_num}`);
+
+	console.log(level === 2);
+
+	if (level === 2) {
+		console.log(`Setting cell.${level}.${grid_num} to active`);
+		const cell = document.getElementById(`cell.${level}.${grid_num}`);
+		if (cell) cell.classList.add('active');
+		return;
+	}
+
+	if (level > 2) {
+		const first_subcell = grid_num * 9;
+
+		for (let cell = 0; cell < 9; cell++) {
+			console.log(`Setting cell.${level - 1}.${first_subcell + cell} to active`);
+			console.log(`false if grid is played: ${board_state[level - 1] && board_state[level - 1][first_subcell + cell] === undefined}`)
+			if (board_state[level - 1] && board_state[level - 1][first_subcell + cell] !== undefined) continue;
+			makeGridActive(level - 1, first_subcell + cell);
 		}
 	}
 }

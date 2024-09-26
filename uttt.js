@@ -1,6 +1,6 @@
 import {wss} from "./index.js";
 
-const DEPTH = 3;
+const DEPTH = 2;
 
 export let board_depth;
 export let board_state = {};
@@ -27,10 +27,7 @@ export function place(cell_layer, cell_number, connection_id, force) {
 	if (board_state[cell_layer][cell_number] !== undefined) return;
 
 	if (active_grids && !force) {
-		if (!active_grids) active_grids = {};
-		if (!active_grids[cell_layer + 1]) active_grids[cell_layer + 1] = {};
-
-		if (active_grids[cell_layer + 1][Math.floor(cell_number / 9)] !== true) return;
+		checkIfActive(cell_layer, cell_number);
 	}
 
 	// Join if empty slot
@@ -47,10 +44,16 @@ export function place(cell_layer, cell_number, connection_id, force) {
 
 		if ((cell_layer + 1) <= board_depth) {
 			if (!active_grids[cell_layer + 1]) active_grids[cell_layer + 1] = {};
-			active_grids[cell_layer + 1][parent_cell] = true;
+			if (!board_state[cell_layer + 1]) board_state[cell_layer + 1] = {};
+			if (board_state[cell_layer + 1][parent_cell] === undefined) {
+				active_grids[cell_layer + 1][parent_cell] = true;
+			} else {
+				if (!active_grids[cell_layer + 2]) active_grids[cell_layer + 2] = {};
+				active_grids[cell_layer + 2][Math.floor(parent_cell / 9)] = true;
+			}
 
 			wss.clients.forEach(client => {
-				client.send(JSON.stringify({ type: "set_active", active_cells: active_grids }))
+				client.send(JSON.stringify({ type: "set_active_grids", active_grids }))
 			});
 		} else {
 			active_grids = undefined;
@@ -71,8 +74,25 @@ export function place(cell_layer, cell_number, connection_id, force) {
 		});
 	}
 
-	active_player++;
-	active_player %= 2;
+	if (!force) {
+		active_player++;
+		active_player %= 2;
+
+	}
+}
+
+function checkIfActive(cell_layer, cell_number) {
+	// check recursively up by one each time
+	if (!active_grids) active_grids = {};
+	if (!active_grids[cell_layer + 1]) active_grids[cell_layer + 1] = {};
+
+	if (active_grids[cell_layer + 1][Math.floor(cell_number / 9)] === true) return true;
+
+	if (cell_layer < board_depth) {
+		const next_layer_size = Math.pow(9, cell_layer + 1);
+		const parent_cell = Math.floor(cell_number / (next_layer_size))*9 + cell_number % 9;
+		return checkIfActive(cell_layer + 1, parent_cell);
+	}
 }
 
 function checkWhoWonGrid(grid_layer, grid_number) {
