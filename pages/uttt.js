@@ -4,7 +4,22 @@ export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
 
-export function start(depth) {
+export function updateState(new_board_depth, new_board_state, new_active_grids) {
+	createBoard(new_board_depth)
+	board_state = new_board_state;
+	active_grids = new_active_grids;
+
+	for (const layer in board_state) {
+		for (const cell_id in board_state[layer]) {
+			const player_num = board_state[layer][cell_id];
+			place(layer, cell_id, player_num);
+		}
+	}
+
+	setActiveGrids(active_grids);
+}
+
+export function createBoard(depth) {
 	board_depth = depth;
 	const board = document.getElementById('board');
 	board.innerHTML = '';
@@ -22,21 +37,6 @@ export function start(depth) {
 	})
 }
 
-export function updateBoard(depth, new_board_state, new_active_grids) {
-	start(depth)
-	board_state = new_board_state;
-	active_grids = new_active_grids;
-
-	for (const layer in board_state) {
-		for (const cell_id in board_state[layer]) {
-			const player_num = board_state[layer][cell_id];
-			place(layer, cell_id, player_num);
-		}
-	}
-
-	setActiveGrids(active_grids);
-}
-
 function createBoardInCell(outerCell, layer, depth) {
 	if (!board_state[layer]) board_state[layer] = {};
 
@@ -44,7 +44,7 @@ function createBoardInCell(outerCell, layer, depth) {
 		for (let j = 0; j < 3; j++) {
 			const cell = document.createElement('div');
 			if (!cell_count[layer]) cell_count[layer] = 0;
-			cell.id = 'cell.' + layer + '.' + cell_count[layer]++
+			cell.id = `cell.${layer - 1}.${cell_count[layer]++}`;
 
 			cell.classList.add('grid');
 			if (layer === 1) cell.classList.add('cell');
@@ -64,7 +64,10 @@ function createBoardInCell(outerCell, layer, depth) {
 	}
 }
 
-export function place(layer, cell_num, player) {
+export function place(cell_layer, cell_number, player) {
+	if (!board_state[cell_layer]) board_state[cell_layer] = {};
+	board_state[cell_layer][cell_number] = player;
+
 	let pieces = {};
 	pieces.cross = `
 		<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -85,11 +88,20 @@ export function place(layer, cell_num, player) {
 		</svg>
 	`
 
-	console.log(`Requesting server place at cell.${layer}.${cell_num}`);
-	const cell = document.getElementById(`cell.${layer}.${cell_num}`);
-	cell.innerHTML = pieces[player === 0 ? 'cross' : 'nought'];
+	let cell;
+	if (cell_layer > board_depth) {
+		cell = document.getElementById('board');
+	} else {
+		cell = document.getElementById(`cell.${cell_layer}.${cell_number}`);
+	}
 
-	cell.classList.add('played');
+	console.log(cell);
+
+	if (cell) {
+		cell.innerHTML = pieces[player === 0 ? 'cross' : 'nought'];
+		cell.classList.add('played');
+	}
+
 }
 
 export function setActiveGrids(active_grids) {
@@ -107,23 +119,16 @@ export function setActiveGrids(active_grids) {
 }
 
 function makeGridActive(level, grid_num) {
-	console.log(`level: ${level}, grid_num: ${grid_num}`);
-
-	console.log(level === 2);
-
-	if (level === 2) {
-		console.log(`Setting cell.${level}.${grid_num} to active`);
+	if (level === 1) {
 		const cell = document.getElementById(`cell.${level}.${grid_num}`);
 		if (cell) cell.classList.add('active');
 		return;
 	}
 
-	if (level > 2) {
+	if (level > 1) {
 		const first_subcell = grid_num * 9;
 
 		for (let cell = 0; cell < 9; cell++) {
-			console.log(`Setting cell.${level - 1}.${first_subcell + cell} to active`);
-			console.log(`false if grid is played: ${board_state[level - 1] && board_state[level - 1][first_subcell + cell] === undefined}`)
 			if (board_state[level - 1] && board_state[level - 1][first_subcell + cell] !== undefined) continue;
 			makeGridActive(level - 1, first_subcell + cell);
 		}

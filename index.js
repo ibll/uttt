@@ -41,7 +41,11 @@ export const wss = new WebSocketServer({ server });
 
 wss.on('connection', async (ws, response) => {
 	// Tell the client what events it can listen for
-	prepareClient(ws);
+	ws.send(JSON.stringify({ type: "prepare_client", client_events }));
+
+	// Load existing game state, if any
+	if (board_depth)
+		ws.send(JSON.stringify({ type: "update_state", board_depth, board_state, active_grids }));
 
 	// Find or set a unique connection_id to the client.
 	response.headers?.cookie?.split('; ' ).forEach((cookie) => {
@@ -64,9 +68,6 @@ wss.on('connection', async (ws, response) => {
 	}
 });
 
-export function prepareClient(ws) {
-	ws.send(JSON.stringify({ type: "prepare_client", client_events, board_size: board_depth, board_state, active_grids }));
-}
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
