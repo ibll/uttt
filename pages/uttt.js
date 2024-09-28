@@ -95,8 +95,6 @@ export function place(cell_layer, cell_number, player) {
 		cell = document.getElementById(`cell.${cell_layer}.${cell_number}`);
 	}
 
-	console.log(cell);
-
 	if (cell) {
 		cell.innerHTML = pieces[player === 0 ? 'cross' : 'nought'];
 		cell.classList.add('played');
