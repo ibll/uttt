@@ -1,6 +1,6 @@
 import {wss} from "./index.js";
 
-const DEPTH = 3;
+const DEPTH = 1;
 
 export let board_depth;
 export let board_state = {};
@@ -68,8 +68,8 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 
 	}
 
-	// Set next active grids
-	findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells);
+	if (grid_layer < board_depth)
+		setNextActiveGrid(grid_layer + 1, Math.floor(grid_number / 9), pos_in_grid, previous_cells);
 
 	// Switch active player
 	if (!previous_cells)
@@ -77,29 +77,29 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 
 }
 
-function findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells) {
-	// console.log(pos_in_grid);
-	// console.log(`grid_layer: ${grid_layer}, grid_number: ${grid_number}, pos_in_grid: ${pos_in_grid}`);
+function setNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells) {
+	console.log(`grid_layer: ${grid_layer}, grid_number: ${grid_number}, pos_in_grid: ${pos_in_grid}`);
+
+	const cell_layer = grid_layer - 1;
+	const cell_number = grid_number * 9;
+
 	active_grids = {};
-	const grid_layer_size = Math.pow(9, board_depth - grid_layer)
+	if (!active_grids[cell_layer]) active_grids[cell_layer] = {};
 
-	if (!board_state[grid_layer]) board_state[grid_layer] = {};
+	let next_number = cell_number  + pos_in_grid;
 
-	if (board_state[grid_layer][grid_number] === undefined) {
-		if (!active_grids[grid_layer]) active_grids[grid_layer] = {};
-
-		let next_number = Math.floor(grid_number / 9)*9 + pos_in_grid;
-
-		active_grids[grid_layer][next_number] = true;
+	if (board_state[cell_layer]?.[next_number] === undefined) {
+		active_grids[cell_layer][next_number] = true;
 		wss.clients.forEach(client => {
 			client.send(JSON.stringify({ type: "set_active_grids", active_grids }));
 		});
 
-		if (previous_cells?.[grid_layer - 2] !== undefined) {
-			findNextActiveGrid(grid_layer - 1, next_number, previous_cells[grid_layer - 2], previous_cells);
-		}
-
+		if (previous_cells?.[cell_layer - 2] !== undefined && cell_layer > 1)
+			setNextActiveGrid(cell_layer, next_number, previous_cells[cell_layer - 2], previous_cells);
+	} else {
+		setNextActiveGrid(grid_layer + 1, Math.floor(next_number / 9), next_number % 9);
 	}
+
 }
 
 function isCellActive(cell_layer, cell_number) {
