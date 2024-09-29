@@ -89,7 +89,7 @@ export function place(cell_layer, cell_number, player) {
 	`
 
 	let cell;
-	if (cell_layer > board_depth) {
+	if (cell_layer >= board_depth) {
 		cell = document.getElementById('board');
 	} else {
 		cell = document.getElementById(`cell.${cell_layer}.${cell_number}`);
