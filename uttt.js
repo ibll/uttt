@@ -24,11 +24,10 @@ export function start() {
 }
 
 export function place(cell_layer, cell_number, connection_id, previous_cells) {
-	console.log(`${connection_id} requested to place at ${cell_layer}.${cell_number}`);
-
 	const cell_layer_size = Math.pow(9, board_depth - cell_layer)
 	const grid_layer = cell_layer + 1;
 	const grid_number = Math.floor(cell_number / 9);
+	const pos_in_grid = cell_number % 9;
 
 	// Ensure cell is within bounds
 	if (cell_number < 0 || cell_number >= cell_layer_size)
@@ -59,22 +58,18 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 		client.send(JSON.stringify({ type: "place", cell_layer, cell_number, player: active_player }));
 	});
 
-	// todo Set the next active grid
-	findNextActiveGrid(cell_layer, cell_number, previous_cells);
-
-	wss.clients.forEach(client => {
-		client.send(JSON.stringify({ type: "set_active_grids", active_grids }))
-	});
-
 	// Win the grid if necessary
 	if (checkWhoWonGrid(grid_layer, grid_number) !== null) {
 		console.log(`${active_player === 0 ? 'X' : 'O'} won grid ${cell_layer}.${cell_number}!`);
 
 		if (!previous_cells) previous_cells = {};
 		previous_cells[cell_layer] = cell_number % 9;
-
 		place(grid_layer, grid_number, players[active_player], previous_cells);
+
 	}
+
+	// Set next active grids
+	findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells);
 
 	// Switch active player
 	if (!previous_cells)
@@ -82,12 +77,11 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 
 }
 
-function findNextActiveGrid(cell_layer, cell_number, previous_cells) {
-	let grid_layer = cell_layer + 1;
-	let grid_number = Math.floor(cell_number / 9);
-	let pos_in_grid = cell_number % 9;
-
+function findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells) {
+	// console.log(pos_in_grid);
+	// console.log(`grid_layer: ${grid_layer}, grid_number: ${grid_number}, pos_in_grid: ${pos_in_grid}`);
 	active_grids = {};
+	const grid_layer_size = Math.pow(9, board_depth - grid_layer)
 
 	if (!board_state[grid_layer]) board_state[grid_layer] = {};
 
@@ -97,26 +91,15 @@ function findNextActiveGrid(cell_layer, cell_number, previous_cells) {
 		let next_number = Math.floor(grid_number / 9)*9 + pos_in_grid;
 
 		active_grids[grid_layer][next_number] = true;
+		wss.clients.forEach(client => {
+			client.send(JSON.stringify({ type: "set_active_grids", active_grids }));
+		});
 
-		// if (previous_cells) {
-		// 	for (let i = grid_layer - 1; i > 0; i--) {
-		// 		active_grids = {}
-		//
-		// 		console.log(i);
-		// 		if (!active_grids[i]) active_grids[i] = {};
-		//
-		// 		const next_cell_number = Math.floor(grid_number / 9)*9 + previous_cells[i];
-		//
-		// 		console.log(next_cell_number);
-		//
-		// 		active_grids[i][next_cell_number] = true;
-		// 	}
-		// }
+		if (previous_cells?.[grid_layer - 2] !== undefined) {
+			findNextActiveGrid(grid_layer - 1, next_number, previous_cells[grid_layer - 2], previous_cells);
+		}
+
 	}
-
-	wss.clients.forEach(client => {
-		client.send(JSON.stringify({ type: "set_active_grids", active_grids }));
-	});
 }
 
 function isCellActive(cell_layer, cell_number) {
@@ -125,7 +108,7 @@ function isCellActive(cell_layer, cell_number) {
 
 	// Cell isn't active if we've checked past the outermost grid.
 	if (cell_layer >= board_depth + 2) {
-		// console.log(`Cell ${cell_layer} is outside of the board of size ${board_depth}, so the cell is not active.`);
+		// console.log(`Cell ${cell_layer} is outside the board of size ${board_depth}, so the cell is not active.`);
 		return false;
 	}
 	// Check if grid is active directly.
