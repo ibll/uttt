@@ -1,13 +1,19 @@
-import { ws } from './client.js';
+import server from '../client_events/outgoing.js';
+
 export let board_depth;
 export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
 
 export function updateState(new_board_depth, new_board_state, new_active_grids) {
-	createBoard(new_board_depth)
+	board_depth = new_board_depth;
 	board_state = new_board_state;
 	active_grids = new_active_grids;
+	cell_count = {};
+
+	console.log(active_grids)
+
+	createBoard(new_board_depth);
 
 	for (const layer in board_state) {
 		for (const cell_id in board_state[layer]) {
@@ -20,19 +26,17 @@ export function updateState(new_board_depth, new_board_state, new_active_grids) 
 }
 
 export function createBoard(depth) {
-	board_depth = depth;
 	const board = document.getElementById('board');
 	board.innerHTML = '';
 
-	board_state = {};
-	cell_count = {};
+	if (!board_depth) return;
 
 	console.log(`Creating board of size ${depth}`);
 	createBoardInCell(board, depth, depth);
 
 	board.querySelectorAll('.cell').forEach(cell => {
 		cell.addEventListener('click', () => {
-			ws.send(JSON.stringify({type: "place", cell_id: cell.id}))
+			server.place(cell.id);
 		})
 	})
 }
@@ -49,7 +53,7 @@ function createBoardInCell(outerCell, layer, depth) {
 			cell.classList.add('grid');
 			if (layer === 1) cell.classList.add('cell');
 
-			cell.style.borderWidth = layer/2 + 'px';
+			cell.style.borderWidth = layer / 2 + 'px';
 			cell.style.borderColor = `var(--c${layer})`
 
 			if (i === 0) cell.classList.add('top');
@@ -124,11 +128,11 @@ function makeGridActive(level, grid_num) {
 	}
 
 	if (level > 1) {
-		const first_subcell = grid_num * 9;
+		const first_sub_cell = grid_num * 9;
 
 		for (let cell = 0; cell < 9; cell++) {
-			if (board_state[level - 1] && board_state[level - 1][first_subcell + cell] !== undefined) continue;
-			makeGridActive(level - 1, first_subcell + cell);
+			if (board_state[level - 1] && board_state[level - 1][first_sub_cell + cell] !== undefined) continue;
+			makeGridActive(level - 1, first_sub_cell + cell);
 		}
 	}
 }

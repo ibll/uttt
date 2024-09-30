@@ -1,26 +1,58 @@
+import server from './client_events/outgoing.js';
+import status from './scripts/status.js'
+import Cookie from './modules/js.cookie.mjs';
+
 const host = window.location.hostname;
 const port = window.location.port;
-export const ws = new WebSocket(`ws://${host}:${port}`);
 
 let client_events = [];
+let ws_opened = false;
 
-ws.onopen = () => console.log('Connected to server');
-ws.onclose = () => console.log('Disconnected from server');
+export let connection_id = Cookie.get('connection_id');
 
-ws.onmessage = (event) => {
-	let payload = {};
-	try { payload = JSON.parse(event.data);}
-	catch { console.error('Invalid JSON:', event.data); }
+export let ws;
 
-	if (payload.type === 'prepare_client')
-		return client_events = payload.client_events;
+document.addEventListener("DOMContentLoaded", function() {
+	status.display("Connecting to server...");
+	connect();
+	setInterval(tryConnect, 5000);
+});
 
-	if (!client_events.includes(payload.type)) return;
+function connect() {
+	ws = new WebSocket(`ws://${host}:${port}`);
 
-	import(`./client_events/${payload.type}.js`)
-		.then((event) => event.default(ws, payload));
-};
+	ws.onopen = () => {
+		status.display("Connected to server!");
+		ws_opened = true;
+	}
+	ws.onclose = () => {
+		if (ws_opened) status.display("Disconnected from server!", 5000);
+
+		ws_opened = false;
+	}
+
+	ws.onmessage = (event) => {
+		let payload = {};
+		try { payload = JSON.parse(event.data);}
+		catch { console.error('Invalid JSON:', event.data); }
+
+		if (payload.type === 'prepare_client')
+			return client_events = payload.client_events;
+
+		if (!client_events.includes(payload.type)) return;
+
+		import(`./client_events/incoming/${payload.type}.js`)
+			.then((event) => event.default(ws, payload));
+	};
+}
+
+function tryConnect(){
+	if(!ws || ws.readyState === WebSocket.CLOSED) {
+		status.display("Trying to reconnect to server...", Infinity)
+		connect();
+	}
+}
 
 document.getElementById("start").addEventListener("click", () => {
-	ws.send(JSON.stringify({type: "start"}));
+	server.start();
 });

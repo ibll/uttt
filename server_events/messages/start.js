@@ -1,4 +1,4 @@
-import { start } from '../uttt.js';
+import { start } from '../../uttt.js';
 
 export default async () => {
 	start();

@@ -1,4 +1,4 @@
-import {updateState} from '../uttt.js';
+import {updateState} from '../../scripts/uttt.js';
 
 export default async (ws, payload) => {
 	const board_depth = payload.board_depth;
