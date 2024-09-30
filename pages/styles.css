@@ -48,85 +48,57 @@ body {
     height: 100vh;
     width: 100vw;
 
+    margin: 0;
+
     overflow: hidden;
-
-    @media (min-aspect-ratio: 4/3) {
-        flex-direction: row;
-    }
-}
-
-#main-panel {
-    padding: 1rem;
 }
 
 .panel {
     h1 {
         text-align: center;
-
-        @media (min-aspect-ratio: 4/3) {
-            text-align: left;
-        }
     }
 
+    padding: 0.5rem 1rem;
     max-width: 100%;
+
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-content: center;
 
-    @media (min-aspect-ratio: 4/3) {
-        padding: 0.5rem !important;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        width: 30%;
-    }
-
-    @media (max-aspect-ratio: 4/3) and (min-aspect-ratio: 9/10) {
-        padding-bottom: 0 !important;
-        padding-top: 0 !important;
-    }
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: var(--popup);
+    box-shadow: var(--popup) 0 0.5rem 3rem 0.1rem;
 }
 
 .hspacer {
     flex: 1;
-    @media (min-aspect-ratio: 4/3) {
-        flex: 0;
-    }
 }
 
-#button-panel {
+.button-panel {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-content: center;
-
-    @media (min-aspect-ratio: 4/3) {
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-    }
+    align-items: center;
 }
 
 button {
     font-family: 'Nunito', sans-serif;
     font-weight: 700;
+
     color: var(--text);
     background-color: var(--popup);
     border: none;
     border-radius: 1rem;
     padding: 1rem;
-    margin: 1rem;
     cursor: pointer;
 
     transition: background-color 0.25s ease-out;
 
     &:hover {
         background-color: var(--rosewater)
-    }
-
-    @media (min-aspect-ratio: 4/3) {
-        margin: 0.5rem 0.5rem 0.5rem 0;
     }
 }
 
@@ -135,14 +107,58 @@ button {
     width: 98vmin;
     height: 98vmin;
     aspect-ratio: 1 / 1;
+    border-style: none;
+}
 
-    @media (max-aspect-ratio: 4/3) and (min-aspect-ratio: 9/10) {
-        width: 90vmin;
-        height: 90vmin;
-
+@media (min-aspect-ratio: 4/3) {
+    body {
+        flex-direction: row;
     }
 
-    border-style: none;
+    .panel {
+        h1 {
+            text-align: left;
+        }
+
+        padding: 0.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        width: 30%;
+
+        border-bottom-style: none;
+        box-shadow: none;
+    }
+
+    .button-panel {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    button {
+        margin: 0.5rem 0.5rem 0.5rem 0;
+        width: 100%;
+    }
+
+    .hspacer {
+        flex: 0;
+    }
+}
+
+@media (max-aspect-ratio: 4/3) and (min-aspect-ratio: 9/10) {
+    .panel {
+        padding-bottom: 0;
+
+        /*border-bottom-style: none;*/
+        /*box-shadow: none;*/
+    }
+
+    #board {
+        width: 90vmin;
+        height: 90vmin;
+    }
 }
 
 .grid {
