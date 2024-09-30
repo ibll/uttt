@@ -117,7 +117,8 @@ button {
 
     .panel {
         h1 {
-            text-align: left;
+            width: 100%;
+            text-align: center;
         }
 
         padding: 0.5rem;
@@ -142,6 +143,10 @@ button {
         width: 100%;
     }
 
+    .slider {
+        width: 100%
+    }
+
     .hspacer {
         flex: 0;
     }
@@ -150,9 +155,6 @@ button {
 @media (max-aspect-ratio: 4/3) and (min-aspect-ratio: 9/10) {
     .panel {
         padding-bottom: 0;
-
-        /*border-bottom-style: none;*/
-        /*box-shadow: none;*/
     }
 
     #board {
@@ -201,6 +203,11 @@ button {
     }
 }
 
+.grid.played {
+    --highlight: none;
+    --highlilght-trans: none;
+}
+
 .grid:not(#board, .played):hover{
     background-color: var(--highlight-trans);
 }
@@ -214,9 +221,19 @@ svg {
     height: 100%;
 }
 
+.overlay {
+    opacity: 50%;
+    position: relative;
+    border-radius: 1rem;
+    z-index: -1;
+    width: 100%;
+    margin-top: -100%;
+    height: 100%;
+}
+
 #status {
     opacity: 0;
-    transition:opacity 1s, traclinsform 1s;
+    transition:opacity 1s, transform 1s;
 
     background-color: var(--popup);
     box-shadow: 0.5rem 0.5rem 3rem 0.1rem #00000040;
@@ -229,7 +246,7 @@ svg {
     transform: translateX(-50%);
 
     @media (orientation: landscape) {
-        left: 2rem;
+        left: 0.5rem;
         transform: none;
     }
 

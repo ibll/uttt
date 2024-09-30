@@ -54,5 +54,6 @@ function tryConnect(){
 }
 
 document.getElementById("start").addEventListener("click", () => {
-	server.start();
+	const size_selector = document.getElementById("size-selector");
+	server.start(size_selector.value);
 });

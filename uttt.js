@@ -1,15 +1,13 @@
 import clients from './server_events/outgoing.js';
 
-const DEPTH = 3;
-
 export let board_depth;
 export let board_state;
 export let active_grids;
 let active_player;
 let players = [];
 
-export function start() {
-	board_depth = DEPTH;
+export function start(size) {
+	board_depth = size;
 	board_state = {};
 	active_grids = {};
 	active_player = 0;
@@ -38,8 +36,12 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 	if (board_state[cell_layer]?.[cell_number] !== undefined)
 		return console.error(`Cell ${cell_layer}.${cell_number} is already filled`);
 
-	for (let i = 0; i < board_depth; i++) {
-		const grid_number = Math.floor(cell_number / Math.pow(9, i));
+	// Ensure cell is not within a claimed grid
+	for (let i = grid_layer; i < board_depth; i++) {
+		const grid_number = Math.floor(cell_number / Math.pow(9, board_depth - i - 1));
+
+		console.log(`layer: ${i}, grid: ${grid_number}`);
+
 		if (board_state[i]?.[grid_number] !== undefined)
 			return console.error(`Cell ${cell_layer}.${cell_number} is within a filled grid`);
 	}

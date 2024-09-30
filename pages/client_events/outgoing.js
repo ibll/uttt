@@ -5,8 +5,8 @@ function sendToServer(message) {
 	ws.send(JSON.stringify(message));
 }
 
-server.start = function() {
-	sendToServer({type: "start"});
+server.start = function(size) {
+	sendToServer({type: "start", size});
 }
 
 server.sync = function() {
@@ -18,3 +18,4 @@ server.place = function(cell_id) {
 }
 
 export default server;
+window.server = server;

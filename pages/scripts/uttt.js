@@ -11,8 +11,6 @@ export function updateState(new_board_depth, new_board_state, new_active_grids) 
 	active_grids = new_active_grids;
 	cell_count = {};
 
-	console.log(active_grids)
-
 	createBoard(new_board_depth);
 
 	for (const layer in board_state) {
@@ -72,6 +70,10 @@ export function place(cell_layer, cell_number, player) {
 	if (!board_state[cell_layer]) board_state[cell_layer] = {};
 	board_state[cell_layer][cell_number] = player;
 
+	cell_layer = parseInt(cell_layer);
+	cell_number = parseInt(cell_number);
+	player = parseInt(player);
+
 	let pieces = {};
 	pieces.cross = `
 		<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -93,6 +95,7 @@ export function place(cell_layer, cell_number, player) {
 	`
 
 	let cell;
+
 	if (cell_layer >= board_depth) {
 		cell = document.getElementById('board');
 	} else {
@@ -100,7 +103,16 @@ export function place(cell_layer, cell_number, player) {
 	}
 
 	if (cell) {
-		cell.innerHTML = pieces[player === 0 ? 'cross' : 'nought'];
+		if (cell_layer === 0) {
+			cell.innerHTML = pieces[player === 0 ? 'cross' : 'nought'];
+		} else if (cell_layer >= board_depth) {
+			return;
+		} else {
+			const overlay = document.createElement('div');
+			overlay.classList.add('overlay');
+			overlay.style.backgroundColor = player === 0 ? 'var(--red)' : 'var(--blue)';
+			cell.appendChild(overlay);
+		}
 		cell.classList.add('played');
 	}
 
