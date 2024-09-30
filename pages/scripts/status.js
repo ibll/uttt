@@ -15,14 +15,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
 const status_API = {}
 
-status_API.display = function(message, length) {
+status_API.display = function(message, length, force_retrigger) {
 	if (!length) length = 5000;
 	if (!status) return display_queue = message;
 
 	if (remove_timeout) clearTimeout(remove_timeout);
 	if (fade_timeout) clearTimeout(fade_timeout);
 
-	if (displayed_message !== message) {
+	if (displayed_message !== message || force_retrigger) {
 		displayed_message = message;
 		glitchIn(message);
 		status.classList.add('active');

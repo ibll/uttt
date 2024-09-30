@@ -8,5 +8,5 @@ export default async (ws, payload) => {
 	console.log(payload.next_player_id)
 
 	if (payload.next_player_id === connection_id && payload.next_player_id !== undefined)
-		status.display("Your turn!", 3000);
+		status.display("Your turn!", 3000, true);
 }
