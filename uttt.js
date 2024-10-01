@@ -63,32 +63,37 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 	console.log(`${connection_id ? player_pieces[active_player] : null} placed at ${cell_layer}.${cell_number}`);
 	clients.place(cell_layer, cell_number, connection_id ? active_player : null);
 
-	// Set next active grid
-	if (grid_layer < board_depth) {
-		findNextActiveGrid(grid_layer + 1, Math.floor(grid_number / 9), pos_in_grid, previous_cells);
-	}
-
+	let already_set_active = false;
 	// Win the grid if necessary
 	const winner = checkWhoWonGrid(grid_layer, grid_number);
 	if (winner !== undefined) {
-		const piece = winner ? player_pieces[winner] : null;
+		const piece = winner !== null ? player_pieces[winner] : null;
 		console.log(`${piece} won grid ${grid_layer}.${grid_number}!`);
 
 		if (!previous_cells) previous_cells = {};
 		previous_cells[cell_layer] = cell_number % 9;
 		const player = winner === null ? null : players[winner];
-		place(grid_layer, grid_number, player, previous_cells);
+		const set_active = place(grid_layer, grid_number, player, previous_cells);
+		if (set_active) already_set_active = true;
 
+		// Don't set an active grid if the game is over
 		if (grid_layer === board_depth) {
 			active_grids = {};
 		}
 	}
 
+	// Set next active grid
+	if (grid_layer < board_depth && !already_set_active) {
+		findNextActiveGrid(grid_layer + 1, Math.floor(grid_number / 9), pos_in_grid, previous_cells);
+		already_set_active = true;
+	}
+
 	// Switch active player
-	if (cell_layer === 0)
+	if (cell_layer === 0) {
 		active_player = 1 - active_player;
 		clients.setActiveGrid(active_grids, players[active_player]);
-
+	}
+	return already_set_active;
 }
 
 function findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells) {
