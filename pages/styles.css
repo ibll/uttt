@@ -208,7 +208,7 @@ button {
 
     transition: background-color 0.25s ease-out;
 
-    .active {
+    .active:not(.played) {
         background-color: var(--green-trans) !important;
         --highlight: var(--green);
         --highlight-trans: var(--green-trans);

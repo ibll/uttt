@@ -76,7 +76,7 @@ export function place(cell_layer, cell_number, player) {
 
 	cell_layer = parseInt(cell_layer);
 	cell_number = parseInt(cell_number);
-	player = parseInt(player);
+	if (player !== null) player = parseInt(player);
 
 	let pieces = {};
 	pieces.cross = `
