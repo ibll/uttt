@@ -11,6 +11,9 @@ export default async (ws, data) => {
 
 		const filePath = path.join(__dirname, MESSAGES_DIR,  payload.type + '.js');
 		fs.readFile(filePath, (err) => {
+			if (!ws.connection_id) {
+				console.error(`Client does not have a connection id. ${payload}`);
+			}
 			if (err) return console.error(`Message type '${payload.type}' not found`);
 			import(filePath)
 				.then(module => module.default(ws, payload))

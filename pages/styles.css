@@ -5,12 +5,18 @@
     --c1: #4c4f6980;
     --c2: #5c5f77C0;
     --c3: #6c6f85;
+
     --rosewater: #dc8a78;
     --rosewater-trans: #dc8a7830;
-    --blue: #7287fd;
-    --red: #dd7878;
     --green: #40a02b;
     --green-trans: #40a02b40;
+
+    --blue: #7287fd;
+    --blue-trans: #7287fd80;
+    --red: #dd7878;
+    --red-trans: #dd787880;
+    --grey: #acb0be;
+    --grey-trans: #acb0be80;
 
     --highlight: var(--rosewater);
     --highlight-trans: var(--rosewater-trans);
@@ -24,12 +30,18 @@
         --c1: #cdd6f480;
         --c2: #bac2deC0;
         --c3: #a6adc8;
+
         --rosewater: #f5e0dc;
         --rosewater-trans: #f5e0dc30;
-        --blue: #89b4fa;
-        --red: #f38ba8;
         --green: #a6e3a1;
         --green-trans: #a6e3a140;
+
+        --blue: #89b4fa;
+        --blue-trans: #89b4fa80;
+        --red: #f38ba8;
+        --red-trans: #f38ba880;
+        --grey: #585b70;
+        --grey-trans: #585b7080;
     }
 }
 
@@ -224,10 +236,8 @@ svg {
 .overlay {
     opacity: 50%;
     position: relative;
-    border-radius: 1rem;
-    z-index: -1;
     width: 100%;
-    margin-top: -100%;
+    margin-bottom: -100%;
     height: 100%;
 }
 

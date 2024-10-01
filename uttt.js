@@ -6,6 +6,11 @@ export let active_grids;
 let active_player;
 let players = [];
 
+const player_pieces = {
+	0: 'X',
+	1: 'O',
+}
+
 export function start(size) {
 	board_depth = size;
 	board_state = {};
@@ -37,14 +42,8 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 		return console.error(`Cell ${cell_layer}.${cell_number} is already filled`);
 
 	// Ensure cell is not within a claimed grid
-	for (let i = grid_layer; i < board_depth; i++) {
-		const grid_number = Math.floor(cell_number / Math.pow(9, board_depth - i - 1));
-
-		console.log(`layer: ${i}, grid: ${grid_number}`);
-
-		if (board_state[i]?.[grid_number] !== undefined)
-			return console.error(`Cell ${cell_layer}.${cell_number} is within a filled grid`);
-	}
+	if (!isCellUnclaimed(cell_layer, cell_number))
+		return console.error(`Cell ${cell_layer}.${cell_number} is within a claimed grid`);
 
 	// Ensure cell is active
 	if (!previous_cells && !isCellActive(cell_layer, cell_number))
@@ -55,14 +54,14 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 		players[active_player] = connection_id;
 
 	// Ensure only the allowed player is placing
-	if (connection_id !== players[active_player])
+	if (connection_id !== players[active_player] && connection_id !== null)
 		return console.error(`It is not ${active_player === 0 ? 'X' : 'O'}'s turn to place`);
 
 	// Place the piece
 	if (!board_state[cell_layer]) board_state[cell_layer] = {};
-	board_state[cell_layer][cell_number] = active_player;
-	console.log(`${active_player === 0 ? 'X' : 'O'} placed at ${cell_layer}.${cell_number}`);
-	clients.place(cell_layer, cell_number, active_player);
+	board_state[cell_layer][cell_number] = connection_id ? active_player : null;
+	console.log(`${connection_id ? player_pieces[active_player] : null} placed at ${cell_layer}.${cell_number}`);
+	clients.place(cell_layer, cell_number, connection_id ? active_player : null);
 
 	// Set next active grid
 	if (grid_layer < board_depth) {
@@ -71,12 +70,18 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 
 	// Win the grid if necessary
 	const winner = checkWhoWonGrid(grid_layer, grid_number);
-	if (winner != null) {
-		console.log(`${active_player === 0 ? 'X' : 'O'} won grid ${grid_layer}.${grid_number}!`);
+	if (winner !== undefined) {
+		const piece = winner ? player_pieces[winner] : null;
+		console.log(`${[piece]} won grid ${grid_layer}.${grid_number}!`);
 
 		if (!previous_cells) previous_cells = {};
 		previous_cells[cell_layer] = cell_number % 9;
-		place(grid_layer, grid_number, players[active_player], previous_cells);
+		const player = winner === null ? null : players[winner];
+		place(grid_layer, grid_number, player, previous_cells);
+
+		if (grid_layer === board_depth) {
+			active_grids = {};
+		}
 	}
 
 	// Switch active player
@@ -104,6 +109,21 @@ function findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells
 	}
 }
 
+function isCellUnclaimed(cell_layer, cell_number) {
+	const grid_layer = cell_layer + 1;
+	const grid_number = Math.floor(cell_number / 9);
+
+	if (board_state[cell_layer]?.[cell_number] !== undefined) {
+		return false;
+	}
+
+	if (grid_layer >= board_depth + 1) {
+		return true;
+	}
+
+	return isCellUnclaimed(grid_layer, grid_number);
+}
+
 function isCellActive(cell_layer, cell_number) {
 	const grid_layer = cell_layer + 1;
 	const grid_number = Math.floor(cell_number / 9);
@@ -124,30 +144,30 @@ function isCellActive(cell_layer, cell_number) {
 function checkWhoWonGrid(grid_layer, grid_number) {
 	const cell_layer = grid_layer - 1;
 	const first_cell_number = grid_number * 9;
+	const cells = Array.from({ length: 9 }, (_, i) => board_state[cell_layer]?.[first_cell_number + i]);
 
-	for (let row = 0; row < 3; row++) {
-		const c0 = board_state[cell_layer]?.[first_cell_number + row*3];
-		const c1 = board_state[cell_layer]?.[first_cell_number + row*3 + 1];
-		const c2 = board_state[cell_layer]?.[first_cell_number + row*3 + 2];
-		if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
+	const lines = [
+		[cells[0], cells[1], cells[2]], // rows
+		[cells[3], cells[4], cells[5]],
+		[cells[6], cells[7], cells[8]],
+		[cells[0], cells[3], cells[6]], // columns
+		[cells[1], cells[4], cells[7]],
+		[cells[2], cells[5], cells[8]],
+		[cells[0], cells[4], cells[8]], // diagonals
+		[cells[2], cells[4], cells[6]]
+	];
+
+	for (const line of lines) {
+		const winner = checkWhoWonLine(...line);
+		if (winner !== undefined) return winner;
 	}
 
-	for (let col = 0; col < 3; col++) {
-		const c0 = board_state[cell_layer]?.[first_cell_number + col];
-		const c1 = board_state[cell_layer]?.[first_cell_number + col + 3];
-		const c2 = board_state[cell_layer]?.[first_cell_number + col + 6];
-		if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
-	}
+	if (cells.every(cell => cell !== undefined)) return null;
 
-	const c0 = board_state[cell_layer]?.[first_cell_number];
-	const c1 = board_state[cell_layer]?.[first_cell_number + 4];
-	const c2 = board_state[cell_layer]?.[first_cell_number + 8];
+	return undefined;
+}
+
+function checkWhoWonLine(c0, c1, c2) {
 	if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
-
-	const c3 = board_state[cell_layer]?.[first_cell_number + 2];
-	const c4 = board_state[cell_layer]?.[first_cell_number + 4];
-	const c5 = board_state[cell_layer]?.[first_cell_number + 6];
-	if (c3 === c4 && c4 === c5 && c3 !== undefined) return c3;
-
-	return null;
+	return undefined;
 }

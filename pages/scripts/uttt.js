@@ -1,4 +1,5 @@
 import server from '../client_events/outgoing.js';
+import status from "./status.js";
 
 export let board_depth;
 export let board_state = {};
@@ -52,6 +53,7 @@ function createBoardInCell(outerCell, layer, depth) {
 			if (layer === 1) cell.classList.add('cell');
 
 			cell.style.borderWidth = layer / 2 + 'px';
+			cell.style.setProperty('--overlay-radius', `${layer*2}px`);
 			cell.style.borderColor = `var(--c${layer})`
 
 			if (i === 0) cell.classList.add('top');
@@ -69,6 +71,8 @@ function createBoardInCell(outerCell, layer, depth) {
 export function place(cell_layer, cell_number, player) {
 	if (!board_state[cell_layer]) board_state[cell_layer] = {};
 	board_state[cell_layer][cell_number] = player;
+
+	console.log(player);
 
 	cell_layer = parseInt(cell_layer);
 	cell_number = parseInt(cell_number);
@@ -93,6 +97,11 @@ export function place(cell_layer, cell_number, player) {
 			</defs>
 		</svg>
 	`
+	pieces.dash = `
+	<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<rect x="5" y="109" width="18" height="190" rx="9" transform="rotate(-90 5 109)" fill="var(--grey)"/>
+	</svg>
+	`
 
 	let cell;
 
@@ -103,18 +112,27 @@ export function place(cell_layer, cell_number, player) {
 	}
 
 	if (cell) {
-		if (cell_layer === 0) {
+		// if (cell_layer === 0) {
+		if ((board_depth === 1 && cell_layer < board_depth) || cell_layer < board_depth - 1) {
 			cell.innerHTML = pieces[player === 0 ? 'cross' : 'nought'];
-		} else if (cell_layer >= board_depth) {
-			return;
+		// } else if (cell_layer >= board_depth) {
+		// 	return;
 		} else {
+			let colour = '--grey';
+			if (player === 0) colour = '--red';
+			if (player === 1) colour = '--blue';
+
 			const overlay = document.createElement('div');
 			overlay.classList.add('overlay');
-			overlay.style.backgroundColor = player === 0 ? 'var(--red)' : 'var(--blue)';
-			cell.appendChild(overlay);
+			overlay.style.outline = `var(${colour}) solid ${cell_layer * 2}px`;
+			overlay.style.backgroundColor = `var(${colour}-trans)`;
+			overlay.style.borderRadius = (20/board_depth) + 2*cell_layer + 'px';
+			cell.prepend(overlay);
 		}
 		cell.classList.add('played');
 	}
+
+	if (cell_layer >= board_depth) status.display(`${player === 0 ? 'X' : 'O'} wins!`, 10000);
 
 }
 
