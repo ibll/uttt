@@ -72,7 +72,7 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 	const winner = checkWhoWonGrid(grid_layer, grid_number);
 	if (winner !== undefined) {
 		const piece = winner ? player_pieces[winner] : null;
-		console.log(`${[piece]} won grid ${grid_layer}.${grid_number}!`);
+		console.log(`${piece} won grid ${grid_layer}.${grid_number}!`);
 
 		if (!previous_cells) previous_cells = {};
 		previous_cells[cell_layer] = cell_number % 9;
