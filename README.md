@@ -3,7 +3,7 @@
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/preview-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="./assets/preview-light.png">
-    <img alt="A screenshot of the game, depicting tic-tac-toe boards nested inside the cells of other tic-tac-toe cells. X's and O's are placed randomly at different levels of depth in the board." src="./assets/uttt-light.png">
+    <img alt="A screenshot of the game, depicting tic-tac-toe boards nested inside the cells of other tic-tac-toe cells. X's and O's are placed randomly at different levels of depth in the board." src="./assets/preview-light.png">
 </picture>
 
 # How to Play
