@@ -1,4 +1,4 @@
-import clients from './server_events/outgoing.js';
+import clients from './events/outgoing.js';
 
 export let board_depth;
 export let board_state;
@@ -17,6 +17,8 @@ export function start(size) {
 	active_grids = {};
 	active_player = 0;
 	players = [];
+
+	console.log(`Creating board with size ${size}`);
 
 	if (!active_grids[board_depth]) active_grids[board_depth] = {};
 	active_grids[board_depth][0] = true;

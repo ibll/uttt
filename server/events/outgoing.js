@@ -1,4 +1,4 @@
-import {wss} from "../index.js";
+import { wss } from "../../index.js";
 
 const clients_API = {};
 
@@ -12,8 +12,16 @@ function sendToClients(message) {
 	});
 }
 
+clients_API.privatePrepareClient = function(client, client_events, client_events_path) {
+	sendToClient(client, {type: "prepare_client", client_events, client_events_path});
+}
+
 clients_API.privateUpdateState = function(client, board_depth, board_state, active_grids) {
 	sendToClient(client, {type: "update_state", board_depth, board_state, active_grids});
+}
+
+clients_API.privateRegisterPiece = function(client, piece) {
+	sendToClient(client, {type: "register_piece", piece});
 }
 
 clients_API.updateState = function(board_depth, board_state, active_grids) {

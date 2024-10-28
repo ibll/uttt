@@ -1,4 +1,4 @@
-import server from './client_events/outgoing.js';
+import server from './events/outgoing.js';
 import status from './scripts/status.js'
 import Cookie from './modules/js.cookie.mjs';
 
@@ -6,9 +6,13 @@ const host = window.location.hostname;
 const port = window.location.port;
 
 let client_events = [];
+let client_events_path = '';
 let ws_opened = false;
 
 export let connection_id = Cookie.get('connection_id');
+export function setConnectionID(new_connection_id) {
+	connection_id = new_connection_id;
+}
 
 export let ws;
 
@@ -36,13 +40,17 @@ function connect() {
 		try { payload = JSON.parse(event.data);}
 		catch { console.error('Invalid JSON:', event.data); }
 
-		if (payload.type === 'prepare_client')
-			return client_events = payload.client_events;
+		if (payload.type === 'prepare_client') {
+			client_events = payload.client_events;
+			client_events_path = payload.client_events_path;
+			return
+		}
 
 		if (!client_events.includes(payload.type)) return;
 
-		import(`./client_events/incoming/${payload.type}.js`)
-			.then((event) => event.default(ws, payload));
+		import(`${client_events_path}/${payload.type}.js`).then((event) => {
+			event.default(ws, payload)
+		});
 	};
 }
 
