@@ -6,6 +6,18 @@
     <img alt="A screenshot of the game, depicting tic-tac-toe boards nested inside the cells of other tic-tac-toe cells. X's and O's are placed randomly at different levels of depth in the board." src="./assets/preview-light.png">
 </picture>
 
+This is a node.js based server that serves an arbitrary-depth tic-tac-toe game to a browser client.
+
+The most common variant, a 2-layer "Ultimate Tic Tac Toe", is a game with simple rules that enable complex gameplay, and has a feeling closer to Chess than it does to normal Tic Tac Toe. Deeper layers are playable in the same fashion, but can get more tedious than they are fun. I created this because I hadn't seen a web version for deeper than 2 layers, and it gets hard to keep track of where to play next when [playing it on a whiteboard](./assets/whiteboard.jpeg)!
+
+# Installation and Running
+
+- Ensure you have [Node.js](https://nodejs.org/) installed on your machine!
+- Clone the repo and navigate to its directory
+- Run `npm install`
+- Run `npm start`
+- Open `http://localhost:3000` in your browser
+
 # How to Play
 
 Ultimate Tic-Tac-Toe is relatively simple. You draw a Tic-Tac-Toe board, and draw another Tic-Tac-Toe board in each of the cells! And, just like in normal Tic-Tac-Toe, your goal is to get a 3-in-a-row.
