@@ -31,7 +31,7 @@ In the example below, X played her first move in the bottom-left of a mini-board
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/tutorial-1-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="./assets/tutorial-1-light.png">
-    <img alt="A tic-tac-toe board with tic-tac-toe boards in each cell. One of the mini-boards has an X in the bottom-left corner, and the entire bottom-left mini board is highlighted green." src="./assets/tutorial-1-light.png">
+    <img alt="A tic-tac-toe board with tic-tac-toe boards in each cell. One of the mini-boards has an X in the bottom-left corner, and the entire bottom-left mini board is highlighted green." src="./assets/tutorial-1-light.png" width="400">
 </picture>
 
 This means that the most important aspect of your turn might not be where your piece goes, but where your opponent can go next!
@@ -41,7 +41,7 @@ One thing to note for Ultimate Tic-Tac-Toe, sending your opponent to a board tha
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/tutorial-2-dark.gif">
     <source media="(prefers-color-scheme: light)" srcset="./assets/tutorial-2-light.gif">
-    <img alt="A gif demonstrating that being sent to a claimed board lets you go anywhere." src="./assets/tutorial-2-light.gif">
+    <img alt="A gif demonstrating that being sent to a claimed board lets you go anywhere." src="./assets/tutorial-2-light.gif" width="400">
 </picture>
 
 ## Ultimate ULTIMATE Tic-Tac-Toe
@@ -55,5 +55,5 @@ Her opponent must then play in the **right-centre** UTTT board, in the **top-rig
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/tutorial-3-dark.gif">
     <source media="(prefers-color-scheme: light)" srcset="./assets/tutorial-3-light.gif">
-    <img alt="A gif demonstrating multi-level sending." src="./assets/tutorial-3-light.gif">
+    <img alt="A gif demonstrating multi-level sending." src="./assets/tutorial-3-light.gif" width="400">
 </picture>
