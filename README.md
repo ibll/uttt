@@ -1,4 +1,4 @@
-# Ultimate Tic Tac Toe
+# Ultimate Tic-Tac-Toe
 
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/preview-dark.png">
@@ -8,7 +8,7 @@
 
 This is a node.js based server that serves an arbitrary-depth tic-tac-toe game to a browser client.
 
-The most common variant, a 2-layer "Ultimate Tic Tac Toe", is a game with simple rules that enable complex gameplay, and has a feeling closer to Chess than it does to normal Tic Tac Toe. Deeper layers are playable in the same fashion, but can get more tedious than they are fun. I created this because I hadn't seen a web version for deeper than 2 layers, and it gets hard to keep track of where to play next when [playing it on a whiteboard](./assets/whiteboard.jpeg)!
+The most common Tic-Tac-Toe variant, a 2-layer "Ultimate Tic-Tac-Toe", is a game with simple rules that enable complex gameplay — and gameplay closer to Chess than it does to normal Tic-Tac-Toe. Versions with more layers are playable in the same fashion, but can get more tedious than they are fun. I created this because I hadn't seen a web version for deeper than 2 layers, and it gets hard to keep track of where to play next when [playing it on a whiteboard](./assets/whiteboard.jpeg)!
 
 # Installation and Running
 
@@ -17,6 +17,7 @@ The most common variant, a 2-layer "Ultimate Tic Tac Toe", is a game with simple
 - Run `npm install`
 - Run `npm start`
 - Open `http://localhost:3000` in your browser
+- To play with another device on the same network, find the local IP of the machine running the server and connect to it on port 3000. (It should look something like `http://XXX.XXX.XXX.XXX:3000` in your browser) 
 
 # How to Play
 
