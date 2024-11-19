@@ -23,9 +23,6 @@ async function wssConnection(ws, response) {
 	const client_events = fetchEventsIn(ABSOLUTE_CLIENT_EVENTS_DIR);
 	clients.privatePrepareClient(ws, client_events, CLIENT_EVENTS_DIR);
 
-	// Load existing game state
-	clients.privateUpdateState(ws, board_depth, board_state, active_grids);
-
 	// Find or set a unique connection_id to the client.
 	const cookies = response.headers?.cookie?.split('; ');
 	const connectionCookie = cookies?.find(cookie => cookie.startsWith('connection_id='));
@@ -38,6 +35,9 @@ async function wssConnection(ws, response) {
 		ws.connection_id = connection_id
 		ws.send(JSON.stringify({ type: "set_connection_id", connection_id }));
 	}
+
+	// Load existing game state
+	clients.privateUpdateState(ws, board_depth, board_state, active_grids);
 
 	// Log connection
 	ws.send(JSON.stringify({ type: "log", content: `Successfully connected as ${ws.connection_id}` }));

@@ -25,11 +25,21 @@ export function start(size) {
 	clients.updateState(board_depth, board_state, active_grids);
 }
 
-export function place(cell_layer, cell_number, connection_id, previous_cells) {
+export function getClientPiece(ws) {
+	// If both players on one device indicate that, otherwise tell them what piece they are
+	const connection_id = ws.connection_id || null;
+	if (players[0] === connection_id && players[1] === connection_id) return 'both';
+	if (players[0] === connection_id) return 'cross';
+	if (players[1] === connection_id) return 'nought';
+	return null;
+}
+
+export function place(cell_layer, cell_number, ws, previous_cells) {
 	const cell_layer_size = Math.pow(9, board_depth - cell_layer)
 	const grid_layer = cell_layer + 1;
 	const grid_number = Math.floor(cell_number / 9);
 	const pos_in_grid = cell_number % 9;
+	const connection_id = ws.connection_id || null;
 
 	// Ensure game is running
 	if (board_depth === undefined)
@@ -52,12 +62,14 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 		return console.error(`Cell ${cell_layer}.${cell_number} is not active`);
 
 	// Assign players on the first two turns
-	if (players[active_player] === undefined)
+	if (players[active_player] === undefined) {
 		players[active_player] = connection_id;
+		clients.privateRegisterPiece(ws, getClientPiece(ws));
+	}
 
 	// Ensure only the allowed player is placing
 	if (connection_id !== players[active_player] && connection_id !== null)
-		return console.error(`It is not ${active_player === 0 ? 'X' : 'O'}'s turn to place`);
+		return console.error(`It is not ${connection_id}'s turn to place`);
 
 	// Place the piece
 	if (!board_state[cell_layer]) board_state[cell_layer] = {};
@@ -74,8 +86,7 @@ export function place(cell_layer, cell_number, connection_id, previous_cells) {
 
 		if (!previous_cells) previous_cells = {};
 		previous_cells[cell_layer] = cell_number % 9;
-		const player = winner === null ? null : players[winner];
-		const set_active = place(grid_layer, grid_number, player, previous_cells);
+		const set_active = place(grid_layer, grid_number, ws, previous_cells);
 		if (set_active) already_set_active = true;
 
 		// Don't set an active grid if the game is over

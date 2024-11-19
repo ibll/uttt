@@ -7,7 +7,7 @@ export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
 
-export function updateState(new_board_depth, new_board_state, new_active_grids) {
+export function updateState(new_board_depth, new_board_state, new_active_grids, client_piece) {
 	board_depth = new_board_depth;
 	board_state = new_board_state;
 	active_grids = new_active_grids;
@@ -23,6 +23,13 @@ export function updateState(new_board_depth, new_board_state, new_active_grids) 
 	}
 
 	setActiveGrids(active_grids);
+
+	console.log(client_piece);
+	setPiece(client_piece)
+}
+
+export function setPiece(piece) {
+	document.getElementById('piece-marker').innerHTML = piece ? pieces[piece] : '';
 }
 
 export function createBoard(depth) {

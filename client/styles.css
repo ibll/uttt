@@ -84,6 +84,24 @@ body {
     box-shadow: var(--popup) 0 0.5rem 3rem 0.1rem;
 }
 
+.title-box {
+    display: flex;
+    flex-direction: row;
+}
+
+#piece-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+}
+
+#piece-marker > * {
+    height: auto;
+    width: 3em;
+    margin: 0.5em;
+}
+
 .hspacer {
     flex: 1;
 }
