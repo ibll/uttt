@@ -12,6 +12,7 @@ const player_pieces = {
 }
 
 export function start(size) {
+	// Clear state
 	board_depth = size;
 	board_state = {};
 	active_grids = {};
@@ -20,15 +21,19 @@ export function start(size) {
 
 	console.log(`Creating board with size ${size}`);
 
+	// Set all grids active
 	if (!active_grids[board_depth]) active_grids[board_depth] = {};
 	active_grids[board_depth][0] = true;
+
+	// inform clients
 	clients.updateState(board_depth, board_state, active_grids);
 }
 
 export function getClientPiece(ws) {
-	// If both players on one device indicate that, otherwise tell them what piece they are
 	const connection_id = ws.connection_id || null;
+	// If both players are on one device, indicate that
 	if (players[0] === connection_id && players[1] === connection_id) return 'both';
+	// Otherwise return their piece id if any
 	if (players[0] === connection_id) return 'cross';
 	if (players[1] === connection_id) return 'nought';
 	return null;
@@ -117,27 +122,24 @@ function findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells
 	active_grids = {};
 	if (!active_grids[cell_layer]) active_grids[cell_layer] = {};
 
-	if (board_state[cell_layer]?.[next_number] === undefined) {
-		active_grids[cell_layer][next_number] = true;
-
-		if (previous_cells?.[cell_layer - 2] !== undefined && cell_layer > 1)
-			return findNextActiveGrid(cell_layer, next_number, previous_cells[cell_layer - 2], previous_cells);
-	} else {
+	if (board_state[cell_layer]?.[next_number] !== undefined)
 		return findNextActiveGrid(grid_layer + 1, Math.floor(grid_number / 9), grid_number % 9);
-	}
+
+	active_grids[cell_layer][next_number] = true;
+
+	if (previous_cells?.[cell_layer - 2] !== undefined && cell_layer > 1)
+		return findNextActiveGrid(cell_layer, next_number, previous_cells[cell_layer - 2], previous_cells);
 }
 
 function isCellUnclaimed(cell_layer, cell_number) {
 	const grid_layer = cell_layer + 1;
 	const grid_number = Math.floor(cell_number / 9);
 
-	if (board_state[cell_layer]?.[cell_number] !== undefined) {
+	if (board_state[cell_layer]?.[cell_number] !== undefined)
 		return false;
-	}
 
-	if (grid_layer >= board_depth + 1) {
+	if (grid_layer >= board_depth + 1)
 		return true;
-	}
 
 	return isCellUnclaimed(grid_layer, grid_number);
 }
@@ -147,13 +149,12 @@ function isCellActive(cell_layer, cell_number) {
 	const grid_number = Math.floor(cell_number / 9);
 
 	// Cell isn't active if we've checked past the outermost grid.
-	if (cell_layer >= board_depth + 2) {
+	if (cell_layer >= board_depth + 2)
 		return false;
-	}
+
 	// Check if grid is active directly.
-	if (active_grids[cell_layer] && active_grids[cell_layer][cell_number]) {
+	if (active_grids[cell_layer] && active_grids[cell_layer][cell_number])
 		return true;
-	}
 
 	// Check if the grid the cell is in is active.
 	return isCellActive(grid_layer, grid_number);

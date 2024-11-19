@@ -84,9 +84,19 @@ body {
     box-shadow: var(--popup) 0 0.5rem 3rem 0.1rem;
 }
 
-.title-box {
+#secondary-panel {
+    display: none;
+}
+
+#title-box {
     display: flex;
     flex-direction: row;
+    width: 100%
+}
+
+#title-text {
+    width: 100%;
+    text-align: left;
 }
 
 #piece-marker {
@@ -99,7 +109,7 @@ body {
 #piece-marker > * {
     height: auto;
     width: 3em;
-    margin: 0.5em;
+    margin: 0.5em 0.5em 0.5em 0;
 }
 
 .hspacer {
@@ -146,11 +156,6 @@ button {
     }
 
     .panel {
-        h1 {
-            width: 100%;
-            text-align: center;
-        }
-
         padding: 0.5rem;
         flex-direction: column;
         align-items: flex-start;
@@ -159,6 +164,10 @@ button {
 
         border-bottom-style: none;
         box-shadow: none;
+    }
+
+    #secondary-panel {
+        display: block;
     }
 
     .button-panel {

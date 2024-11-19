@@ -17,9 +17,19 @@ export function setConnectionID(new_connection_id) {
 export let ws;
 
 document.addEventListener("DOMContentLoaded", function() {
+	adjustTitleText()
 	status.display("Connecting to server...");
 	connect();
 	setInterval(tryConnect, 5000);
+});
+
+document.getElementById("start").addEventListener("click", () => {
+	const size_selector = document.getElementById("size-selector");
+	server.start(size_selector.value);
+});
+
+window.addEventListener('resize', function() {
+	adjustTitleText();
 });
 
 function connect() {
@@ -61,7 +71,10 @@ function tryConnect(){
 	}
 }
 
-document.getElementById("start").addEventListener("click", () => {
-	const size_selector = document.getElementById("size-selector");
-	server.start(size_selector.value);
-});
+export function adjustTitleText() {
+	const titleText = document.getElementById('title-text');
+	console.log(titleText.offsetWidth);
+	if (titleText.offsetWidth < 240) titleText.textContent = 'UTTT';
+	else if (titleText.offsetWidth < 360) titleText.textContent = 'Ultimate TTT';
+	else titleText.textContent = 'Ultimate Tic-Tac-Toe';
+}

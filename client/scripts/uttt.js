@@ -1,6 +1,7 @@
 import server from '../events/outgoing.js';
 import status from "./status.js";
 import {pieces} from "../assets/pieces.js";
+import {adjustTitleText} from "../client.js";
 
 export let board_depth;
 export let board_state = {};
@@ -30,6 +31,7 @@ export function updateState(new_board_depth, new_board_state, new_active_grids, 
 
 export function setPiece(piece) {
 	document.getElementById('piece-marker').innerHTML = piece ? pieces[piece] : '';
+	adjustTitleText();
 }
 
 export function createBoard(depth) {
