@@ -45,9 +45,12 @@
     }
 }
 
+html {
+    height: 100dvh;
+}
+
 body {
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
+    font-family: 'Verdana', sans-serif;
     color: var(--text);
     background-color: var(--background);
 
@@ -57,12 +60,16 @@ body {
     flex-direction: column;
     align-items: stretch;
 
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
 
     margin: 0;
 
     overflow: hidden;
+}
+
+h1 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
 }
 
 .panel {
@@ -112,7 +119,7 @@ body {
     margin: 0.5em 0.5em 0.5em 0;
 }
 
-.hspacer {
+.h-spacer {
     flex: 1;
 }
 
@@ -144,10 +151,93 @@ button {
 
 #board {
     margin: auto;
+    border-style: none;
+    height: 100%;
+}
+
+#board.grid {
     width: 98vmin;
     height: 98vmin;
     aspect-ratio: 1 / 1;
-    border-style: none;
+}
+
+#board:not(.grid) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+#board::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+#board::-webkit-scrollbar-track {
+    background-color: var(--popup);
+}
+
+#board::-webkit-scrollbar-thumb {
+    max-width: 0.8rem;
+    background: var(--highlight);
+    border-radius: 1rem;
+}
+
+#how-to-play {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 50rem;
+    padding: 0 10vw 25vh;
+}
+
+#how-to-play h1 {
+    margin-top: 4em;
+}
+
+#how-to-play p {
+    text-align: justify;
+    line-height: 1.5em;
+}
+
+#how-to-play picture {
+    display: flex;
+    justify-content: center;
+}
+
+#how-to-play img {
+    width: 20rem;
+    max-width: 90%
+}
+
+#board:not(.grid) {
+    overflow-y: scroll;
+}
+
+#board::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+#board::-webkit-scrollbar-track {
+    background-color: var(--background);
+}
+
+#board::-webkit-scrollbar-thumb {
+    max-width: 0.8rem;
+    background: var(--popup);
+    border-radius: 1rem;
+}
+
+#how-to-play {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 50rem;
+    padding: 0 1rem 25vh;
+}
+
+#how-to-play p {
+    text-align: justify;
 }
 
 @media (min-aspect-ratio: 4/3) {
@@ -186,7 +276,7 @@ button {
         width: 100%
     }
 
-    .hspacer {
+    .h-spacer {
         flex: 0;
     }
 }
@@ -196,7 +286,7 @@ button {
         padding-bottom: 0;
     }
 
-    #board {
+    #board.grid {
         width: 90vmin;
         height: 90vmin;
     }
@@ -271,6 +361,7 @@ svg {
 #status {
     opacity: 0;
     transition:opacity 1s, transform 1s;
+    text-align: center;
 
     background-color: var(--popup);
     box-shadow: 0.5rem 0.5rem 3rem 0.1rem #00000040;

@@ -3,7 +3,6 @@ import path from "path";
 import {v4 as uuidv4} from "uuid";
 import {WebSocketServer} from "ws";
 
-import { board_depth, active_grids, board_state } from "./uttt.js";
 import clients from "./events/outgoing.js";
 
 const __dirname = import.meta.dirname;
@@ -21,7 +20,7 @@ export function createWSS(server) {
 async function wssConnection(ws, response) {
 	// Inform the client of events it can listen for
 	const client_events = fetchEventsIn(ABSOLUTE_CLIENT_EVENTS_DIR);
-	clients.privatePrepareClient(ws, client_events, CLIENT_EVENTS_DIR);
+	clients.prepareClient(ws, client_events, CLIENT_EVENTS_DIR);
 
 	// Find or set a unique connection_id to the client.
 	const cookies = response.headers?.cookie?.split('; ');
@@ -35,9 +34,6 @@ async function wssConnection(ws, response) {
 		ws.connection_id = connection_id
 		ws.send(JSON.stringify({ type: "set_connection_id", connection_id }));
 	}
-
-	// Load existing game state
-	clients.privateUpdateState(ws, board_depth, board_state, active_grids);
 
 	// Log connection
 	ws.send(JSON.stringify({ type: "log", content: `Successfully connected as ${ws.connection_id}` }));
