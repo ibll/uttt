@@ -22,6 +22,13 @@ status_API.display = function(message, length, force_retrigger) {
 	if (remove_timeout) clearTimeout(remove_timeout);
 	if (fade_timeout) clearTimeout(fade_timeout);
 
+	if (!message) {
+		status.classList.remove('active');
+		displayed_message = undefined;
+		glitchOut();
+		return;
+	}
+
 	if (displayed_message !== message || force_retrigger) {
 		displayed_message = message;
 		glitchIn(message);
