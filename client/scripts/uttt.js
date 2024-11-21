@@ -9,6 +9,8 @@ export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
 
+window.getBoardState = () => board_state;
+
 export function updateState(new_game_id, new_board_depth, new_board_state, new_active_grids, client_piece) {
 	game_id = new_game_id;
 	board_depth = new_board_depth;
@@ -120,7 +122,12 @@ export function place(cell_layer, cell_number, player) {
 		cell.classList.add('played');
 	}
 
-	if (cell_layer >= board_depth) status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
+	// Check for win
+	if (cell_layer >= board_depth) {
+		console.log(player);
+		if (player == null) status.display('Draw!', Infinity);
+		else status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
+	}
 
 }
 

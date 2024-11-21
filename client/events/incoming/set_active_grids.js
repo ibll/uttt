@@ -7,6 +7,6 @@ export default async (ws, payload) => {
 
 	if (payload.next_player_id === connection_id && payload.next_player_id !== undefined)
 		status.display("Your turn!", Infinity, true);
-	else
-		status.display(null, Infinity, true);
+	else if (payload.next_player_id !== null)
+		status.display('', Infinity, true);
 }

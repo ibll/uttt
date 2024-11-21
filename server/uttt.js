@@ -75,23 +75,23 @@ export class Game {
 
 		// Ensure game is running
 		if (this.board_depth === undefined)
-			return console.error('Game has not been started');
+			return // console.error('Game has not been started');
 
 		// Ensure cell is within bounds
 		if (cell_number < 0 || cell_number >= cell_layer_size)
-			return console.error(`Cell ${cell_layer}.${cell_number} is out of bounds for layer ${cell_layer}`);
+			return // console.error(`Cell ${cell_layer}.${cell_number} is out of bounds for layer ${cell_layer}`);
 
 		// Ensure cell is not already filled
 		if (this.board_state[cell_layer]?.[cell_number] !== undefined)
-			return console.error(`Cell ${cell_layer}.${cell_number} is already filled`);
+			return // console.error(`Cell ${cell_layer}.${cell_number} is already filled`);
 
 		// Ensure cell is not within a claimed grid
 		if (!this.isCellUnclaimed(cell_layer, cell_number))
-			return console.error(`Cell ${cell_layer}.${cell_number} is within a claimed grid`);
+			return // console.error(`Cell ${cell_layer}.${cell_number} is within a claimed grid`);
 
 		// Ensure cell is active
 		if (!previous_cells && !this.isCellActive(cell_layer, cell_number))
-			return console.error(`Cell ${cell_layer}.${cell_number} is not active`);
+			return // console.error(`Cell ${cell_layer}.${cell_number} is not active`);
 
 		// Assign this.players on the first two turns
 		if (this.players[this.active_player] === undefined) {
@@ -101,12 +101,12 @@ export class Game {
 
 		// Ensure only the allowed player is placing
 		if (connection_id !== this.players[this.active_player] && connection_id !== null)
-			return console.error(`It is not ${connection_id}'s turn to place`);
+			return // console.error(`It is not ${connection_id}'s turn to place`);
 
 		// Place the piece
 		if (!this.board_state[cell_layer]) this.board_state[cell_layer] = {};
 		this.board_state[cell_layer][cell_number] = connection_id ? this.active_player : null;
-		console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
+		// console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
 
 		this.subscribers.forEach(subscriber => {
 			client.place(subscriber, cell_layer, cell_number, connection_id ? this.active_player : null)
@@ -116,8 +116,7 @@ export class Game {
 		// Win the grid if necessary
 		const winner = this.checkWhoWonGrid(grid_layer, grid_number);
 		if (winner !== undefined) {
-			const piece = winner !== null ? player_pieces[winner] : null;
-			console.log(`${piece} won grid ${grid_layer}.${grid_number}!`);
+			// console.log(`${ winner !== null ? player_pieces[winner] : null} won grid ${grid_layer}.${grid_number}!`);
 
 			if (!previous_cells) previous_cells = {};
 			previous_cells[cell_layer] = cell_number % 9;
@@ -132,8 +131,12 @@ export class Game {
 			if (set_active) already_set_active = true;
 
 			// Don't set an active grid if the game is over
-			if (grid_layer === this.board_depth) {
+			if (grid_layer >= this.board_depth) {
+				const winner_piece = ws?.connection_id !== undefined ? player_pieces[winner] : null;
+				console.log(`${winner_piece} won game ${this.game_id}`);
+				const already_set_active = true;
 				this.active_grids = {};
+				return already_set_active
 			}
 		}
 
