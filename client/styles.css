@@ -161,6 +161,10 @@ button {
 }
 
 #board:not(.grid) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
     overflow-y: scroll;
 }
 
