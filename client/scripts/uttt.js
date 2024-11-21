@@ -16,6 +16,7 @@ export function updateState(new_game_id, new_board_depth, new_board_state, new_a
 	active_grids = new_active_grids;
 	cell_count = {};
 
+	status.display(`Joined game ${game_id}`)
 	window.location.hash = game_id;
 	createBoard(new_board_depth);
 
@@ -37,6 +38,7 @@ export function setPiece(piece) {
 
 export function createBoard(depth) {
 	const board = document.getElementById('board');
+	board.classList.add('grid');
 	board.innerHTML = '';
 
 	if (!board_depth) return;
@@ -96,11 +98,11 @@ export function place(cell_layer, cell_number, player) {
 	}
 
 	if (cell) {
-		// if (cell_layer === 0) {
 		if ((board_depth === 1 && cell_layer < board_depth) || cell_layer < board_depth - 1) {
-			cell.innerHTML = pieces[player === 0 ? 'cross' : 'nought'];
-		// } else if (cell_layer >= board_depth) {
-		// 	return;
+			let piece_marker = 'dash';
+			if(player === 0) piece_marker = 'cross'
+			if(player === 1) piece_marker = 'nought'
+			cell.innerHTML = pieces[piece_marker];
 		} else {
 			let colour = '--grey';
 			if (player === 0) colour = '--red';
@@ -108,15 +110,17 @@ export function place(cell_layer, cell_number, player) {
 
 			const overlay = document.createElement('div');
 			overlay.classList.add('overlay');
+
 			overlay.style.outline = `var(${colour}) solid ${cell_layer * 2}px`;
-			overlay.style.backgroundColor = `var(${colour}-trans)`;
+			if (cell_layer !== board_depth) overlay.style.backgroundColor = `var(${colour}-trans)`;
 			overlay.style.borderRadius = (20/board_depth) + 2*cell_layer + 'px';
+
 			cell.prepend(overlay);
 		}
 		cell.classList.add('played');
 	}
 
-	if (cell_layer >= board_depth) status.display(`${player === 0 ? 'X' : 'O'} wins!`, 10000);
+	if (cell_layer >= board_depth) status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
 
 }
 

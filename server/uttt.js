@@ -57,6 +57,7 @@ export class Game {
 	}
 
 	getClientPiece(ws) {
+		// todo get working again
 		const connection_id = ws.connection_id || null;
 		// If both this.players are on one device, indicate that
 		if (this.players[0] === connection_id && this.players[1] === connection_id) return 'both';
@@ -71,7 +72,7 @@ export class Game {
 		const grid_layer = cell_layer + 1;
 		const grid_number = Math.floor(cell_number / 9);
 		const pos_in_grid = cell_number % 9;
-		const connection_id = ws.connection_id || null;
+		const connection_id = ws?.connection_id || null;
 
 		// Ensure game is running
 		if (this.board_depth === undefined)
@@ -105,7 +106,7 @@ export class Game {
 
 		// Place the piece
 		if (!this.board_state[cell_layer]) this.board_state[cell_layer] = {};
-		this.board_state[cell_layer][cell_number] = connection_id ?this.active_player : null;
+		this.board_state[cell_layer][cell_number] = connection_id ? this.active_player : null;
 		console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
 
 		this.subscribers.forEach(subscriber => {
@@ -121,7 +122,14 @@ export class Game {
 
 			if (!previous_cells) previous_cells = {};
 			previous_cells[cell_layer] = cell_number % 9;
-			const set_active =this.place(grid_layer, grid_number, ws, previous_cells);
+
+			let set_active;
+			if (winner !== null) {
+				set_active = this.place(grid_layer, grid_number, ws, previous_cells);
+			} else {
+				set_active = this.place(grid_layer, grid_number, null, previous_cells)
+			}
+
 			if (set_active) already_set_active = true;
 
 			// Don't set an active grid if the game is over
@@ -210,7 +218,7 @@ export class Game {
 
 		for (const line of lines) {
 			const winner = this.checkWhoWonLine(...line);
-			if (winner !== undefined) return winner;
+			if (winner !== undefined && line[0] !== null) return winner;
 		}
 
 		if (cells.every(cell => cell !== undefined)) return null;

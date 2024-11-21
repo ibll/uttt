@@ -1,9 +1,9 @@
 # Ultimate Tic-Tac-Toe
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/preview-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="./assets/preview-light.png">
-    <img alt="A screenshot of the game, depicting tic-tac-toe boards nested inside the cells of other tic-tac-toe cells. X's and O's are placed randomly at different levels of depth in the board." src="./assets/preview-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="client/assets/preview-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="client/assets/preview-light.png">
+    <img alt="A screenshot of the game, depicting tic-tac-toe boards nested inside the cells of other tic-tac-toe cells. X's and O's are placed randomly at different levels of depth in the board." src="client/assets/preview-light.png">
 </picture>
 
 This is a node.js based server that serves an arbitrary-depth tic-tac-toe game to a browser client.
@@ -12,7 +12,7 @@ The most common Tic-Tac-Toe variant, a 2-layer "Ultimate Tic-Tac-Toe", is a game
 gameplay — and gameplay closer to Chess than it does to normal Tic-Tac-Toe. Versions with more layers are playable in
 the same fashion, but can get more tedious than they are fun. I created this because I hadn't seen a web version for
 deeper than 2 layers, and it gets hard to keep track of where to play next
-when [playing it on a whiteboard](./assets/whiteboard.jpeg)!
+when [playing it on a whiteboard](client/assets/whiteboard.jpeg)!
 
 # Installation and Running
 
@@ -39,9 +39,9 @@ In the example below, X played her first move in the bottom-left of a mini-board
 only being within the bottom-left board!
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/tutorial-1-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="./assets/tutorial-1-light.png">
-    <img alt="A tic-tac-toe board with tic-tac-toe boards in each cell. One of the mini-boards has an X in the bottom-left corner, and the entire bottom-left mini board is highlighted green." src="./assets/tutorial-1-light.png" width="400">
+    <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-1-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-1-light.png">
+    <img alt="A tic-tac-toe board with tic-tac-toe boards in each cell. One of the mini-boards has an X in the bottom-left corner, and the entire bottom-left mini board is highlighted green." src="client/assets/tutorial-1-light.png" width="400">
 </picture>
 
 This means that the most important aspect of your turn might not be where your piece goes, but where your opponent can
@@ -52,9 +52,9 @@ anywhere in the next level above that board! This makes games end much faster th
 harder to avoid giving your opponent the opportunity to go anywhere they'd like!
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/tutorial-2-dark.gif">
-    <source media="(prefers-color-scheme: light)" srcset="./assets/tutorial-2-light.gif">
-    <img alt="A gif demonstrating that being sent to a claimed board lets you go anywhere." src="./assets/tutorial-2-light.gif" width="400">
+    <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-2-dark.gif">
+    <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-2-light.gif">
+    <img alt="A gif demonstrating that being sent to a claimed board lets you go anywhere." src="client/assets/tutorial-2-light.gif" width="400">
 </picture>
 
 ## Ultimate ULTIMATE Tic-Tac-Toe
@@ -70,7 +70,7 @@ Her opponent must then play in the **right-centre** UTTT board, in the **top-rig
 in the right-centre board until another board is won.
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/tutorial-3-dark.gif">
-    <source media="(prefers-color-scheme: light)" srcset="./assets/tutorial-3-light.gif">
-    <img alt="A gif demonstrating multi-level sending." src="./assets/tutorial-3-light.gif" width="400">
+    <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-3-dark.gif">
+    <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-3-light.gif">
+    <img alt="A gif demonstrating multi-level sending." src="client/assets/tutorial-3-light.gif" width="400">
 </picture>
