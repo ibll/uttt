@@ -32,6 +32,11 @@ window.addEventListener('resize', function() {
 	adjustTitleText();
 });
 
+window.addEventListener('hashchange', function() {
+	const game_id = window.location.hash.substring(1);
+	server.join(game_id);
+});
+
 function connect() {
 	ws = new WebSocket(`ws://${host}:${port}`);
 

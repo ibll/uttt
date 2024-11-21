@@ -45,7 +45,9 @@
     }
 }
 
-/*todo make responsiveness more consistent*/
+html {
+    height: 100dvh;
+}
 
 body {
     font-family: 'Verdana', sans-serif;
@@ -58,8 +60,7 @@ body {
     flex-direction: column;
     align-items: stretch;
 
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
 
     margin: 0;
 
@@ -360,6 +361,7 @@ svg {
 #status {
     opacity: 0;
     transition:opacity 1s, transform 1s;
+    text-align: center;
 
     background-color: var(--popup);
     box-shadow: 0.5rem 0.5rem 3rem 0.1rem #00000040;

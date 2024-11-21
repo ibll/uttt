@@ -1,7 +1,7 @@
 import server from '../events/outgoing.js';
 import status from "./status.js";
-import {pieces} from "../assets/pieces.js";
-import {adjustTitleText} from "../client.js";
+import {icons} from "../assets/icons.js";
+import {adjustTitleText, connection_id} from "../client.js";
 
 export let game_id;
 export let board_depth;
@@ -34,7 +34,7 @@ export function updateState(new_game_id, new_board_depth, new_board_state, new_a
 }
 
 export function setPiece(piece) {
-	document.getElementById('piece-marker').innerHTML = piece ? pieces[piece] : '';
+	document.getElementById('piece-marker').innerHTML = piece ? icons[piece] : '';
 	adjustTitleText();
 }
 
@@ -104,7 +104,7 @@ export function place(cell_layer, cell_number, player) {
 			let piece_marker = 'dash';
 			if(player === 0) piece_marker = 'cross'
 			if(player === 1) piece_marker = 'nought'
-			cell.innerHTML = pieces[piece_marker];
+			cell.innerHTML = icons[piece_marker];
 		} else {
 			let colour = '--grey';
 			if (player === 0) colour = '--red';
@@ -124,19 +124,23 @@ export function place(cell_layer, cell_number, player) {
 
 	// Check for win
 	if (cell_layer >= board_depth) {
-		console.log(player);
 		if (player == null) status.display('Draw!', Infinity);
 		else status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
 	}
 
 }
 
-export function setActiveGrids(active_grids) {
+export function setActiveGrids(active_grids, next_player_id) {
 	document.querySelectorAll('.grid').forEach(cell => {
 		cell.classList.remove('active');
 	})
 
 	if (!active_grids) return;
+
+	if (next_player_id === connection_id && next_player_id !== undefined)
+		status.display("Your turn!", Infinity, true);
+	else if (next_player_id !== null)
+		status.display('', Infinity, true);
 
 	for (const layer in active_grids) {
 		for (const grid_num in active_grids[layer]) {

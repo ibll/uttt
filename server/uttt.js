@@ -20,11 +20,10 @@ function createGameID(length) {
 	let id = '';
 
 	for (let i = 0; i < length; i++) {
-		if ((i + 1) % 2 === 0) {
+		if ((i + 1) % 2 === 0)
 			id += vowels[Math.floor(Math.random() * vowels.length)];
-		} else {
+		else
 			id += consonants[Math.floor(Math.random() * consonants.length)];
-		}
 	}
 
 	return id;
