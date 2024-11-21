@@ -3,17 +3,20 @@ import status from "./status.js";
 import {pieces} from "../assets/pieces.js";
 import {adjustTitleText} from "../client.js";
 
+export let game_id;
 export let board_depth;
 export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
 
-export function updateState(new_board_depth, new_board_state, new_active_grids, client_piece) {
+export function updateState(new_game_id, new_board_depth, new_board_state, new_active_grids, client_piece) {
+	game_id = new_game_id;
 	board_depth = new_board_depth;
 	board_state = new_board_state;
 	active_grids = new_active_grids;
 	cell_count = {};
 
+	window.location.hash = game_id;
 	createBoard(new_board_depth);
 
 	for (const layer in board_state) {
@@ -24,8 +27,6 @@ export function updateState(new_board_depth, new_board_state, new_active_grids, 
 	}
 
 	setActiveGrids(active_grids);
-
-	console.log(client_piece);
 	setPiece(client_piece)
 }
 
@@ -45,7 +46,7 @@ export function createBoard(depth) {
 
 	board.querySelectorAll('.cell').forEach(cell => {
 		cell.addEventListener('click', () => {
-			server.place(cell.id);
+			server.place(game_id, cell.id);
 		})
 	})
 }

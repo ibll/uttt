@@ -1,192 +1,225 @@
-import clients from './events/outgoing.js';
-
-export let board_depth;
-export let board_state;
-export let active_grids;
-let active_player;
-let players = [];
+import client from './events/outgoing.js';
 
 const player_pieces = {
 	0: 'X',
-	1: 'O',
+	1: 'O'
 }
 
-export function start(size) {
-	// Clear state
-	board_depth = size;
-	board_state = {};
-	active_grids = {};
-	active_player = 0;
-	players = [];
+export let games = {};
 
-	console.log(`Creating board with size ${size}`);
-
-	// Set all grids active
-	if (!active_grids[board_depth]) active_grids[board_depth] = {};
-	active_grids[board_depth][0] = true;
-
-	// inform clients
-	clients.updateState(board_depth, board_state, active_grids);
+export function createGame(size) {
+	const id = createGameID(6);
+	games[id] = new Game(id, size);
+	return id;
 }
 
-export function getClientPiece(ws) {
-	const connection_id = ws.connection_id || null;
-	// If both players are on one device, indicate that
-	if (players[0] === connection_id && players[1] === connection_id) return 'both';
-	// Otherwise return their piece id if any
-	if (players[0] === connection_id) return 'cross';
-	if (players[1] === connection_id) return 'nought';
-	return null;
-}
+function createGameID(length) {
+	const consonants = 'bcdfghjkmnrstyz';
+	const vowels = 'aeiou';
 
-export function place(cell_layer, cell_number, ws, previous_cells) {
-	const cell_layer_size = Math.pow(9, board_depth - cell_layer)
-	const grid_layer = cell_layer + 1;
-	const grid_number = Math.floor(cell_number / 9);
-	const pos_in_grid = cell_number % 9;
-	const connection_id = ws.connection_id || null;
+	let id = '';
 
-	// Ensure game is running
-	if (board_depth === undefined)
-		return console.error('Game has not been started');
-
-	// Ensure cell is within bounds
-	if (cell_number < 0 || cell_number >= cell_layer_size)
-		return console.error(`Cell ${cell_layer}.${cell_number} is out of bounds for layer ${cell_layer}`);
-
-	// Ensure cell is not already filled
-	if (board_state[cell_layer]?.[cell_number] !== undefined)
-		return console.error(`Cell ${cell_layer}.${cell_number} is already filled`);
-
-	// Ensure cell is not within a claimed grid
-	if (!isCellUnclaimed(cell_layer, cell_number))
-		return console.error(`Cell ${cell_layer}.${cell_number} is within a claimed grid`);
-
-	// Ensure cell is active
-	if (!previous_cells && !isCellActive(cell_layer, cell_number))
-		return console.error(`Cell ${cell_layer}.${cell_number} is not active`);
-
-	// Assign players on the first two turns
-	if (players[active_player] === undefined) {
-		players[active_player] = connection_id;
-		clients.privateRegisterPiece(ws, getClientPiece(ws));
-	}
-
-	// Ensure only the allowed player is placing
-	if (connection_id !== players[active_player] && connection_id !== null)
-		return console.error(`It is not ${connection_id}'s turn to place`);
-
-	// Place the piece
-	if (!board_state[cell_layer]) board_state[cell_layer] = {};
-	board_state[cell_layer][cell_number] = connection_id ? active_player : null;
-	console.log(`${connection_id ? player_pieces[active_player] : null} placed at ${cell_layer}.${cell_number}`);
-	clients.place(cell_layer, cell_number, connection_id ? active_player : null);
-
-	let already_set_active = false;
-	// Win the grid if necessary
-	const winner = checkWhoWonGrid(grid_layer, grid_number);
-	if (winner !== undefined) {
-		const piece = winner !== null ? player_pieces[winner] : null;
-		console.log(`${piece} won grid ${grid_layer}.${grid_number}!`);
-
-		if (!previous_cells) previous_cells = {};
-		previous_cells[cell_layer] = cell_number % 9;
-		const set_active = place(grid_layer, grid_number, ws, previous_cells);
-		if (set_active) already_set_active = true;
-
-		// Don't set an active grid if the game is over
-		if (grid_layer === board_depth) {
-			active_grids = {};
+	for (let i = 0; i < length; i++) {
+		if ((i + 1) % 2 === 0) {
+			id += vowels[Math.floor(Math.random() * vowels.length)];
+		} else {
+			id += consonants[Math.floor(Math.random() * consonants.length)];
 		}
 	}
 
-	// Set next active grid
-	if (grid_layer < board_depth && !already_set_active) {
-		findNextActiveGrid(grid_layer + 1, Math.floor(grid_number / 9), pos_in_grid, previous_cells);
-		already_set_active = true;
+	return id;
+}
+
+export function join(ws, game_id) {
+	const game = games[game_id];
+
+	if (!game) return;
+
+	game.subscribers.push(ws);
+	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids)
+}
+
+export class Game {
+	constructor(game_id, size) {
+		this.game_id = game_id;
+		this.board_depth = size;
+		this.board_state = {};
+		this.active_grids = {};
+		this.active_player = 0;
+		this.players = [];
+		this.subscribers = [];
+
+		console.log(`Creating game ${game_id} with size ${size}`);
+
+		// Set all grids active
+		if (!this.active_grids[this.board_depth]) this.active_grids[this.board_depth] = {};
+		this.active_grids[this.board_depth][0] = true;
 	}
 
-	// Switch active player
-	if (cell_layer === 0) {
-		active_player = 1 - active_player;
-		clients.setActiveGrid(active_grids, players[active_player]);
-	}
-	return already_set_active;
-}
-
-function findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells) {
-	const cell_layer = grid_layer - 1;
-	const cell_number = grid_number * 9;
-	const next_number = cell_number  + pos_in_grid;
-
-	active_grids = {};
-	if (!active_grids[cell_layer]) active_grids[cell_layer] = {};
-
-	if (board_state[cell_layer]?.[next_number] !== undefined)
-		return findNextActiveGrid(grid_layer + 1, Math.floor(grid_number / 9), grid_number % 9);
-
-	active_grids[cell_layer][next_number] = true;
-
-	if (previous_cells?.[cell_layer - 2] !== undefined && cell_layer > 1)
-		return findNextActiveGrid(cell_layer, next_number, previous_cells[cell_layer - 2], previous_cells);
-}
-
-function isCellUnclaimed(cell_layer, cell_number) {
-	const grid_layer = cell_layer + 1;
-	const grid_number = Math.floor(cell_number / 9);
-
-	if (board_state[cell_layer]?.[cell_number] !== undefined)
-		return false;
-
-	if (grid_layer >= board_depth + 1)
-		return true;
-
-	return isCellUnclaimed(grid_layer, grid_number);
-}
-
-function isCellActive(cell_layer, cell_number) {
-	const grid_layer = cell_layer + 1;
-	const grid_number = Math.floor(cell_number / 9);
-
-	// Cell isn't active if we've checked past the outermost grid.
-	if (cell_layer >= board_depth + 2)
-		return false;
-
-	// Check if grid is active directly.
-	if (active_grids[cell_layer] && active_grids[cell_layer][cell_number])
-		return true;
-
-	// Check if the grid the cell is in is active.
-	return isCellActive(grid_layer, grid_number);
-}
-
-function checkWhoWonGrid(grid_layer, grid_number) {
-	const cell_layer = grid_layer - 1;
-	const first_cell_number = grid_number * 9;
-	const cells = Array.from({ length: 9 }, (_, i) => board_state[cell_layer]?.[first_cell_number + i]);
-
-	const lines = [
-		[cells[0], cells[1], cells[2]], // rows
-		[cells[3], cells[4], cells[5]],
-		[cells[6], cells[7], cells[8]],
-		[cells[0], cells[3], cells[6]], // columns
-		[cells[1], cells[4], cells[7]],
-		[cells[2], cells[5], cells[8]],
-		[cells[0], cells[4], cells[8]], // diagonals
-		[cells[2], cells[4], cells[6]]
-	];
-
-	for (const line of lines) {
-		const winner = checkWhoWonLine(...line);
-		if (winner !== undefined) return winner;
+	getClientPiece(ws) {
+		const connection_id = ws.connection_id || null;
+		// If both this.players are on one device, indicate that
+		if (this.players[0] === connection_id && this.players[1] === connection_id) return 'both';
+		// Otherwise return their piece id if any
+		if (this.players[0] === connection_id) return 'cross';
+		if (this.players[1] === connection_id) return 'nought';
+		return null;
 	}
 
-	if (cells.every(cell => cell !== undefined)) return null;
+	place(cell_layer, cell_number, ws, previous_cells) {
+		const cell_layer_size = Math.pow(9, this.board_depth - cell_layer)
+		const grid_layer = cell_layer + 1;
+		const grid_number = Math.floor(cell_number / 9);
+		const pos_in_grid = cell_number % 9;
+		const connection_id = ws.connection_id || null;
 
-	return undefined;
-}
+		// Ensure game is running
+		if (this.board_depth === undefined)
+			return console.error('Game has not been started');
 
-function checkWhoWonLine(c0, c1, c2) {
-	if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
-	return undefined;
+		// Ensure cell is within bounds
+		if (cell_number < 0 || cell_number >= cell_layer_size)
+			return console.error(`Cell ${cell_layer}.${cell_number} is out of bounds for layer ${cell_layer}`);
+
+		// Ensure cell is not already filled
+		if (this.board_state[cell_layer]?.[cell_number] !== undefined)
+			return console.error(`Cell ${cell_layer}.${cell_number} is already filled`);
+
+		// Ensure cell is not within a claimed grid
+		if (!this.isCellUnclaimed(cell_layer, cell_number))
+			return console.error(`Cell ${cell_layer}.${cell_number} is within a claimed grid`);
+
+		// Ensure cell is active
+		if (!previous_cells && !this.isCellActive(cell_layer, cell_number))
+			return console.error(`Cell ${cell_layer}.${cell_number} is not active`);
+
+		// Assign this.players on the first two turns
+		if (this.players[this.active_player] === undefined) {
+			this.players[this.active_player] = connection_id;
+			client.registerPiece(ws, this.getClientPiece(ws));
+		}
+
+		// Ensure only the allowed player is placing
+		if (connection_id !== this.players[this.active_player] && connection_id !== null)
+			return console.error(`It is not ${connection_id}'s turn to place`);
+
+		// Place the piece
+		if (!this.board_state[cell_layer]) this.board_state[cell_layer] = {};
+		this.board_state[cell_layer][cell_number] = connection_id ?this.active_player : null;
+		console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
+
+		this.subscribers.forEach(subscriber => {
+			client.place(subscriber, cell_layer, cell_number, connection_id ? this.active_player : null)
+		});
+
+		let already_set_active = false;
+		// Win the grid if necessary
+		const winner = this.checkWhoWonGrid(grid_layer, grid_number);
+		if (winner !== undefined) {
+			const piece = winner !== null ? player_pieces[winner] : null;
+			console.log(`${piece} won grid ${grid_layer}.${grid_number}!`);
+
+			if (!previous_cells) previous_cells = {};
+			previous_cells[cell_layer] = cell_number % 9;
+			const set_active =this.place(grid_layer, grid_number, ws, previous_cells);
+			if (set_active) already_set_active = true;
+
+			// Don't set an active grid if the game is over
+			if (grid_layer === this.board_depth) {
+				this.active_grids = {};
+			}
+		}
+
+		// Set next active grid
+		if (grid_layer < this.board_depth && !already_set_active) {
+			this.findNextActiveGrid(grid_layer + 1, Math.floor(grid_number / 9), pos_in_grid, previous_cells);
+			already_set_active = true;
+		}
+
+		// Switch active player
+		if (cell_layer === 0) {
+			this.active_player = 1 -this.active_player;
+			this.subscribers.forEach(subscriber => {
+				client.setActiveGrid(subscriber, this.active_grids, this.players[this.active_player]);
+			});
+		}
+		return already_set_active;
+	}
+
+	findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells) {
+		const cell_layer = grid_layer - 1;
+		const cell_number = grid_number * 9;
+		const next_number = cell_number  + pos_in_grid;
+
+		this.active_grids = {};
+		if (!this.active_grids[cell_layer]) this.active_grids[cell_layer] = {};
+
+		if (this.board_state[cell_layer]?.[next_number] !== undefined)
+			return this.findNextActiveGrid(grid_layer + 1, Math.floor(grid_number / 9), grid_number % 9);
+
+		this.active_grids[cell_layer][next_number] = true;
+
+		if (previous_cells?.[cell_layer - 2] !== undefined && cell_layer > 1)
+			return this.findNextActiveGrid(cell_layer, next_number, previous_cells[cell_layer - 2], previous_cells);
+	}
+
+	isCellUnclaimed(cell_layer, cell_number) {
+		const grid_layer = cell_layer + 1;
+		const grid_number = Math.floor(cell_number / 9);
+
+		if (this.board_state[cell_layer]?.[cell_number] !== undefined)
+			return false;
+
+		if (grid_layer >= this.board_depth + 1)
+			return true;
+
+		return this.isCellUnclaimed(grid_layer, grid_number);
+	}
+
+	isCellActive(cell_layer, cell_number) {
+		const grid_layer = cell_layer + 1;
+		const grid_number = Math.floor(cell_number / 9);
+
+		// Cell isn't active if we've checked past the outermost grid.
+		if (cell_layer >= this.board_depth + 2)
+			return false;
+
+		// Check if grid is active directly.
+		if (this.active_grids[cell_layer] && this.active_grids[cell_layer][cell_number])
+			return true;
+
+		// Check if the grid the cell is in is active.
+		return this.isCellActive(grid_layer, grid_number);
+	}
+
+	checkWhoWonGrid(grid_layer, grid_number) {
+		const cell_layer = grid_layer - 1;
+		const first_cell_number = grid_number * 9;
+		const cells = Array.from({ length: 9 }, (_, i) => this.board_state[cell_layer]?.[first_cell_number + i]);
+
+		const lines = [
+			[cells[0], cells[1], cells[2]], // rows
+			[cells[3], cells[4], cells[5]],
+			[cells[6], cells[7], cells[8]],
+			[cells[0], cells[3], cells[6]], // columns
+			[cells[1], cells[4], cells[7]],
+			[cells[2], cells[5], cells[8]],
+			[cells[0], cells[4], cells[8]], // diagonals
+			[cells[2], cells[4], cells[6]]
+		];
+
+		for (const line of lines) {
+			const winner = this.checkWhoWonLine(...line);
+			if (winner !== undefined) return winner;
+		}
+
+		if (cells.every(cell => cell !== undefined)) return null;
+
+		return undefined;
+	}
+
+	checkWhoWonLine(c0, c1, c2) {
+		if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
+		return undefined;
+	}
 }

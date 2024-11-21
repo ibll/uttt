@@ -53,6 +53,12 @@ function connect() {
 		if (payload.type === 'prepare_client') {
 			client_events = payload.client_events;
 			client_events_path = payload.client_events_path;
+
+			console.log('Client being prepared...')
+
+			let game_id = window.location.hash.substring(1);
+			if (game_id) server.join(game_id);
+
 			return
 		}
 
@@ -73,7 +79,7 @@ function tryConnect(){
 
 export function adjustTitleText() {
 	const titleText = document.getElementById('title-text');
-	console.log(titleText.offsetWidth);
+
 	if (titleText.offsetWidth < 240) titleText.textContent = 'UTTT';
 	else if (titleText.offsetWidth < 360) titleText.textContent = 'Ultimate TTT';
 	else titleText.textContent = 'Ultimate Tic-Tac-Toe';

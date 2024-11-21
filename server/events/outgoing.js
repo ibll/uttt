@@ -1,41 +1,31 @@
-import { wss } from "../../index.js";
-import {getClientPiece} from "../uttt.js";
+const client_API = {};
 
-const clients_API = {};
-
-function sendToClient(client, message) {
-	client.send(JSON.stringify(message));
+function sendToClient(ws, message) {
+	ws.send(JSON.stringify(message));
 }
 
-function sendToClients(message) {
-	wss.clients.forEach(client => {
-		client.send(JSON.stringify(message));
-	});
+client_API.notify = function(ws, content) {
+	sendToClient(ws, {type: "notify", content});
 }
 
-clients_API.privatePrepareClient = function(client, client_events, client_events_path) {
-	sendToClient(client, {type: "prepare_client", client_events, client_events_path});
+client_API.prepareClient = function(ws, client_events, client_events_path) {
+	sendToClient(ws, {type: "prepare_client", client_events, client_events_path});
 }
 
-clients_API.privateUpdateState = function(client, board_depth, board_state, active_grids) {
-	const client_piece = getClientPiece(client);
-	sendToClient(client, {type: "update_state", board_depth, board_state, active_grids, client_piece});
+client_API.updateState = function(ws, game_id, board_depth, board_state, active_grids, client_piece) {
+	sendToClient(ws, {type: "update_state", game_id, board_depth, board_state, active_grids, client_piece});
 }
 
-clients_API.privateRegisterPiece = function(client, piece) {
-	sendToClient(client, {type: "register_piece", piece});
+client_API.registerPiece = function(ws, piece) {
+	sendToClient(ws, {type: "register_piece", piece});
 }
 
-clients_API.updateState = function(board_depth, board_state, active_grids) {
-	sendToClients({type: "update_state", board_depth, board_state, active_grids});
+client_API.place = function(ws, cell_layer, cell_number, player) {
+	sendToClient(ws, {type: "place", cell_layer, cell_number, player})
 }
 
-clients_API.place = function(cell_layer, cell_number, player) {
-	sendToClients({type: "place", cell_layer, cell_number, player})
+client_API.setActiveGrid = function(ws, active_grids, next_player_id) {
+	sendToClient(ws, {type: "set_active_grids", active_grids, next_player_id});
 }
 
-clients_API.setActiveGrid = function(active_grids, next_player_id) {
-	sendToClients({type: "set_active_grids", active_grids, next_player_id});
-}
-
-export default clients_API;
+export default client_API;
