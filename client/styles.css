@@ -45,6 +45,8 @@
     }
 }
 
+/*todo make responsiveness more consistent*/
+
 body {
     font-family: 'Verdana', sans-serif;
     color: var(--text);

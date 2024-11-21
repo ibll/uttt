@@ -36,7 +36,7 @@ export function join(ws, game_id) {
 	if (!game) return;
 
 	game.subscribers.push(ws);
-	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids)
+	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws));
 }
 
 export class Game {
@@ -57,7 +57,6 @@ export class Game {
 	}
 
 	getClientPiece(ws) {
-		// todo get working again
 		const connection_id = ws.connection_id || null;
 		// If both this.players are on one device, indicate that
 		if (this.players[0] === connection_id && this.players[1] === connection_id) return 'both';
