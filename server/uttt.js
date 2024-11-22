@@ -35,7 +35,7 @@ export function join(ws, game_id) {
 	if (!game) return;
 
 	game.subscribers.push(ws);
-	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws));
+	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.getNextActivePlayer());
 }
 
 export class Game {
@@ -53,6 +53,12 @@ export class Game {
 		// Set all grids active
 		if (!this.active_grids[this.board_depth]) this.active_grids[this.board_depth] = {};
 		this.active_grids[this.board_depth][0] = true;
+	}
+
+	getNextActivePlayer() {
+		let player = this.players[this.active_player];
+		if (this.players[0] === this.players[1]) player = null;
+		return player;
 	}
 
 	getClientPiece(ws) {
@@ -149,10 +155,7 @@ export class Game {
 		if (cell_layer === 0) {
 			this.active_player = 1 - this.active_player;
 			this.subscribers.forEach(subscriber => {
-				// Don't inform player of next turn if it's being played locally
-				let player = this.players[this.active_player];
-				if (this.players[0] === this.players[1]) player = null;
-				client.setActiveGrid(subscriber, this.active_grids, player);
+				client.setActiveGrid(subscriber, this.active_grids, this.getNextActivePlayer());
 			});
 		}
 		return already_set_active;

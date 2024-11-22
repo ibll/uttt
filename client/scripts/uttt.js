@@ -1,17 +1,18 @@
 import server from '../events/outgoing.js';
 import status from "./status.js";
 import {icons} from "../assets/icons.js";
-import {adjustTitleText, connection_id} from "../client.js";
+import {addLeaveButton, adjustTitleText, connection_id} from "../client.js";
 
 export let game_id;
 export let board_depth;
 export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
+let won = false;
 
 window.getBoardState = () => board_state;
 
-export function updateState(new_game_id, new_board_depth, new_board_state, new_active_grids, client_piece) {
+export function updateState(new_game_id, new_board_depth, new_board_state, new_active_grids, client_piece, next_player_id) {
 	game_id = new_game_id;
 	board_depth = new_board_depth;
 	board_state = new_board_state;
@@ -20,6 +21,7 @@ export function updateState(new_game_id, new_board_depth, new_board_state, new_a
 
 	status.display(`Joined game ${game_id}`)
 	window.location.hash = game_id;
+	addLeaveButton();
 	createBoard(new_board_depth);
 
 	for (const layer in board_state) {
@@ -29,7 +31,7 @@ export function updateState(new_game_id, new_board_depth, new_board_state, new_a
 		}
 	}
 
-	setActiveGrids(active_grids);
+	setActiveGrids(active_grids, next_player_id);
 	setPiece(client_piece)
 }
 
@@ -41,6 +43,7 @@ export function setPiece(piece) {
 export function createBoard(depth) {
 	const board = document.getElementById('board');
 	board.classList.add('grid');
+	board.classList.remove('played');
 	board.innerHTML = '';
 
 	if (!board_depth) return;
@@ -105,7 +108,7 @@ export function place(cell_layer, cell_number, player) {
 			if(player === 0) piece_marker = 'cross'
 			if(player === 1) piece_marker = 'nought'
 			cell.innerHTML = icons[piece_marker];
-		} else {
+		} else if (cell_layer < board_depth) {
 			let colour = '--grey';
 			if (player === 0) colour = '--red';
 			if (player === 1) colour = '--blue';
@@ -124,6 +127,7 @@ export function place(cell_layer, cell_number, player) {
 
 	// Check for win
 	if (cell_layer >= board_depth) {
+		won = true;
 		if (player == null) status.display('Draw!', Infinity);
 		else status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
 	}
@@ -137,10 +141,12 @@ export function setActiveGrids(active_grids, next_player_id) {
 
 	if (!active_grids) return;
 
-	if (next_player_id === connection_id && next_player_id !== undefined)
-		status.display("Your turn!", Infinity, true);
-	else if (next_player_id !== null)
-		status.display('', Infinity, true);
+	if (!won) {
+		if (next_player_id === connection_id && next_player_id !== undefined)
+			status.display("Your turn!", Infinity, true);
+		else if (next_player_id !== null)
+			status.display('', Infinity, true);
+	}
 
 	for (const layer in active_grids) {
 		for (const grid_num in active_grids[layer]) {

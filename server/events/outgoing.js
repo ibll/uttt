@@ -12,8 +12,8 @@ client_API.prepareClient = function(ws, client_events, client_events_path) {
 	sendToClient(ws, {type: "prepare_client", client_events, client_events_path});
 }
 
-client_API.updateState = function(ws, game_id, board_depth, board_state, active_grids, client_piece) {
-	sendToClient(ws, {type: "update_state", game_id, board_depth, board_state, active_grids, client_piece});
+client_API.updateState = function(ws, game_id, board_depth, board_state, active_grids, client_piece, next_player_id) {
+	sendToClient(ws, {type: "update_state", game_id, board_depth, board_state, active_grids, client_piece, next_player_id});
 }
 
 client_API.registerPiece = function(ws, piece) {

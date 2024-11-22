@@ -37,7 +37,7 @@ async function wssConnection(ws, response) {
 
 	// Log connection
 	ws.send(JSON.stringify({ type: "log", content: `Successfully connected as ${ws.connection_id}` }));
-	console.log(`Client connected: ${ws.connection_id}`);
+	// console.log(`Client connected: ${ws.connection_id}`);
 
 	// Add event listeners for the connection
 	for (const file of fetchEventsIn(ABSOLUTE_SERVER_EVENTS_DIR)) {

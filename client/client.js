@@ -1,6 +1,7 @@
 import server from './events/outgoing.js';
 import status from './scripts/status.js'
 import Cookie from './modules/js.cookie.mjs';
+import {game_id} from "./scripts/uttt.js";
 
 const host = window.location.hostname;
 const port = window.location.port;
@@ -24,8 +25,11 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.getElementById("start").addEventListener("click", () => {
-	const size_selector = document.getElementById("size-selector");
-	server.start(size_selector.value);
+	server.start(2);
+});
+
+document.getElementById("leave").addEventListener("click", () => {
+	window.location.href = '/';
 });
 
 window.addEventListener('resize', function() {
@@ -33,8 +37,8 @@ window.addEventListener('resize', function() {
 });
 
 window.addEventListener('hashchange', function() {
-	const game_id = window.location.hash.substring(1);
-	server.join(game_id);
+	const hash = window.location.hash.substring(1);
+	if (hash !== game_id) server.join(hash);
 });
 
 function connect() {
@@ -46,7 +50,6 @@ function connect() {
 	}
 	ws.onclose = () => {
 		if (ws_opened) status.display("Disconnected from server!", 5000);
-
 		ws_opened = false;
 	}
 
@@ -88,4 +91,12 @@ export function adjustTitleText() {
 	if (titleText.offsetWidth < 240) titleText.textContent = 'UTTT';
 	else if (titleText.offsetWidth < 360) titleText.textContent = 'Ultimate TTT';
 	else titleText.textContent = 'Ultimate Tic-Tac-Toe';
+}
+
+export function addLeaveButton() {
+	const leaveButton = document.getElementById('leave');
+	if (leaveButton) leaveButton.classList.remove('hidden')
+
+	const startButton = document.getElementById('start');
+	if (startButton) startButton.classList.remove('button-right')
 }
