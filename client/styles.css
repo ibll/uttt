@@ -1,7 +1,11 @@
 :root {
     --background: #eff1f5;
-    --popup: #dce0e8;
+    --background-invis: #eff1f500;
+    --popup: #e6e9ef;
+    --popup-trans: #dce0e880;
+    --border-trans: #dce0e8d2;
     --text: #4c4f69;
+    --label: #9ca0b0;
     --c1: #4c4f6980;
     --c2: #5c5f77C0;
     --c3: #6c6f85;
@@ -25,8 +29,12 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --background: #1e1e2e;
-        --popup: #11111b;
+        --background-infis: #1e1e2e00;
+        --popup: #181825;
+        --popup-trans: #11111b80;
+        --border-trans: #11111bd2;
         --text: #cdd6f4;
+        --label: #6c7086;
         --c1: #cdd6f480;
         --c2: #bac2deC0;
         --c3: #a6adc8;
@@ -76,35 +84,54 @@ h1 {
     h1 {
         text-align: center;
     }
+    z-index: 1;
 
-    padding: 0.5rem 1rem;
-    max-width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    padding: 0 5%;
+
+    background: linear-gradient(to bottom, var(--background) 60%, var(--background-invis) 100%);
+    backdrop-filter: blur(10px);
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     align-content: center;
-
-    border-bottom-style: solid;
-    border-bottom-width: 2px;
-    border-bottom-color: var(--popup);
-    box-shadow: var(--popup) 0 0.5rem 3rem 0.1rem;
 }
 
 #secondary-panel {
     display: none;
 }
 
+.bar {
+    width: 100%;
+    max-width: 50rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+#info-bar {
+    justify-content: space-around;
+    background-color: var(--popup-trans);
+    border: var(--border-trans) 2px solid;
+    box-sizing: border-box;
+    /*backdrop-filter: blur(10px);*/
+
+    border-radius: 20px;
+    height: fit-content;
+}
+
 #title-box {
     display: flex;
     flex-direction: row;
     width: 100%
-}
-
-#title-text {
-    width: 100%;
-    text-align: left;
 }
 
 #piece-marker {
@@ -114,10 +141,15 @@ h1 {
     overflow: visible;
 }
 
-#piece-marker > * {
+#piece-marker > svg {
     height: auto;
     width: 3em;
-    margin: 0.5em 0.5em 0.5em 0;
+    margin-right: 0.5rem;
+}
+
+#title-text {
+    width: 100%;
+    text-align: left;
 }
 
 .h-spacer {
@@ -130,7 +162,7 @@ h1 {
 
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: end;
     align-content: center;
     align-items: center;
 }
@@ -140,9 +172,9 @@ button {
     font-weight: 700;
 
     color: var(--text);
-    background-color: var(--popup);
-    border: none;
-    outline: black 2px solid;
+    background-color: var(--popup-trans);
+    backdrop-filter:  blur(10px);
+    border: var(--border-trans) 2px solid;
     padding: 1rem;
     cursor: pointer;
 
@@ -159,10 +191,7 @@ button {
 button svg {
     display: block;
     width: 100%;
-}
-
-button:hover svg path {
-    stroke: var(--background);
+    min-width: 1rem;
 }
 
 button.hidden {
@@ -170,13 +199,17 @@ button.hidden {
 }
 
 button.button-left {
-    border-top-left-radius: 1rem;
-    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+
+    &:not(.button-right) {
+        border-right: none;
+    }
 }
 
 button.button-right {
-    border-top-right-radius: 1rem;
-    border-bottom-right-radius: 1rem;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 #start {
@@ -184,7 +217,7 @@ button.button-right {
 }
 
 #start:hover {
-    background-color: var(--green);
+    background-color: var(--highlight);
     color: var(--background)
 }
 
@@ -195,7 +228,31 @@ button.button-right {
 
 #leave:hover {
     background-color: var(--red);
-    color: var(--background)
+    svg path {
+        stroke : var(--background);
+    }
+}
+
+
+
+.info {
+    font-family: "Roboto Mono", monospace;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+}
+
+.info p {
+    margin: 0;
+
+    &.label {
+        color: var(--label);
+    }
 }
 
 #board {
@@ -205,6 +262,7 @@ button.button-right {
 }
 
 #board.grid {
+    margin-top: 20vh;
     width: 98vmin;
     height: 98vmin;
     aspect-ratio: 1 / 1;
@@ -223,7 +281,7 @@ button.button-right {
 }
 
 #board::-webkit-scrollbar-track {
-    background-color: var(--popup);
+    background-color: var(--background);
 }
 
 #board::-webkit-scrollbar-thumb {
@@ -259,29 +317,11 @@ button.button-right {
     max-width: 90%
 }
 
-#board:not(.grid) {
-    overflow-y: scroll;
-}
-
-#board::-webkit-scrollbar {
-    width: 0.5rem;
-}
-
-#board::-webkit-scrollbar-track {
-    background-color: var(--background);
-}
-
-#board::-webkit-scrollbar-thumb {
-    max-width: 0.8rem;
-    background: var(--popup);
-    border-radius: 1rem;
-}
-
 #how-to-play {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 50rem;
+    max-width: 40rem;
     padding: 0 1rem 25vh;
 }
 
@@ -289,20 +329,35 @@ button.button-right {
     text-align: justify;
 }
 
-@media (min-aspect-ratio: 4/3) {
+@media (min-aspect-ratio: 10/6) {
+    #board {
+        margin: 0 auto;
+    }
+
     body {
         flex-direction: row;
     }
 
     .panel {
-        padding: 0.5rem;
+        padding: 1rem;
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
         width: 30%;
+        position: revert;
 
         border-bottom-style: none;
         box-shadow: none;
+    }
+
+    #top-bar {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 1rem;
     }
 
     #secondary-panel {
@@ -327,16 +382,31 @@ button.button-right {
     .h-spacer {
         flex: 0;
     }
+
+    @media (max-width: 800px) {
+        #info-bar {
+            display: none;
+        }
+    }
 }
 
-@media (max-aspect-ratio: 4/3) and (min-aspect-ratio: 9/10) {
-    .panel {
-        padding-bottom: 0;
+@media (max-aspect-ratio: 9/10) and (min-aspect-ratio: 3/4) {
+    #board.grid {
+        width: 85vmin;
+        height: 85vmin;
+    }
+}
+
+@media (max-aspect-ratio: 10/6) and (min-aspect-ratio: 9/10) {
+    #board.grid {
+        width: 75vmin;
+        height: 75vmin;
     }
 
-    #board.grid {
-        width: 90vmin;
-        height: 90vmin;
+    @media (max-height: 520px) {
+        #info-bar {
+            display: none;
+        }
     }
 }
 
@@ -417,13 +487,17 @@ svg {
 
 #status {
     opacity: 0;
-    transition:opacity 1s, transform 1s;
+    transition: opacity 1s, transform 1s;
     text-align: center;
 
-    background-color: var(--popup);
+    background-color: var(--popup-trans);
     box-shadow: 0.5rem 0.5rem 3rem 0.1rem #00000040;
-    border-radius: 1rem;
+    border-radius: 20px;
     padding: 1rem;
+    border: var(--border-trans) 2px solid;
+
+
+    backdrop-filter: blur(10px);
 
     position: fixed;
     bottom: 2rem;
