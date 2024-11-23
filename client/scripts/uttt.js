@@ -1,7 +1,7 @@
 import server from '../events/outgoing.js';
 import status from "./status.js";
 import {icons} from "../assets/icons.js";
-import {addLeaveButton, adjustTitleText, connection_id} from "../client.js";
+import {addLeaveButton, addStatusBarBlock, adjustTitleText, connection_id, resetStatusBar} from "../client.js";
 
 export let game_id;
 export let board_depth;
@@ -12,17 +12,25 @@ let won = false;
 
 window.getBoardState = () => board_state;
 
-export function updateState(new_game_id, new_board_depth, new_board_state, new_active_grids, client_piece, next_player_id) {
-	game_id = new_game_id;
-	board_depth = new_board_depth;
-	board_state = new_board_state;
-	active_grids = new_active_grids;
+export function updateState(payload) {
+	game_id = payload.game_id;
+	board_depth = payload.board_depth;
+	board_state = payload.board_state;
+	active_grids = payload.active_grids;
+
 	cell_count = {};
 
 	status.display(`Joined game ${game_id}`)
 	window.location.hash = game_id;
+
 	addLeaveButton();
-	createBoard(new_board_depth);
+
+	resetStatusBar()
+	addStatusBarBlock('move', 'move', '');
+	addStatusBarBlock('room', 'room', payload.game_id);
+	addStatusBarBlock('time', 'time', '');
+
+	createBoard(board_depth);
 
 	for (const layer in board_state) {
 		for (const cell_id in board_state[layer]) {
@@ -31,8 +39,8 @@ export function updateState(new_game_id, new_board_depth, new_board_state, new_a
 		}
 	}
 
-	setActiveGrids(active_grids, next_player_id);
-	setPiece(client_piece)
+	setActiveGrids(active_grids, payload.next_player_id);
+	setPiece(payload.client_piece)
 }
 
 export function setPiece(piece) {
@@ -52,9 +60,7 @@ export function createBoard(depth) {
 	createBoardInCell(board, depth, depth);
 
 	board.querySelectorAll('.cell').forEach(cell => {
-		cell.addEventListener('click', () => {
-			server.place(game_id, cell.id);
-		})
+		cell.addEventListener('click', () => server.place(game_id, cell.id))
 	})
 }
 

@@ -18,7 +18,12 @@ export function setConnectionID(new_connection_id) {
 export let ws;
 
 document.addEventListener("DOMContentLoaded", function() {
-	adjustTitleText()
+	adjustTitleText();
+	resetStatusBar();
+	addStatusBarBlock('', 'my site', `<a href="https://ibll.dev/">ibll.dev</a>`)
+	addStatusBarBlock('', 'made by', `Isbell!`)
+	addStatusBarBlock('', 'github', `<a href="https://github.com/ibll/uttt/">ibll/uttt</a>`)
+
 	status.display("Connecting to server...");
 	connect();
 	setInterval(tryConnect, 5000);
@@ -99,4 +104,25 @@ export function addLeaveButton() {
 
 	const startButton = document.getElementById('start');
 	if (startButton) startButton.classList.remove('button-right')
+}
+
+export function resetStatusBar() {
+	const status_bar = document.getElementById('status-bar');
+	status_bar.innerHTML = '';
+}
+
+export function addStatusBarBlock(id, label, value) {
+	const status_bar = document.getElementById('status-bar');
+	const status_block = document.createElement('div');
+
+	status_block.id = id;
+	status_block.classList.add('status-block');
+
+	status_block.innerHTML = `
+		<p class="status-label">${label}</p>
+		<p class="status-value">${value}</p>
+	`;
+
+	status_bar.appendChild(status_block);
+	return status_bar;
 }
