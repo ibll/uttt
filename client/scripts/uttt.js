@@ -110,6 +110,7 @@ function createBoardInCell(outerCell, layer, depth) {
 
 export function place(cell_layer, cell_number, player, moves) {
 	if (moves) updateStatusBlock('move', moves);
+	if (!start_time) start_time = Date.now();
 
 	if (!board_state[cell_layer]) board_state[cell_layer] = {};
 	board_state[cell_layer][cell_number] = player;

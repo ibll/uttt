@@ -47,7 +47,7 @@ export class Game {
 		this.active_grids = {};
 		this.active_player = 0;
 		this.moves = 0;
-		this.start_time = Date.now();
+		this.start_time = undefined;
 		this.end_time = undefined;
 		this.players = [];
 		this.subscribers = [];
@@ -111,6 +111,9 @@ export class Game {
 		// Ensure only the allowed player is placing
 		if (connection_id !== this.players[this.active_player] && connection_id !== null)
 			return // console.error(`It is not ${connection_id}'s turn to place`);
+
+		// Start game timer if necessary
+		if (!this.start_time) this.start_time = Date.now();
 
 		// Place the piece
 		if (!this.board_state[cell_layer]) this.board_state[cell_layer] = {};
