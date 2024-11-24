@@ -1,22 +1,35 @@
 import server from '../events/outgoing.js';
 import status from "./status.js";
 import {icons} from "../assets/icons.js";
-import {addLeaveButton, addStatusBarBlock, adjustTitleText, connection_id, resetStatusBar} from "../client.js";
+import {addLeaveButton, addStatusBarBlock, adjustTitleText, connection_id, resetStatusBar, updateStatusBlock} from "../client.js";
 
 export let game_id;
 export let board_depth;
 export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
+let start_time;
+let end_time;
 let won = false;
+
+let timeInterval;
 
 window.getBoardState = () => board_state;
 
 export function updateState(payload) {
+	// Server said game doesn't exist anymore, exit lobby
+	if (!payload.game_id && window.location.hash) {
+		window.location.hash = '';
+		window.location.href = '/';
+		return;
+	}
+
 	game_id = payload.game_id;
 	board_depth = payload.board_depth;
 	board_state = payload.board_state;
 	active_grids = payload.active_grids;
+	start_time = payload.start_time;
+	end_time = payload.end_time;
 
 	cell_count = {};
 
@@ -26,9 +39,9 @@ export function updateState(payload) {
 	addLeaveButton();
 
 	resetStatusBar()
-	addStatusBarBlock('move', 'move', '');
+	addStatusBarBlock('move', 'move', payload.moves);
 	addStatusBarBlock('room', 'room', payload.game_id);
-	addStatusBarBlock('time', 'time', '');
+	addStatusBarBlock('time', 'time', '00:00:00');
 
 	createBoard(board_depth);
 
@@ -41,6 +54,9 @@ export function updateState(payload) {
 
 	setActiveGrids(active_grids, payload.next_player_id);
 	setPiece(payload.client_piece)
+
+	updateTime();
+	if (!end_time) timeInterval = setInterval(updateTime, 1000)
 }
 
 export function setPiece(piece) {
@@ -92,7 +108,9 @@ function createBoardInCell(outerCell, layer, depth) {
 	}
 }
 
-export function place(cell_layer, cell_number, player) {
+export function place(cell_layer, cell_number, player, moves) {
+	if (moves) updateStatusBlock('move', moves);
+
 	if (!board_state[cell_layer]) board_state[cell_layer] = {};
 	board_state[cell_layer][cell_number] = player;
 
@@ -134,6 +152,9 @@ export function place(cell_layer, cell_number, player) {
 	// Check for win
 	if (cell_layer >= board_depth) {
 		won = true;
+
+		if (!end_time) end_time = Date.now();
+
 		if (player == null) status.display('Draw!', Infinity);
 		else status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
 	}
@@ -176,4 +197,27 @@ function makeGridActive(level, grid_num) {
 			makeGridActive(level - 1, first_sub_cell + cell);
 		}
 	}
+}
+
+function updateTime() {
+	if (!start_time) return;
+
+	let elapsedTime;
+	if (end_time) elapsedTime = end_time - start_time;
+	else elapsedTime = Date.now() - start_time;
+
+	updateStatusBlock('time', getTimeString(elapsedTime));
+	if (end_time) return clearInterval(timeInterval);
+}
+
+function getTimeString(interval) {
+	const elapsedTime = interval
+	const seconds = Math.floor(elapsedTime / 1000) % 60;
+	const minutes = Math.floor(elapsedTime / 60000) % 60;
+	const hours = Math.floor(elapsedTime / 3600000);
+	return `${getTimeSegment(hours)}:${getTimeSegment(minutes)}:${getTimeSegment(seconds)}`;
+}
+
+function getTimeSegment(number) {
+	return number.toString().padStart(2, '0');
 }

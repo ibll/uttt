@@ -32,10 +32,11 @@ function createGameID(length) {
 export function join(ws, game_id) {
 	const game = games[game_id];
 
-	if (!game) return;
+	// Reset client if its on a game that no longer exists
+	if (!game) return client.updateState(ws, undefined);
 
 	game.subscribers.push(ws);
-	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.getNextActivePlayer());
+	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.getNextActivePlayer(), game.moves, game.start_time, game.end_time);
 }
 
 export class Game {
@@ -45,6 +46,9 @@ export class Game {
 		this.board_state = {};
 		this.active_grids = {};
 		this.active_player = 0;
+		this.moves = 0;
+		this.start_time = Date.now();
+		this.end_time = undefined;
 		this.players = [];
 		this.subscribers = [];
 
@@ -113,12 +117,15 @@ export class Game {
 		this.board_state[cell_layer][cell_number] = connection_id ? this.active_player : null;
 		// console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
 
+		if (cell_layer === 0) this.moves++;
+
+		const player = connection_id ? this.active_player : null;
 		this.subscribers.forEach(subscriber => {
-			client.place(subscriber, cell_layer, cell_number, connection_id ? this.active_player : null)
+			client.place(subscriber, cell_layer, cell_number, player, this.moves);
 		});
 
-		let already_set_active = false;
 		// Win the grid if necessary
+		let already_set_active = false;
 		const winner = this.checkWhoWonGrid(grid_layer, grid_number);
 		if (winner !== undefined) {
 			// console.log(`${ winner !== null ? player_pieces[winner] : null} won grid ${grid_layer}.${grid_number}!`);
@@ -139,8 +146,11 @@ export class Game {
 			if (grid_layer >= this.board_depth) {
 				const winner_piece = ws?.connection_id !== undefined ? player_pieces[winner] : null;
 				console.log(`${winner_piece} won game ${this.game_id}`);
-				const already_set_active = true;
+
+				this.end_time = Date.now();
 				this.active_grids = {};
+
+				const already_set_active = true;
 				return already_set_active
 			}
 		}

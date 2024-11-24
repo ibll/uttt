@@ -9,6 +9,7 @@ export default async (ws, data) => {
 		let payload = JSON.parse(data)
 		if (!payload.type) return;
 
+
 		const filePath = path.join(__dirname, MESSAGES_DIR,  payload.type + '.js');
 		fs.readFile(filePath, (err) => {
 			if (!ws.connection_id) {

@@ -42,8 +42,9 @@ window.addEventListener('resize', function() {
 });
 
 window.addEventListener('hashchange', function() {
+	if (!window.location.hash) return;
 	const hash = window.location.hash.substring(1);
-	if (hash !== game_id) server.join(hash);
+	if (hash && hash !== game_id ) server.join(hash);
 });
 
 function connect() {
@@ -125,4 +126,13 @@ export function addStatusBarBlock(id, label, value) {
 
 	status_bar.appendChild(status_block);
 	return status_bar;
+}
+
+
+export function updateStatusBlock(id, value) {
+	const element = document.getElementById(id);
+	if (!element) return;
+	const valueElement = element.querySelector('.status-value');
+	if (!valueElement) return;
+	valueElement.textContent = value;
 }

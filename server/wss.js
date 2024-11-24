@@ -24,9 +24,9 @@ async function wssConnection(ws, response) {
 
 	// Find or set a unique connection_id to the client.
 	const cookies = response.headers?.cookie?.split('; ');
-	const connectionCookie = cookies?.find(cookie => cookie.startsWith('connection_id='));
-	if (connectionCookie) {
-		const [, value] = connectionCookie.split('=');
+	const connection_cookie = cookies?.find(cookie => cookie.startsWith('connection_id='));
+	if (connection_cookie) {
+		const [, value] = connection_cookie.split('=');
 		ws.connection_id = value;
 	}
 	if (!ws.connection_id) {
@@ -42,7 +42,9 @@ async function wssConnection(ws, response) {
 	// Add event listeners for the connection
 	for (const file of fetchEventsIn(ABSOLUTE_SERVER_EVENTS_DIR)) {
 		const event = await import((`${ABSOLUTE_SERVER_EVENTS_DIR}/${file}.js`));
-		ws.on(file.split('.')[0], (event_data) => event.default(ws, event_data));
+		ws.on(file.split('.')[0], (event_data) => {
+			if (event.default) event.default(ws, event_data);
+		});
 	}
 }
 
