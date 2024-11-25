@@ -468,6 +468,7 @@ button.status-block {
 /* RESPONSIVENESS */
 /* * * * * * * * * * * * * */
 
+/*Move toast to the edge*/
 @media (orientation: landscape) {
 	#toast {
 		left: 1rem;
@@ -511,12 +512,12 @@ button.status-block {
 
 /*Desktop*/
 @media (min-aspect-ratio: 9/6) {
-
 	:root {
 		--header-clearance: 0;
 	}
 
 	body {
+		height: 100%;
 		flex-direction: row;
 		padding: 0;
 	}
@@ -525,6 +526,8 @@ button.status-block {
 		width: 100%;
 		max-width: calc(50vw - 50vmin);
 		height: 100%;
+
+		box-sizing: border-box;
 
 		position: sticky;
 		padding: 1rem;
@@ -574,14 +577,20 @@ button.status-block {
 		width: 100%;
 	}
 
-	#board:not(.grid) {
+	#board {
+		width: 100% !important;
+		height: auto;
+		aspect-ratio: 1;
+	}
+
+	#board:not(.grid) {;
 		aspect-ratio: revert !Important;
 		min-height: fit-content !important;
 	}
 }
 
 /*Desktop, too thin for the right panel*/
-@media (min-aspect-ratio: 9/6) and (max-width: 736px) {
+@media (min-aspect-ratio: 9/6) and (max-width: 928px) {
 	body {
 		flex-direction: row;
 		justify-content: space-between;
@@ -597,6 +606,9 @@ button.status-block {
 	}
 
 	#board{
+		height: 100% !important;
+		width: auto;
+		aspect-ratio: 1;
 		margin: auto;
 	}
 }
