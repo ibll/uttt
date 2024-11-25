@@ -548,20 +548,23 @@ button.status-block {
 	}
 
 	#top-bar {
+		width: 100%;
+		max-width: 30rem;
 		padding: 0;
+		margin-bottom: 1rem;
+
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: center;
-		width: 100%;
-		margin-bottom: 1rem;
 	}
 
 	#status-bar {
 		width: 100%;
-		padding: 0 4px;
-		height: fit-content;
 		min-width: fit-content;
+		max-width: 30rem;
+		height: fit-content;
+		padding: 0 4px;
 		flex-direction: column;
 	}
 
@@ -591,7 +594,8 @@ button.status-block {
 	}
 
 	.panel {
-		min-width: fit-content;
+		width: 100%;
+		max-width: 25rem;
 	}
 
 	#secondary-panel {
