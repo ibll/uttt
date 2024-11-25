@@ -577,39 +577,30 @@ button.status-block {
 		width: 100%;
 	}
 
-	#board {
-		width: 100% !important;
-		height: auto;
-		aspect-ratio: 1;
-	}
-
 	#board:not(.grid) {;
-		aspect-ratio: revert !Important;
-		min-height: fit-content !important;
+		aspect-ratio: revert;
+		min-height: fit-content;
 	}
 }
 
 /*Desktop, too thin for the right panel*/
-@media (min-aspect-ratio: 9/6) and (max-width: 928px) {
+@media (min-aspect-ratio: 9/6) and (max-width: 1120px) {
 	body {
 		flex-direction: row;
 		justify-content: space-between;
 	}
 
 	.panel {
-		width: 100%;
 		min-width: fit-content;
 	}
 
 	#secondary-panel {
-		display: none !important;
+		display: none;
 	}
 
 	#board{
-		height: 100% !important;
 		width: auto;
 		aspect-ratio: 1;
-		margin: auto;
 	}
 }
 
