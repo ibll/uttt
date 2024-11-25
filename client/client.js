@@ -46,12 +46,6 @@ document.getElementById("leave").addEventListener("click", () => {
 	window.location.href = '/';
 });
 
-// window.addEventListener('resize', adjustTitleText);
-const titleText = document.getElementById('title-text');
-
-const resizeObserver = new ResizeObserver(adjustTitleText);
-resizeObserver.observe(titleText);
-
 
 window.addEventListener('hashchange', function() {
 	if (!window.location.hash) return;
@@ -103,16 +97,29 @@ function tryConnect(){
 	}
 }
 
+const titleText = document.getElementById('title-text');
+const titleTextResizeObserver = new ResizeObserver(adjustTitleText);
+titleTextResizeObserver.observe(titleText);
+
 export function adjustTitleText() {
 	const titleText = document.getElementById('title-text');
 
-	if (titleText.offsetWidth < 240) titleText.textContent = 'UTTT';
+	if (titleText.offsetWidth < 220) titleText.textContent = 'UTTT';
 	else if (titleText.offsetWidth < 360) titleText.textContent = 'Ultimate TTT';
 	else titleText.textContent = 'Ultimate Tic-Tac-Toe';
 }
 
+const startButton = document.getElementById('start');
+const startButtonResizeObserver = new ResizeObserver(adjustStartButton);
+startButtonResizeObserver.observe(startButton);
+
+export function adjustStartButton() {
+	if (startButton.classList.contains('enabled')) return;
+	if (startButton.offsetWidth < 120) startButton.textContent = 'New...';
+	else startButton.textContent = 'New Room...';
+}
+
 export function resetStartButton() {
-	const startButton = document.getElementById('start');
 	startButton.textContent = 'New Room...';
 	startButton.classList.remove('enabled');
 }

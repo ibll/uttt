@@ -523,7 +523,7 @@ button.status-block {
 	}
 
 	.panel {
-		width: 100%;
+		width: 25%;
 		max-width: calc(50vw - 50vmin);
 		height: 100%;
 
@@ -595,7 +595,7 @@ button.status-block {
 
 	.panel {
 		width: 100%;
-		max-width: 25rem;
+		max-width: 30vw;
 	}
 
 	#secondary-panel {
