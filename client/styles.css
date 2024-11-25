@@ -78,6 +78,7 @@ html::-webkit-scrollbar-thumb {
 
 body {
 	height: calc(100vh - 10rem);
+	min-height: fit-content;
 	margin: 0;
 	padding-top: 10rem;
 
@@ -367,6 +368,10 @@ button.status-block {
 }
 
 #board:not(.grid) {
+	width: auto;
+	max-height: 98vmin;
+	aspect-ratio: 1 / 1;
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -389,7 +394,11 @@ button.status-block {
 		flex-direction: row;
 		padding: 0;
 		height: 100vh;
-		/*min-height: fit-content;*/
+	}
+
+	#board:not(.grid) {
+		aspect-ratio: revert !Important;
+		min-height: fit-content !important;
 	}
 
 	.panel {
@@ -400,7 +409,7 @@ button.status-block {
 		align-items: flex-start;
 		justify-content: flex-start;
 		width: 100%;
-		max-width: 30%;
+		max-width: calc(50vw - 50vmin);
 		height: 100%;
 
 		&:before {
