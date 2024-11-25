@@ -280,7 +280,7 @@ button.square {
 
 input:focus, button:focus {
 	outline: none;
-	border: 2px solid var(--highlight);
+	border: 2px solid var(--highlight) !important;
 
 	&:not(.right) {
 		border-right: 2px solid var(--highlight);
@@ -343,7 +343,7 @@ input:focus, button:focus {
 }
 
 button.status-block {
-	border-color: var(--highlight);
+	border-color: var(--highlight-trans);
 
 	&:hover {
 		border-color: var(--border-trans);
