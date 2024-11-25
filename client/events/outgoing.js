@@ -9,9 +9,9 @@ server.start = function(size) {
 	sendToServer({type: "start", size});
 }
 
-server.join = function(game_id) {
+server.join = function(game_id, automatic) {
 	console.log('Requesting to join game', game_id);
-	sendToServer({type: "join", game_id});
+	sendToServer({type: "join", game_id, automatic});
 }
 
 server.place = function(game_id, cell_id) {

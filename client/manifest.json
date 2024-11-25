@@ -1,0 +1,12 @@
+{
+	"name": "UTTT",
+	"start_url": "/",
+	"icons": [
+		{
+			"src": "assets/pwa.png",
+			"type": "img/png",
+			"sizes": "200x200",
+			"purpose": "any"
+		}
+	]
+}

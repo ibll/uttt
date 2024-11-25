@@ -9,14 +9,15 @@ const port = window.location.port;
 
 let client_events = [];
 let client_events_path = '';
+
+export let ws;
 let ws_opened = false;
+
 
 export let connection_id = Cookie.get('connection_id');
 export function setConnectionID(new_connection_id) {
 	connection_id = new_connection_id;
 }
-
-export let ws;
 
 document.addEventListener("DOMContentLoaded", function() {
 	adjustTitleText();
@@ -28,24 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	setInterval(tryConnect, 5000);
 });
 
-const start_element = document.getElementById('start')
-start_element.addEventListener("click", () => {
-	if (!start_element.classList.contains('enabled')) {
-		start_element.textContent = 'Cancel';
-		start_element.classList.add('enabled');
-
-		statusBarSetChooseSize();
-	} else {
-		resetStartButton()
-		if (game_id) statusBarSetGameInfo();
-		else statusBarSetMyLinks();
-	}
-});
-
-document.getElementById("leave").addEventListener("click", () => {
-	window.location.href = '/';
-});
-
+// Websocket
 
 window.addEventListener('hashchange', function() {
 	if (!window.location.hash) return;
@@ -77,7 +61,7 @@ function connect() {
 			console.log('Client being prepared...')
 
 			let game_id = window.location.hash.substring(1);
-			if (game_id) server.join(game_id);
+			if (game_id) server.join(game_id, true);
 
 			return
 		}
@@ -97,9 +81,18 @@ function tryConnect(){
 	}
 }
 
-const titleText = document.getElementById('title-text');
+// Elements
+
+const title_text = document.getElementById('title-text');
+const join_code_input = document.getElementById('join-code');
+const join_button = document.getElementById('join');
+const start_button = document.getElementById('start');
+const leave_button = document.getElementById("leave");
+
+// Resize Observers
+
 const titleTextResizeObserver = new ResizeObserver(adjustTitleText);
-titleTextResizeObserver.observe(titleText);
+titleTextResizeObserver.observe(title_text);
 
 export function adjustTitleText() {
 	const titleText = document.getElementById('title-text');
@@ -108,20 +101,47 @@ export function adjustTitleText() {
 	else if (titleText.offsetWidth < 360) titleText.textContent = 'Ultimate TTT';
 	else titleText.textContent = 'Ultimate Tic-Tac-Toe';
 }
-
-const startButton = document.getElementById('start');
 const startButtonResizeObserver = new ResizeObserver(adjustStartButton);
-startButtonResizeObserver.observe(startButton);
+startButtonResizeObserver.observe(start_button);
 
 export function adjustStartButton() {
-	if (startButton.classList.contains('enabled')) return;
-	if (startButton.offsetWidth < 120) startButton.textContent = 'New...';
-	else startButton.textContent = 'New Room...';
+	if (start_button.classList.contains('enabled')) return;
+	if (start_button.offsetWidth < 120) start_button.textContent = 'New...';
+	else start_button.textContent = 'New Room...';
 }
 
+// Buttons
+
+join_code_input.addEventListener("keyup", (event) => {
+	if (event.key === 'Enter') join_button.click();
+});
+
+join_button.addEventListener("click", () => {
+	const code = join_code_input.value;
+	if (!code) return;
+	server.join(code);
+});
+
+start_button.addEventListener("click", () => {
+	if (!start_button.classList.contains('enabled')) {
+		start_button.textContent = 'Cancel';
+		start_button.classList.add('enabled');
+
+		statusBarSetChooseSize();
+	} else {
+		resetStartButton()
+		if (game_id) statusBarSetGameInfo();
+		else statusBarSetMyLinks();
+	}
+});
+
+leave_button.addEventListener("click", () => {
+	window.location.href = '/';
+});
+
 export function resetStartButton() {
-	startButton.textContent = 'New Room...';
-	startButton.classList.remove('enabled');
+	start_button.textContent = 'New Room...';
+	start_button.classList.remove('enabled');
 }
 
 export function addLeaveButton() {
@@ -129,7 +149,7 @@ export function addLeaveButton() {
 	if (leaveButton) leaveButton.classList.remove('hidden')
 
 	const startButton = document.getElementById('start');
-	if (startButton) startButton.classList.remove('button-right')
+	if (startButton) startButton.classList.remove('right')
 }
 
 function statusBarSetMyLinks() {

@@ -4,8 +4,8 @@ function sendToClient(ws, message) {
 	ws.send(JSON.stringify(message));
 }
 
-client_API.notify = function(ws, content) {
-	sendToClient(ws, {type: "notify", content});
+client_API.display = function(ws, content) {
+	sendToClient(ws, {type: "display", content});
 }
 
 client_API.prepareClient = function(ws, client_events, client_events_path) {
