@@ -1,5 +1,5 @@
-const fade_times = 250;
-const fade_stages = 10;
+const default_fade_times = 250;
+const default_fade_stages = 10;
 
 let toast_element;
 let displayed_message;
@@ -10,6 +10,11 @@ let fade_timeout;
 
 document.addEventListener("DOMContentLoaded", function() {
 	toast_element = document.getElementById('toast');
+
+	toast_element.addEventListener("click", function() {
+		toast_API.display();
+	});
+
 	if (display_queue) toast_API.display(display_queue);
 });
 
@@ -25,7 +30,7 @@ toast_API.display = function(message, length, force_retrigger) {
 	if (!message) {
 		toast_element.classList.remove('active');
 		displayed_message = undefined;
-		glitchOut();
+		glitchOut(100);
 		return;
 	}
 
@@ -46,8 +51,8 @@ toast_API.display = function(message, length, force_retrigger) {
 
 function clipMessage(remainingMessage) {
 	const randomIndex = Math.floor(Math.random() * remainingMessage.length);
-	const minSlice = Math.max(0, randomIndex - Math.floor(remainingMessage.length / fade_stages));
-	const maxSlice = Math.min(remainingMessage.length, randomIndex + Math.floor(remainingMessage.length / fade_stages));
+	const minSlice = Math.max(0, randomIndex - Math.floor(remainingMessage.length / default_fade_stages));
+	const maxSlice = Math.min(remainingMessage.length, randomIndex + Math.floor(remainingMessage.length / default_fade_stages));
 
 	return remainingMessage.slice(0, minSlice) + remainingMessage.slice(maxSlice + 1);
 }
@@ -58,18 +63,18 @@ function glitchIn(message) {
 
 	stages[0] = '';
 
-	for (let i = fade_stages - 1; i > 0; i--) {
+	for (let i = default_fade_stages - 1; i > 0; i--) {
 		stages[i] = remainingMessage;
 		remainingMessage = clipMessage(remainingMessage);
 	}
 
-	const timeout = Math.floor(fade_times / fade_stages);
+	const timeout = Math.floor(default_fade_times / default_fade_stages);
 
 	glitchInStep(stages, 0, timeout);
 }
 
 function glitchInStep(stages, stage, timeout) {
-	if (stage >= fade_stages) return;
+	if (stage >= default_fade_stages) return;
 
 	toast_element.innerHTML = stages[stage];
 
@@ -78,24 +83,25 @@ function glitchInStep(stages, stage, timeout) {
 	}, timeout);
 }
 
-function glitchOut() {
+function glitchOut(time) {
+	let fade_time = time || default_fade_times;
 	let remainingMessage = toast_element.innerHTML;
 	let stages = [];
 
-	stages[fade_stages - 1] = '';
+	stages[default_fade_stages - 1] = '';
 
-	for (let i = 0; i < fade_stages - 1; i++) {
+	for (let i = 0; i < default_fade_stages - 1; i++) {
 		stages[i] = remainingMessage;
 		remainingMessage = clipMessage(remainingMessage);
 	}
 
-	const timeout = Math.floor(fade_times / fade_stages);
+	const timeout = Math.floor(fade_time / default_fade_stages);
 
 	glitchOutStep(stages, 0, timeout);
 }
 
 function glitchOutStep(stages, stage, timeout) {
-	if (stage >= fade_stages) return;
+	if (stage >= default_fade_stages) return;
 
 	toast_element.innerHTML = stages[stage];
 

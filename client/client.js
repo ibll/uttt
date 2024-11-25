@@ -46,9 +46,12 @@ document.getElementById("leave").addEventListener("click", () => {
 	window.location.href = '/';
 });
 
-window.addEventListener('resize', function() {
-	adjustTitleText();
-});
+// window.addEventListener('resize', adjustTitleText);
+const titleText = document.getElementById('title-text');
+
+const resizeObserver = new ResizeObserver(adjustTitleText);
+resizeObserver.observe(titleText);
+
 
 window.addEventListener('hashchange', function() {
 	if (!window.location.hash) return;
