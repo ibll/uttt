@@ -1,7 +1,7 @@
 const fade_times = 250;
 const fade_stages = 10;
 
-let status;
+let toast_element;
 let displayed_message;
 let display_queue;
 
@@ -9,21 +9,21 @@ let remove_timeout;
 let fade_timeout;
 
 document.addEventListener("DOMContentLoaded", function() {
-	status = document.getElementById('status');
-	if (display_queue) status_API.display(display_queue);
+	toast_element = document.getElementById('toast');
+	if (display_queue) toast_API.display(display_queue);
 });
 
-const status_API = {}
+const toast_API = {}
 
-status_API.display = function(message, length, force_retrigger) {
+toast_API.display = function(message, length, force_retrigger) {
 	if (!length) length = 5000;
-	if (!status) return display_queue = message;
+	if (!toast_element) return display_queue = message;
 
 	if (remove_timeout) clearTimeout(remove_timeout);
 	if (fade_timeout) clearTimeout(fade_timeout);
 
 	if (!message) {
-		status.classList.remove('active');
+		toast_element.classList.remove('active');
 		displayed_message = undefined;
 		glitchOut();
 		return;
@@ -32,13 +32,13 @@ status_API.display = function(message, length, force_retrigger) {
 	if (displayed_message !== message || force_retrigger) {
 		displayed_message = message;
 		glitchIn(message);
-		status.classList.add('active');
+		toast_element.classList.add('active');
 	}
 
 	if (length === Infinity) return;
 
 	remove_timeout = setTimeout(() => {
-		status.classList.remove('active');
+		toast_element.classList.remove('active');
 		displayed_message = undefined;
 		glitchOut();
 	}, length);
@@ -71,7 +71,7 @@ function glitchIn(message) {
 function glitchInStep(stages, stage, timeout) {
 	if (stage >= fade_stages) return;
 
-	status.innerHTML = stages[stage];
+	toast_element.innerHTML = stages[stage];
 
 	fade_timeout = setTimeout(() => {
 		glitchInStep(stages, stage + 1, timeout);
@@ -79,7 +79,7 @@ function glitchInStep(stages, stage, timeout) {
 }
 
 function glitchOut() {
-	let remainingMessage = status.innerHTML;
+	let remainingMessage = toast_element.innerHTML;
 	let stages = [];
 
 	stages[fade_stages - 1] = '';
@@ -97,11 +97,11 @@ function glitchOut() {
 function glitchOutStep(stages, stage, timeout) {
 	if (stage >= fade_stages) return;
 
-	status.innerHTML = stages[stage];
+	toast_element.innerHTML = stages[stage];
 
 	fade_timeout = setTimeout(() => {
 		glitchOutStep(stages, stage + 1, timeout);
 	}, timeout);
 }
 
-export default status_API;
+export default toast_API;

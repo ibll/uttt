@@ -1,7 +1,8 @@
 import server from './events/outgoing.js';
-import status from './scripts/status.js'
+import status from './scripts/toast.js'
 import Cookie from './modules/js.cookie.mjs';
-import {game_id} from "./scripts/uttt.js";
+import {game_id, statusBarSetGameInfo} from "./scripts/uttt.js";
+import status_bar from "./scripts/status_bar.js";
 
 const host = window.location.hostname;
 const port = window.location.port;
@@ -19,18 +20,26 @@ export let ws;
 
 document.addEventListener("DOMContentLoaded", function() {
 	adjustTitleText();
-	resetStatusBar();
-	addStatusBarBlock('', 'my site', `<a href="https://ibll.dev/">ibll.dev</a>`)
-	addStatusBarBlock('', 'made by', `Isbell!`)
-	addStatusBarBlock('', 'github', `<a href="https://github.com/ibll/uttt/">ibll/uttt</a>`)
+
+	statusBarSetMyLinks();
 
 	status.display("Connecting to server...");
 	connect();
 	setInterval(tryConnect, 5000);
 });
 
-document.getElementById("start").addEventListener("click", () => {
-	server.start(2);
+const start_element = document.getElementById('start')
+start_element.addEventListener("click", () => {
+	if (!start_element.classList.contains('enabled')) {
+		start_element.textContent = 'Cancel';
+		start_element.classList.add('enabled');
+
+		statusBarSetChooseSize();
+	} else {
+		resetStartButton()
+		if (game_id) statusBarSetGameInfo();
+		else statusBarSetMyLinks();
+	}
 });
 
 document.getElementById("leave").addEventListener("click", () => {
@@ -99,6 +108,12 @@ export function adjustTitleText() {
 	else titleText.textContent = 'Ultimate Tic-Tac-Toe';
 }
 
+export function resetStartButton() {
+	const startButton = document.getElementById('start');
+	startButton.textContent = 'New Room...';
+	startButton.classList.remove('enabled');
+}
+
 export function addLeaveButton() {
 	const leaveButton = document.getElementById('leave');
 	if (leaveButton) leaveButton.classList.remove('hidden')
@@ -107,32 +122,17 @@ export function addLeaveButton() {
 	if (startButton) startButton.classList.remove('button-right')
 }
 
-export function resetStatusBar() {
-	const status_bar = document.getElementById('status-bar');
-	status_bar.innerHTML = '';
+function statusBarSetMyLinks() {
+	status_bar.reset();
+	status_bar.addBlock('', 'my site', `<a href="https://ibll.dev/">ibll.dev</a>`)
+	status_bar.addBlock('', 'made by', `Isbell!`)
+	status_bar.addBlock('', 'github', `<a href="https://github.com/ibll/uttt/">ibll/uttt</a>`)
 }
 
-export function addStatusBarBlock(id, label, value) {
-	const status_bar = document.getElementById('status-bar');
-	const status_block = document.createElement('div');
-
-	status_block.id = id;
-	status_block.classList.add('status-block');
-
-	status_block.innerHTML = `
-		<p class="status-label">${label}</p>
-		<p class="status-value">${value}</p>
-	`;
-
-	status_bar.appendChild(status_block);
-	return status_bar;
-}
-
-
-export function updateStatusBlock(id, value) {
-	const element = document.getElementById(id);
-	if (!element) return;
-	const valueElement = element.querySelector('.status-value');
-	if (!valueElement) return;
-	valueElement.textContent = value;
+function statusBarSetChooseSize() {
+	status_bar.reset();
+	status_bar.setActive(true);
+	status_bar.addBlock('', 'classic', '1 layer', server.start, 1);
+	status_bar.addBlock('', 'ultimate', '2 layers', server.start, 2);
+	status_bar.addBlock('', 'nightmare', '3 layers', server.start, 3);
 }

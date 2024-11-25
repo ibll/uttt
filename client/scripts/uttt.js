@@ -1,13 +1,15 @@
 import server from '../events/outgoing.js';
-import status from "./status.js";
+import status from "./toast.js";
 import {icons} from "../assets/icons.js";
-import {addLeaveButton, addStatusBarBlock, adjustTitleText, connection_id, resetStatusBar, updateStatusBlock} from "../client.js";
+import {addLeaveButton, adjustTitleText, connection_id, resetStartButton} from "../client.js";
+import status_bar from "./status_bar.js";
 
 export let game_id;
 export let board_depth;
 export let board_state = {};
 export let active_grids = {};
 let cell_count = {};
+let moves;
 let start_time;
 let end_time;
 let won = false;
@@ -28,6 +30,7 @@ export function updateState(payload) {
 	board_depth = payload.board_depth;
 	board_state = payload.board_state;
 	active_grids = payload.active_grids;
+	moves = payload.moves;
 	start_time = payload.start_time;
 	end_time = payload.end_time;
 
@@ -37,11 +40,7 @@ export function updateState(payload) {
 	window.location.hash = game_id;
 
 	addLeaveButton();
-
-	resetStatusBar()
-	addStatusBarBlock('move', 'move', payload.moves);
-	addStatusBarBlock('room', 'room', payload.game_id);
-	addStatusBarBlock('time', 'time', '00:00:00');
+	statusBarSetGameInfo();
 
 	createBoard(board_depth);
 
@@ -54,9 +53,6 @@ export function updateState(payload) {
 
 	setActiveGrids(active_grids, payload.next_player_id);
 	setPiece(payload.client_piece)
-
-	updateTime();
-	if (!end_time) timeInterval = setInterval(updateTime, 1000)
 }
 
 export function setPiece(piece) {
@@ -109,7 +105,7 @@ function createBoardInCell(outerCell, layer, depth) {
 }
 
 export function place(cell_layer, cell_number, player, moves) {
-	if (moves) updateStatusBlock('move', moves);
+	if (moves) status_bar.updateBlock('move', moves);
 	if (!start_time) start_time = Date.now();
 
 	if (!board_state[cell_layer]) board_state[cell_layer] = {};
@@ -200,14 +196,26 @@ function makeGridActive(level, grid_num) {
 	}
 }
 
+export function statusBarSetGameInfo() {
+	resetStartButton();
+
+	status_bar.reset()
+	status_bar.addBlock('move', 'move', moves);
+	status_bar.addBlock('room', 'room', game_id);
+	status_bar.addBlock('time', 'time', '00:00:00');
+
+	updateTime();
+	if (!end_time) timeInterval = setInterval(updateTime, 1000)
+}
+
 function updateTime() {
-	if (!start_time) return;
+	if (!start_time || !document.getElementById('time')) return;
 
 	let elapsedTime;
 	if (end_time) elapsedTime = end_time - start_time;
 	else elapsedTime = Date.now() - start_time;
 
-	updateStatusBlock('time', getTimeString(elapsedTime));
+	status_bar.updateBlock('time', getTimeString(elapsedTime));
 	if (end_time) return clearInterval(timeInterval);
 }
 

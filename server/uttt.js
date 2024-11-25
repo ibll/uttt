@@ -32,7 +32,7 @@ function createGameID(length) {
 export function join(ws, game_id) {
 	const game = games[game_id];
 
-	// Reset client if its on a game that no longer exists
+	// Reset client if it's on a game that no longer exists
 	if (!game) return client.updateState(ws, undefined);
 
 	game.subscribers.push(ws);

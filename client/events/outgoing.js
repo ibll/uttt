@@ -19,4 +19,5 @@ server.place = function(game_id, cell_id) {
 }
 
 export default server;
-window.server = server;
+
+if (window) window.server = server;
