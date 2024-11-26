@@ -134,7 +134,7 @@ export function place(cell_layer, cell_number, player, moves) {
 			if(player === 1) piece_marker = 'nought'
 			cell.innerHTML = icons[piece_marker];
 		} else if (cell_layer < board_depth) {
-			let colour = '--grey';
+			let colour = '--yellow';
 			if (player === 0) colour = '--red';
 			if (player === 1) colour = '--blue';
 

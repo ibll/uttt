@@ -21,6 +21,8 @@
 	--blue-trans: #7287fd80;
 	--red: #dd7878;
 	--red-trans: #dd787880;
+	--yellow: #df8e1d;
+	--yellow-trans: #df8e1d80;
 	--grey: #acb0be;
 	--grey-trans: #acb0be80;
 
@@ -55,6 +57,8 @@
 		--blue-trans: #89b4fa80;
 		--red: #f38ba8;
 		--red-trans: #f38ba880;
+		--yellow: #f9e2af;
+		--yellow-trans: #f9e2af80;
 		--grey: #585b70;
 		--grey-trans: #585b7080;
 	}

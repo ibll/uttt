@@ -13,7 +13,7 @@ icons.nought = `
 `
 icons.dash = `
 	<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<rect x="5" y="109" width="18" height="190" rx="9" transform="rotate(-90 5 109)" fill="var(--grey)"/>
+		<rect x="5" y="109" width="18" height="190" rx="9" transform="rotate(-90 5 109)" fill="var(--yellow)"/>
 	</svg>
 `
 icons.both = `
