@@ -183,6 +183,8 @@ a {
 }
 
 .button-panel {
+	touch-action: pan-x pan-y;
+
 	height: 4rem;
 	width: 100%;
 	max-width: 20rem;
@@ -344,6 +346,7 @@ input:focus, button:focus {
 
 button.status-block {
 	border-color: var(--highlight-trans);
+	font-size: 0.8rem;
 
 	&:hover {
 		border-color: var(--border-trans);
@@ -601,12 +604,8 @@ button.status-block {
 		flex-direction: column;
 	}
 
-	. {
-		width: 100%;
-		max-width: 100%;
-		height: 3rem;
-		align-items: flex-start;
-		justify-content: flex-start;
+	button.status-block p {
+		font-size: 1rem;
 	}
 
 	#start {
