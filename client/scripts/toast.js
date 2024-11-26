@@ -111,3 +111,4 @@ function glitchOutStep(stages, stage, timeout) {
 }
 
 export default toast_API;
+window.toast = toast_API;
