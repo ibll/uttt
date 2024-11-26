@@ -32,7 +32,7 @@ the cells! And, just like in normal Tic-Tac-Toe, your goal is to get a 3-in-a-ro
 Each player can only directly place into the smallest level cells, and earn the higher-level boards by winning them!
 Easy, right?
 
-But there is one catch! When you make a move, your opponent is sent to another board relatively to where you placed your
+There is one catch! When you make a move, your opponent is sent to another board relatively to where you placed your
 piece.
 
 In the example below, X played her first move in the bottom-left of a mini-board. O's next turn is then restricted to
@@ -73,4 +73,19 @@ in the right-centre board until another board is won.
     <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-3-dark.gif">
     <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-3-light.gif">
     <img alt="A gif demonstrating multi-level sending." src="client/assets/tutorial-3-light.gif" width="400">
+</picture>
+
+## Endless Mode
+
+If you're feeling particularly masochistic, you can start an endless game! There are no winners, only losers. The game begins
+with a classic 3x3 Tic-Tac-Toe game.  When won, this board is shrunken down to one ninth of the next layer. This happens
+until the game is unplayably small, your browser crashes, or somebody quits.
+
+Notice that the previous board shrinks to the **last cell** that was won. In the example below, X plays in the **middle right** cell.
+That board then becomes the **middle right** sub-board.
+
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-4-dark.gif">
+    <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-4-light.gif">
+    <img alt="A gif demonstrating endless mode." src="client/assets/tutorial-4-light.gif" width="400">
 </picture>
