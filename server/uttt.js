@@ -40,7 +40,7 @@ export function join(ws, game_id, automatic) {
 	}
 
 	game.subscribers.push(ws);
-	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.getNextActivePlayer(), game.moves, game.start_time, game.end_time);
+	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.getNextActivePlayer(), game.moves, game.start_time, game.end_time, game.endless);
 }
 
 export class Game {
@@ -55,6 +55,13 @@ export class Game {
 		this.end_time = undefined;
 		this.players = [];
 		this.subscribers = [];
+		this.last_cell = undefined;
+		this.endless = false;
+
+		if (size === 0) {
+			this.board_depth = 1;
+			this.endless = true;
+		}
 
 		console.log(`Creating game ${game_id} with size ${size}`);
 
@@ -124,6 +131,10 @@ export class Game {
 		this.board_state[cell_layer][cell_number] = connection_id ? this.active_player : null;
 		// console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
 
+		if (cell_layer === 0) {
+			this.last_cell = cell_number;
+		}
+
 		if (cell_layer === 0) this.moves++;
 
 		const player = connection_id ? this.active_player : null;
@@ -152,10 +163,19 @@ export class Game {
 			// Don't set an active grid if the game is over
 			if (grid_layer >= this.board_depth) {
 				const winner_piece = ws?.connection_id !== undefined ? player_pieces[winner] : null;
-				console.log(`${winner_piece} won game ${this.game_id}`);
 
-				this.end_time = Date.now();
-				this.active_grids = {};
+				if (this.endless) {
+					console.log(`${winner_piece} won layer ${this.board_depth} in endless game ${this.game_id}`);
+					this.active_player = 1 - this.active_player;
+					this.expand();
+
+				} else {
+					console.log(`${winner_piece} won game ${this.game_id}`);
+					this.active_grids = {};
+					this.end_time = Date.now();
+					const already_set_active = true;
+					return already_set_active;
+				}
 
 				const already_set_active = true;
 				return already_set_active
@@ -253,5 +273,35 @@ export class Game {
 	checkWhoWonLine(c0, c1, c2) {
 		if (c0 === c1 && c1 === c2 && c0 !== undefined) return c0;
 		return undefined;
+	}
+
+	expand() {
+		const new_board_depth = this.board_depth + 1;
+		const new_board_state = {};
+		const new_active_grids = {};
+		new_active_grids[new_board_depth] = { 0: true };
+
+		let sub_cell_shift = this.last_cell;
+		while (sub_cell_shift >= 9) {
+			sub_cell_shift = Math.floor(sub_cell_shift / 9);
+		}
+
+		for (const cl in this.board_state) {
+			const cell_layer = parseInt(cl);
+			new_board_state[cell_layer] = {};
+			const cell_layer_size = Math.pow(9, this.board_depth - cell_layer);
+
+			for (const cn in this.board_state[cell_layer]) {
+				const cell_number = parseInt(cn);
+				new_board_state[cell_layer][cell_number + cell_layer_size * sub_cell_shift] = this.board_state[cell_layer][cell_number];
+			}
+		}
+
+		this.board_depth = new_board_depth
+		this.board_state = new_board_state;
+		this.active_grids = new_active_grids;
+		this.subscribers.forEach(ws => {
+			client.updateState(ws, this.game_id, this.board_depth, this.board_state, this.active_grids, this.getClientPiece(ws), this.getNextActivePlayer(), this.moves, this.start_time, this.end_time, this.endless);
+		});
 	}
 }

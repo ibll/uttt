@@ -12,6 +12,7 @@ let cell_count = {};
 let moves;
 let start_time;
 let end_time;
+let endless;
 let won = false;
 
 let timeInterval;
@@ -26,18 +27,21 @@ export function updateState(payload) {
 		return;
 	}
 
-	game_id = payload.game_id;
+	if (game_id !== payload.game_id) {
+		game_id = payload.game_id;
+		status.display(`Joined game ${game_id}`)
+		window.location.hash = game_id;
+	}
+
 	board_depth = payload.board_depth;
 	board_state = payload.board_state;
 	active_grids = payload.active_grids;
 	moves = payload.moves;
 	start_time = payload.start_time;
 	end_time = payload.end_time;
+	endless = payload.endless;
 
 	cell_count = {};
-
-	status.display(`Joined game ${game_id}`)
-	window.location.hash = game_id;
 
 	addLeaveButton();
 	statusBarSetGameInfo();
@@ -153,7 +157,7 @@ export function place(cell_layer, cell_number, player, moves) {
 		if (!end_time) end_time = Date.now();
 
 		if (player == null) status.display('Draw!', Infinity);
-		else status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
+		else if (!endless) status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
 	}
 
 }
