@@ -162,7 +162,7 @@ function statusBarSetMyLinks() {
 function statusBarSetChooseSize() {
 	status_bar.reset();
 	status_bar.setActive(true);
-	status_bar.addBlock('', 'classic', '1 layer', server.start, 1);
 	status_bar.addBlock('', 'ultimate', '2 layers', server.start, 2);
 	status_bar.addBlock('', 'nightmare', '3 layers', server.start, 3);
+	status_bar.addBlock('', 'endless', 'good luck', server.start, 0);
 }
