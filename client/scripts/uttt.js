@@ -156,8 +156,9 @@ export function place(cell_layer, cell_number, player, moves) {
 
 		if (!end_time) end_time = Date.now();
 
+		if (endless) return;
 		if (player == null) status.display('Draw!', Infinity);
-		else if (!endless) status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
+		else  status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
 	}
 
 }

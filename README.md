@@ -14,6 +14,10 @@ the same fashion, but can get more tedious than they are fun. I created this bec
 deeper than 2 layers, and it gets hard to keep track of where to play next
 when [playing it on a whiteboard](client/assets/whiteboard.jpeg)!
 
+# UI Showcase
+
+<img alt="An image showing different screenshots of the game." src="client/assets/ui-showcase.png">
+
 # Installation and Running
 
 - Ensure you have [Node.js](https://nodejs.org/) installed on your machine!
