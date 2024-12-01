@@ -331,6 +331,7 @@ input:focus, button:focus {
 .status-block {
 	width: 100%;
 	margin: 4px;
+	padding: 0;
 	box-sizing: border-box;
 
 	display: flex;
