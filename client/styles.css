@@ -215,6 +215,10 @@ input {
 	height: 100%;
 
 	transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+
+	&:hover {
+		border: solid 2px var(--rosewater-trans) !important;
+	}
 }
 
 button {

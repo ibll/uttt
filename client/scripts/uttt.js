@@ -74,10 +74,6 @@ export function createBoard(depth) {
 
 	console.log(`Creating board of size ${depth}`);
 	createBoardInCell(board, depth, depth);
-
-	board.querySelectorAll('.cell').forEach(cell => {
-		cell.addEventListener('click', () => server.place(game_id, cell.id))
-	})
 }
 
 function createBoardInCell(outerCell, layer, depth) {
@@ -90,7 +86,13 @@ function createBoardInCell(outerCell, layer, depth) {
 			cell.id = `cell.${layer - 1}.${cell_count[layer]++}`;
 
 			cell.classList.add('grid');
-			if (layer === 1) cell.classList.add('cell');
+			if (layer === 1) {
+				cell.classList.add('cell');
+				cell.onclick = () => server.place(game_id, cell.id);
+				cell.onkeydown = (e) => {
+					if (e.key === 'Enter' || e.key === ' ') server.place(game_id, cell.id);
+				}
+			}
 
 			cell.style.borderWidth = layer / 2 + 'px';
 			cell.style.setProperty('--overlay-radius', `${layer*2}px`);
@@ -164,8 +166,11 @@ export function place(cell_layer, cell_number, player, moves) {
 }
 
 export function setActiveGrids(active_grids, next_player_id) {
-	document.querySelectorAll('.grid').forEach(cell => {
-		cell.classList.remove('active');
+	document.querySelectorAll('.grid.active').forEach(grid => {
+		grid.querySelectorAll('.cell').forEach(cell => {
+			cell.tabIndex = -1;
+		})
+		grid.classList.remove('active');
 	})
 
 	if (!active_grids) return;
@@ -186,8 +191,13 @@ export function setActiveGrids(active_grids, next_player_id) {
 
 function makeGridActive(level, grid_num) {
 	if (level === 1) {
-		const cell = document.getElementById(`cell.${level}.${grid_num}`);
-		if (cell) cell.classList.add('active');
+	console.log('activing...')
+		const grid = document.getElementById(`cell.${level}.${grid_num}`) || document.getElementById('board');
+		if (!grid) return;
+		grid.querySelectorAll('.cell:not(.played)').forEach(cell => {
+			cell.tabIndex = 0;
+		});
+		grid.classList.add('active');
 		return;
 	}
 
