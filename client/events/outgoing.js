@@ -10,7 +10,7 @@ server.start = function(size) {
 }
 
 server.join = function(game_id, automatic) {
-	console.log('Requesting to join game', game_id);
+	console.log(`Requesting to join game ${game_id}`);
 	sendToServer({type: "join", game_id, automatic});
 }
 
