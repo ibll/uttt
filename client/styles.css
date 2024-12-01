@@ -279,6 +279,7 @@ button.square {
 
 .button-panel *:not(.right) {
 	border-right: none;
+	padding-right: 2px;
 }
 
 .button-panel .right {
@@ -291,6 +292,7 @@ input:focus, button:focus {
 	border: 2px solid var(--highlight) !important;
 
 	&:not(.right) {
+		padding-right: 0;
 		border-right: 2px solid var(--highlight);
 	}
 }
