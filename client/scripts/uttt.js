@@ -60,6 +60,7 @@ export function updateState(payload) {
 }
 
 export function setPiece(piece) {
+	if (!piece) return;
 	document.getElementById('piece-marker').innerHTML = piece ? icons[piece] : '';
 	adjustTitleText();
 }
