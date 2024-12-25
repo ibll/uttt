@@ -40,6 +40,11 @@ export default function loadStatic(req, res) {
 			output = output.replace(
 				'<meta property="og:image" content="./assets/og-image.png"/>',
 				`<meta property="og:image" content="https://${domain}/assets/og-image.png"/>`
+			)
+
+			output = output.replace(
+				'<meta property="twitter:card" content="./assets/og-image.png"/>',
+				`<meta property="twitter:card" content="https://${domain}/assets/og-image.png"/>`
 			);
 		}
 
