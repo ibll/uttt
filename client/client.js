@@ -38,7 +38,8 @@ window.addEventListener('hashchange', function() {
 });
 
 function connect() {
-	ws = new WebSocket(`wss://${host}:${port}`);
+	if (location.protocol === 'https:') ws = new WebSocket(`wss://${host}:${port}`);
+	else if (location.protocol === 'http:') ws = new WebSocket(`ws://${host}:${port}`);
 
 	ws.onopen = () => {
 		status.display("Connected to server!");
