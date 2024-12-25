@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import mime from 'mime';
 import url from 'url';
-import games from './uttt.js';
+import { games } from './uttt.js';
 
 const __dirname = import.meta.dirname;
 const client_dir = path.resolve(__dirname, '../client');
