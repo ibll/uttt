@@ -166,9 +166,8 @@ export class Game {
 
 				if (this.endless) {
 					console.log(`${winner_piece} won layer ${this.board_depth} in endless game ${this.game_id}`);
-					this.active_player = 1 - this.active_player;
 					this.expand();
-
+					already_set_active = true;
 				} else {
 					console.log(`${winner_piece} won game ${this.game_id}`);
 					this.active_grids = {};
@@ -176,9 +175,6 @@ export class Game {
 					const already_set_active = true;
 					return already_set_active;
 				}
-
-				const already_set_active = true;
-				return already_set_active
 			}
 		}
 
@@ -195,6 +191,7 @@ export class Game {
 				client.setActiveGrid(subscriber, this.active_grids, this.getNextActivePlayer());
 			});
 		}
+
 		return already_set_active;
 	}
 
