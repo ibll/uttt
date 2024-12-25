@@ -51,9 +51,9 @@ only being within the bottom-left board!
 This means that the most important aspect of your turn might not be where your piece goes, but where your opponent can
 go next!
 
-One thing to note for Ultimate Tic-Tac-Toe, sending your opponent to a board that's already been claimed lets them go
-anywhere in the next level above that board! This makes games end much faster than they start, as it gets harder and
-harder to avoid giving your opponent the opportunity to go anywhere they'd like!
+One last thing for Ultimate Tic-Tac-Toe: sending your opponent to a board that's already been claimed lets them go
+anywhere! This makes games end much faster than they start, as it gets harder and harder to avoid giving your opponent
+the opportunity to go anywhere they'd like!
 
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-2-dark.gif">
