@@ -29,13 +29,15 @@ export default function loadStatic(req, res) {
 
 		let output = content;
 
-		if (parsed_url.pathname === '/' && games.hasOwnProperty(parsed_url.query['room'])) {
+		if (parsed_url.pathname === '/') {
 			output = output.toString();
 
-			output = output.replace(
-				'<meta property="og:title" content="Ultimate Tic-Tac-Toe"/>',
-				`<meta property="og:title" content="${parsed_url.query['room'] ? `Join room '${parsed_url.query['room']}' in Ultimate Tic-Tac-Toe!` : 'Ultimate Tic-Tac-Toe'}"/>`
-			);
+			if (games.hasOwnProperty(parsed_url.query['room'])) {
+				output = output.replace(
+					'<meta property="og:title" content="Ultimate Tic-Tac-Toe"/>',
+					`<meta property="og:title" content="${parsed_url.query['room'] ? `Join room '${parsed_url.query['room']}' in Ultimate Tic-Tac-Toe!` : 'Ultimate Tic-Tac-Toe'}"/>`
+				);
+			}
 
 			output = output.replace(
 				'<meta property="og:image" content="./assets/og-image.png"/>',
