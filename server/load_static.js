@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import mime from 'mime';
 import url from 'url';
+import { domain } from '../index.js';
 import { games } from './uttt.js';
 
 const __dirname = import.meta.dirname;
@@ -28,11 +29,17 @@ export default function loadStatic(req, res) {
 
 		let output = content;
 
-		console.log(filePath)
 		if (parsed_url.pathname === '/' && games.hasOwnProperty(parsed_url.query['room'])) {
-			output = content.toString().replace(
+			output = output.toString();
+
+			output = output.replace(
 				'<meta property="og:title" content="Ultimate Tic-Tac-Toe"/>',
 				`<meta property="og:title" content="${parsed_url.query['room'] ? `Join room '${parsed_url.query['room']}' in Ultimate Tic-Tac-Toe!` : 'Ultimate Tic-Tac-Toe'}"/>`
+			);
+
+			output = output.replace(
+				'<meta property="og:image" content="./assets/og-image.png"/>',
+				`<meta property="og:image" content="https://${domain}/assets/og-image.png"/>`
 			);
 		}
 

@@ -5,7 +5,7 @@ import loadStatic  from "./server/load_static.js";
 import {createWSS} from "./server/wss.js";
 
 const cert_dir = `/etc/letsencrypt/live`;
-const domain = `uttt.ibll.dev`;
+export const domain = `uttt.ibll.dev`;
 let options;
 
 try {
