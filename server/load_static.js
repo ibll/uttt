@@ -1,12 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import mime from 'mime';
+import url from 'url';
 
 const __dirname = import.meta.dirname;
 const client_dir = path.resolve(__dirname, '../client');
 
 export default function loadStatic(req, res) {
-	const filePath = path.join(client_dir, req.url === '/' ? 'index.html' : req.url);
+	const parsed_url = url.parse(req.url, true);
+	const filePath = path.join(client_dir, parsed_url.pathname === '/' ? 'index.html' : parsed_url.pathname);
 	let contentType = mime.getType(filePath) || 'text/html';
 
 	fs.readFile(filePath, (err, content) => {
@@ -17,9 +19,22 @@ export default function loadStatic(req, res) {
 				res.writeHead(statusCode, { 'Content-Type': 'text/html' });
 				res.end(errorContent || `Server Error: ${err.code}`, 'utf-8');
 			});
-		} else {
-			res.writeHead(200, { 'Content-Type': contentType });
-			res.end(content, 'utf-8');
+
+			return;
 		}
+
+		res.writeHead(200, { 'Content-Type': contentType });
+
+		let output = content;
+
+		console.log(filePath)
+		if (parsed_url.pathname === '/') {
+			output = content.toString().replace(
+				'<meta property="og:title" content="Ultimate Tic-Tac-Toe"/>',
+				`<meta property="og:title" content="${parsed_url.query['room'] ? `Join room ${parsed_url.query['room']} in Ultimate Tic-Tac-Toe!` : 'Ultimate Tic-Tac-Toe'}"/>`
+			);
+		}
+
+		res.end(output, 'utf-8');
 	});
 }

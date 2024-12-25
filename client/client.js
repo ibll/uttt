@@ -31,10 +31,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // Websocket
 
-window.addEventListener('hashchange', function() {
-	if (!window.location.hash) return;
-	const hash = window.location.hash.substring(1);
-	if (hash && hash !== game_id ) server.join(hash);
+window.addEventListener('popstate', function() {
+	const urlParams = new URLSearchParams(window.location.search);
+	const game_id = urlParams.get('room');
+	
+	if (!game_id) return;
+	if (game_id && game_id !== game_id ) server.join(game_id);
 });
 
 function connect() {
@@ -61,7 +63,8 @@ function connect() {
 
 			console.log('Client being prepared...')
 
-			let game_id = window.location.hash.substring(1);
+			const urlParams = new URLSearchParams(window.location.search);
+			let game_id = urlParams.get('room')
 			if (game_id) server.join(game_id, true);
 
 			return

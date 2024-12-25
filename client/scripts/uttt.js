@@ -21,16 +21,24 @@ window.getBoardState = () => board_state;
 
 export function updateState(payload) {
 	// Server said game doesn't exist anymore, exit lobby
-	if (!payload.game_id && window.location.hash) {
-		window.location.hash = '';
-		window.location.href = '/';
+	const urlParams = new URLSearchParams(window.location.search);
+	const room_param = urlParams.get('room');
+	if (!payload.game_id && room_param) {
+
+		const url = new URL(window.location);
+		url.searchParams.delete('room');
+		history.pushState({}, '', url);
+
 		return;
 	}
 
 	if (game_id !== payload.game_id) {
 		game_id = payload.game_id;
 		status.display(`Joined game ${game_id}`)
-		window.location.hash = game_id;
+
+		const url = new URL(window.location);
+		url.searchParams.set('room', game_id);
+		history.pushState({}, '', url);
 	}
 
 	board_depth = payload.board_depth;
