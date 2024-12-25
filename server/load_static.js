@@ -29,7 +29,7 @@ export default function loadStatic(req, res) {
 		let output = content;
 
 		console.log(filePath)
-		if (parsed_url.pathname === '/' && games.contains(parsed_url.query['room'])) {
+		if (parsed_url.pathname === '/' && games.hasOwnProperty(parsed_url.query['room'])) {
 			output = content.toString().replace(
 				'<meta property="og:title" content="Ultimate Tic-Tac-Toe"/>',
 				`<meta property="og:title" content="${parsed_url.query['room'] ? `Join room '${parsed_url.query['room']}' in Ultimate Tic-Tac-Toe!` : 'Ultimate Tic-Tac-Toe'}"/>`
