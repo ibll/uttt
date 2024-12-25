@@ -605,6 +605,7 @@ button.status-block {
 	}
 
 	#status-bar {
+		box-shadow: none;
 		width: 100%;
 		min-width: fit-content;
 		max-width: 30rem;
