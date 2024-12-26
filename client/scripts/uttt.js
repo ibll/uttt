@@ -78,6 +78,7 @@ export function createBoard(depth) {
 	board.classList.add('grid');
 	board.classList.remove('played');
 	board.innerHTML = '';
+	won = false;
 
 	if (!board_depth) return;
 
@@ -185,6 +186,7 @@ export function setActiveGrids(active_grids, next_player_id) {
 	if (!active_grids) return;
 
 	if (!won) {
+		console.log(`connection id: ${connection_id}, next player id: ${next_player_id}`)
 		if (next_player_id === connection_id && next_player_id !== undefined)
 			status.display("Your turn!", Infinity, true);
 		else if (next_player_id !== null)
@@ -200,7 +202,6 @@ export function setActiveGrids(active_grids, next_player_id) {
 
 function makeGridActive(level, grid_num) {
 	if (level === 1) {
-	console.log('activing...')
 		const grid = document.getElementById(`cell.${level}.${grid_num}`) || document.getElementById('board');
 		if (!grid) return;
 		grid.querySelectorAll('.cell:not(.played)').forEach(cell => {
