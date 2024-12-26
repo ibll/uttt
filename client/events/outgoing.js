@@ -1,8 +1,24 @@
-import { ws } from "../client.js";
+import {prepared, ws} from "../client.js";
 const server = {};
 
+const message_queue = [];
+
 function sendToServer(message) {
-	ws.send(JSON.stringify(message));
+	if (prepared) {
+		console.log('sending', message.type);
+		ws.send(JSON.stringify(message));
+	} else {
+		console.log("Connection not open, adding to queue");
+		message_queue.push(message);
+	}
+}
+
+server.process_message_queue = function() {
+	console.log("Processing message queue");
+	while (message_queue.length > 0) {
+		const message = message_queue.shift();
+		sendToServer(message);
+	}
 }
 
 server.start = function(size) {

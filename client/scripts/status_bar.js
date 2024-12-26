@@ -44,3 +44,4 @@ status_bar_API.updateBlock = (id, value) => {
 }
 
 export default status_bar_API;
+window.status_bar = status_bar_API;

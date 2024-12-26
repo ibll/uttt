@@ -3,6 +3,7 @@ import status from './scripts/toast.js'
 import Cookie from './modules/js.cookie.mjs';
 import {game_id, statusBarSetGameInfo} from "./scripts/uttt.js";
 import status_bar from "./scripts/status_bar.js";
+import Cookies from "./modules/js.cookie.mjs";
 
 const host = window.location.hostname;
 const port = window.location.port;
@@ -13,6 +14,7 @@ let client_events_path = '';
 export let ws;
 let ws_opened = false;
 
+export let prepared = false;
 
 export let connection_id = Cookie.get('connection_id');
 export function setConnectionID(new_connection_id) {
@@ -50,22 +52,31 @@ function connect() {
 	ws.onclose = () => {
 		if (ws_opened) status.display("Disconnected from server!", 5000);
 		ws_opened = false;
+		prepared = false;
 	}
 
-	ws.onmessage = (event) => {
+	ws.onmessage = async (event) => {
 		let payload = {};
-		try { payload = JSON.parse(event.data);}
-		catch { console.error('Invalid JSON:', event.data); }
+		try {
+			payload = JSON.parse(event.data);
+		} catch {
+			console.error('Invalid JSON:', event.data);
+		}
 
 		if (payload.type === 'prepare_client') {
 			client_events = payload.client_events;
 			client_events_path = payload.client_events_path;
 
-			console.log('Client being prepared...')
+			Cookies.set('connection_id', payload.connection_id, {expires: 7});
+			setConnectionID(payload.connection_id);
+			console.log('Connecting with id ', payload.connection_id)
 
 			const urlParams = new URLSearchParams(window.location.search);
 			let game_id = urlParams.get('room')
 			if (game_id) server.join(game_id, true);
+
+			prepared = true;
+			server.process_message_queue();
 
 			return
 		}

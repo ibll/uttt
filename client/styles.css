@@ -390,7 +390,6 @@ button.status-block {
 
 /*board in tutorial mode*/
 #board:not(.grid) {
-	width: auto;
 	max-height: 98vmin;
 	aspect-ratio: 1 / 1;
 
@@ -399,9 +398,9 @@ button.status-block {
 	align-items: center;
 }
 
-/* * * * * * * * */
+/* * * * * **/
 /* TUTORIAL */
-/* * * * * * * * */
+/** * * * * */
 
 #how-to-play {
 	display: flex;

@@ -30,7 +30,7 @@ function createGameID(length) {
 }
 
 export function join(ws, game_id, automatic) {
-	game_id = game_id.replace('#', '').trim().toLowerCase();
+	game_id = game_id.trim().toLowerCase();
 	const game = games[game_id];
 
 	// Reset client if it's automatically on a game that no longer exists
@@ -40,7 +40,7 @@ export function join(ws, game_id, automatic) {
 	}
 
 	game.subscribers.push(ws);
-	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.getNextActivePlayer(), game.moves, game.start_time, game.end_time, game.endless);
+	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.active_player === 0 ? 'cross' : 'nought', game.moves, game.start_time, game.end_time, game.endless);
 }
 
 export class Game {
@@ -51,6 +51,7 @@ export class Game {
 		this.active_grids = {};
 		this.active_player = 0;
 		this.moves = 0;
+		this.queued_pieces = [];
 		this.start_time = undefined;
 		this.end_time = undefined;
 		this.players = [];
@@ -137,10 +138,8 @@ export class Game {
 
 		if (cell_layer === 0) this.moves++;
 
-		const player = connection_id ? this.active_player : null;
-		this.subscribers.forEach(subscriber => {
-			client.place(subscriber, cell_layer, cell_number, player, this.moves);
-		});
+		const piece = connection_id ? this.active_player : null;
+		this.queued_pieces.push({ cell_layer, cell_number, piece });
 
 		// Win the grid if necessary
 		let already_set_active = false;
@@ -184,12 +183,13 @@ export class Game {
 			already_set_active = true;
 		}
 
-		// Switch active player
+		// Switch active player and update clients
 		if (cell_layer === 0) {
 			this.active_player = 1 - this.active_player;
 			this.subscribers.forEach(subscriber => {
-				client.setActiveGrid(subscriber, this.active_grids, this.getNextActivePlayer());
+				client.pieceUpdate(subscriber, this.queued_pieces, this.active_grids, this.active_player === 0 ? 'cross' : 'nought', this.moves);
 			});
+			this.queued_pieces = [];
 		}
 
 		return already_set_active;
@@ -298,7 +298,7 @@ export class Game {
 		this.board_state = new_board_state;
 		this.active_grids = new_active_grids;
 		this.subscribers.forEach(ws => {
-			client.updateState(ws, this.game_id, this.board_depth, this.board_state, this.active_grids, this.getClientPiece(ws), this.getNextActivePlayer(), this.moves, this.start_time, this.end_time, this.endless);
+			client.updateState(ws, this.game_id, this.board_depth, this.board_state, this.active_grids, this.getClientPiece(ws), this.active_player === 0 ? 'cross' : 'nought', this.moves, this.start_time, this.end_time, this.endless);
 		});
 	}
 }

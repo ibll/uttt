@@ -1,7 +1,7 @@
 import server from '../events/outgoing.js';
 import status from "./toast.js";
 import {icons} from "../assets/icons.js";
-import {addLeaveButton, adjustTitleText, connection_id, resetStartButton} from "../client.js";
+import {addLeaveButton, adjustTitleText, resetStartButton} from "../client.js";
 import status_bar from "./status_bar.js";
 
 export let game_id;
@@ -14,20 +14,24 @@ let start_time;
 let end_time;
 let endless;
 let won = false;
+let my_piece;
 
-let timeInterval;
+let time_interval;
 
 window.getBoardState = () => board_state;
 
 export function updateState(payload) {
-	// Server said game doesn't exist anymore, exit lobby
 	const urlParams = new URLSearchParams(window.location.search);
 	const room_param = urlParams.get('room');
+
+	// Server said game doesn't exist anymore, exit lobby
+
 	if (!payload.game_id && room_param) {
+		console.log('Game no longer exists, exiting lobby');
 
 		const url = new URL(window.location);
 		url.searchParams.delete('room');
-		history.pushState({}, '', url);
+		window.location.href = url.toString();
 
 		return;
 	}
@@ -53,6 +57,7 @@ export function updateState(payload) {
 
 	addLeaveButton();
 	statusBarSetGameInfo();
+	setPiece(payload.client_piece)
 
 	createBoard(board_depth);
 
@@ -64,10 +69,10 @@ export function updateState(payload) {
 	}
 
 	setActiveGrids(active_grids, payload.next_player_id);
-	setPiece(payload.client_piece)
 }
 
 export function setPiece(piece) {
+	my_piece = piece;
 	if (!piece) return;
 	document.getElementById('piece-marker').innerHTML = piece ? icons[piece] : '';
 	adjustTitleText();
@@ -175,7 +180,12 @@ export function place(cell_layer, cell_number, player, moves) {
 
 }
 
-export function setActiveGrids(active_grids, next_player_id) {
+export function setMoves(new_moves) {
+	moves = new_moves;
+	status_bar.updateBlock('move', moves);
+}
+
+export function setActiveGrids(active_grids, next_piece) {
 	document.querySelectorAll('.grid.active').forEach(grid => {
 		grid.querySelectorAll('.cell').forEach(cell => {
 			cell.tabIndex = -1;
@@ -186,10 +196,9 @@ export function setActiveGrids(active_grids, next_player_id) {
 	if (!active_grids) return;
 
 	if (!won) {
-		console.log(`connection id: ${connection_id}, next player id: ${next_player_id}`)
-		if (next_player_id === connection_id && next_player_id !== undefined)
+		if (next_piece === my_piece && next_piece !== undefined)
 			status.display("Your turn!", Infinity, true);
-		else if (next_player_id !== null)
+		else if (next_piece !== null)
 			status.display('', Infinity, true);
 	}
 
@@ -230,7 +239,7 @@ export function statusBarSetGameInfo() {
 	status_bar.addBlock('time', 'time', '00:00:00');
 
 	updateTime();
-	if (!end_time) timeInterval = setInterval(updateTime, 1000)
+	if (!end_time) time_interval = setInterval(updateTime, 1000)
 }
 
 function updateTime() {
@@ -241,7 +250,7 @@ function updateTime() {
 	else elapsedTime = Date.now() - start_time;
 
 	status_bar.updateBlock('time', getTimeString(elapsedTime));
-	if (end_time) return clearInterval(timeInterval);
+	if (end_time) return clearInterval(time_interval);
 }
 
 function getTimeString(interval) {
