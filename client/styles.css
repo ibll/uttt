@@ -64,7 +64,9 @@
 
 html {
 	height: 100dvh;
+}
 
+* {
 	&::-webkit-scrollbar {
 		width: 0.5rem;
 		height: 0.5rem;
@@ -590,6 +592,12 @@ button.status-block {
 
 	#secondary-panel {
 		display: block;
+		overflow-y: scroll;
+		padding: 0;
+	}
+
+	#secondary-panel #how-to-play {
+		padding: 0 1rem 0 0;
 	}
 
 	#top-bar {

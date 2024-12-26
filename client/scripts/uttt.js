@@ -77,6 +77,11 @@ export function createBoard(depth) {
 	const board = document.getElementById('board');
 	board.classList.add('grid');
 	board.classList.remove('played');
+
+	const how_to_play = document.getElementById('how-to-play');
+	const secondary_panel = document.getElementById('secondary-panel');
+	if (how_to_play) secondary_panel.appendChild(how_to_play);
+
 	board.innerHTML = '';
 
 	if (!board_depth) return;
