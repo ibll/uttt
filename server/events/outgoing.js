@@ -20,14 +20,6 @@ client_API.registerPiece = function(ws, piece) {
 	sendToClient(ws, {type: "register_piece", piece});
 }
 
-client_API.place = function(ws, cell_layer, cell_number, player, moves) {
-	sendToClient(ws, {type: "place", cell_layer, cell_number, player, moves})
-}
-
-client_API.setActiveGrid = function(ws, active_grids, next_player_id) {
-	sendToClient(ws, {type: "set_active_grids", active_grids, next_player_id});
-}
-
 /**
  * @param ws {WebSocket} Connection to send message to
  * @param pieces {Array} Array of pieces
