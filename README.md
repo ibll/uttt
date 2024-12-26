@@ -1,4 +1,4 @@
-# Ultimate Tic-Tac-Toe
+# [Ultimate Tic-Tac-Toe](https://uttt.ibll.dev)
 
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="client/assets/preview-dark.png">
