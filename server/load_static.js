@@ -25,7 +25,13 @@ export default function loadStatic(req, res) {
 			return;
 		}
 
-		res.writeHead(200, { 'Content-Type': contentType });
+		const headers = { 'Content-Type': contentType };
+
+		if (contentType.startsWith('image/')) {
+			headers['Cache-Control'] = 'public, max-age=31536000';
+		}
+
+		res.writeHead(200, headers);
 
 		let output = content;
 
