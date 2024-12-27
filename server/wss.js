@@ -13,13 +13,8 @@ const ABSOLUTE_CLIENT_EVENTS_DIR = path.join(__dirname, '../client/', CLIENT_EVE
 const CLIENT_EVENTS = fetchEventsIn(ABSOLUTE_CLIENT_EVENTS_DIR);
 
 const connected_current = io.counter({
-	name: 'Connected Clients — Current',
+	name: 'Connected Clients',
 	id: 'app/connected_current'
-});
-
-const connected_unique = io.counter({
-	name: 'Connected Clients — Unique',
-	id: 'app/connected_unique',
 });
 
 export function createWSS(server) {
@@ -39,8 +34,6 @@ async function wssConnection(ws, response) {
 		ws.connection_id = value;
 	}
 	if (!ws.connection_id) {
-		connected_unique.inc();
-
 		const connection_id = uuidv4()
 		ws.connection_id = connection_id
 	}
