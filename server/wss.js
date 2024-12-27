@@ -1,8 +1,8 @@
+import io from "@pm2/io";
 import fs from "fs";
 import path from "path";
 import {v4 as uuidv4} from "uuid";
 import {WebSocketServer} from "ws";
-
 import clients from "./events/outgoing.js";
 
 const __dirname = import.meta.dirname;
@@ -12,6 +12,11 @@ const SERVER_EVENTS_DIR = './events/incoming';
 const ABSOLUTE_CLIENT_EVENTS_DIR = path.join(__dirname, '../client/', CLIENT_EVENTS_DIR);
 const CLIENT_EVENTS = fetchEventsIn(ABSOLUTE_CLIENT_EVENTS_DIR);
 
+const connected_clients = io.counter({
+	name: 'Connected Clients',
+	id: 'connected_clients'
+});
+
 export function createWSS(server) {
 	const wss = new WebSocketServer({ server });
 	wss.on('connection', wssConnection);
@@ -19,6 +24,8 @@ export function createWSS(server) {
 }
 
 async function wssConnection(ws, response) {
+	connected_clients.inc();
+
 	// Find or set a unique connection_id to the client.
 	const cookies = response.headers?.cookie?.split('; ');
 	const connection_cookie = cookies?.find(cookie => cookie.startsWith('connection_id='));
@@ -55,6 +62,11 @@ async function wssConnection(ws, response) {
 		} catch {
 			console.error(`Couldn't parse message:\n${data}`);
 		}
+	});
+
+	ws.on('close', () => {
+		// console.log(`Client disconnected: ${ws.connection_id}`);
+		connected_clients.dec();
 	});
 }
 

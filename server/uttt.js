@@ -1,9 +1,20 @@
 import client from './events/outgoing.js';
+import io from "@pm2/io";
 
 const player_pieces = {
 	0: 'X',
 	1: 'O'
 }
+
+const rooms_created = io.counter({
+	name: 'Rooms Created',
+	id: 'rooms_created'
+});
+
+const piece_placed = io.meter({
+	name: 'Piece Placed',
+	id: 'piece_placed'
+});
 
 export let games = {};
 
@@ -63,6 +74,8 @@ export class Game {
 			this.board_depth = 1;
 			this.endless = true;
 		}
+
+		rooms_created.inc();
 
 		console.log(`Creating game ${game_id} with size ${size}`);
 
@@ -131,6 +144,8 @@ export class Game {
 		if (!this.board_state[cell_layer]) this.board_state[cell_layer] = {};
 		this.board_state[cell_layer][cell_number] = connection_id ? this.active_player : null;
 		// console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
+
+		piece_placed.mark()
 
 		if (cell_layer === 0) {
 			this.last_cell = cell_number;
