@@ -12,9 +12,14 @@ const SERVER_EVENTS_DIR = './events/incoming';
 const ABSOLUTE_CLIENT_EVENTS_DIR = path.join(__dirname, '../client/', CLIENT_EVENTS_DIR);
 const CLIENT_EVENTS = fetchEventsIn(ABSOLUTE_CLIENT_EVENTS_DIR);
 
-const connected_clients = io.counter({
-	name: 'Connected Clients',
-	id: 'connected_clients'
+const connected_current = io.counter({
+	name: 'Connected Clients — Current',
+	id: 'connected_current'
+});
+
+const connected_unique = io.counter({
+	name: 'Connected Clients — Unique',
+	id: 'connected_unique',
 });
 
 export function createWSS(server) {
@@ -24,7 +29,7 @@ export function createWSS(server) {
 }
 
 async function wssConnection(ws, response) {
-	connected_clients.inc();
+	connected_current.inc();
 
 	// Find or set a unique connection_id to the client.
 	const cookies = response.headers?.cookie?.split('; ');
@@ -34,6 +39,8 @@ async function wssConnection(ws, response) {
 		ws.connection_id = value;
 	}
 	if (!ws.connection_id) {
+		connected_unique.inc();
+
 		const connection_id = uuidv4()
 		ws.connection_id = connection_id
 	}
@@ -66,7 +73,7 @@ async function wssConnection(ws, response) {
 
 	ws.on('close', () => {
 		// console.log(`Client disconnected: ${ws.connection_id}`);
-		connected_clients.dec();
+		connected_current.dec();
 	});
 }
 

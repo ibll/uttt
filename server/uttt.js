@@ -7,13 +7,27 @@ const player_pieces = {
 }
 
 const rooms_created = io.counter({
-	name: 'Rooms Created',
+	name: 'Rooms Created — Total',
 	id: 'rooms_created'
 });
 
+const rooms_created_hour = io.meter({
+	name: 'Rooms Created — Past Hour',
+	id: 'rooms_created',
+	timeframe: 3600,
+	samples: 3600
+});
+
 const pieces_placed = io.counter({
-	name: 'Pieces Placed',
+	name: 'Pieces Placed — Total',
 	id: 'piece_placed'
+});
+
+const pieces_placed_hour = io.meter({
+	name: 'Pieces Placed — Past Hour',
+	id: 'pieces_placed_hour',
+	timeframe: 3600,
+	samples: 3600
 });
 
 export let games = {};
@@ -76,6 +90,7 @@ export class Game {
 		}
 
 		rooms_created.inc();
+		rooms_created_hour.mark();
 
 		console.log(`Creating game ${game_id} with size ${size}`);
 
@@ -140,6 +155,7 @@ export class Game {
 		// console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
 
 		pieces_placed.inc()
+		pieces_placed_hour.mark()
 
 		if (cell_layer === 0) {
 			this.last_cell = cell_number;
