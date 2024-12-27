@@ -12,10 +12,10 @@ const rooms_created = io.counter({
 });
 
 const piece_placed = io.meter({
-	name: 'Pieces Placed / Min',
+	name: 'Piece Placed',
 	id: 'piece_placed',
 	unit: 'pieces/min',
-	samples: 1,
+	samples: 60,
 	timeframe: 60
 });
 
