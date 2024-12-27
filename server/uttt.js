@@ -11,12 +11,9 @@ const rooms_created = io.counter({
 	id: 'rooms_created'
 });
 
-const piece_placed = io.meter({
-	name: 'Piece Placed this hour',
-	id: 'piece_placed',
-	unit: 'pieces/min',
-	samples: 60,
-	timeframe: 3600
+const pieces_placed = io.counter({
+	name: 'Pieces Placed',
+	id: 'piece_placed'
 });
 
 export let games = {};
@@ -148,7 +145,7 @@ export class Game {
 		this.board_state[cell_layer][cell_number] = connection_id ? this.active_player : null;
 		// console.log(`${connection_id ? player_pieces[this.active_player] : null} placed at ${cell_layer}.${cell_number}`);
 
-		piece_placed.mark()
+		pieces_placed.inc()
 
 		if (cell_layer === 0) {
 			this.last_cell = cell_number;
