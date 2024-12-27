@@ -24,9 +24,9 @@ when [playing it on a whiteboard](client/assets/whiteboard.jpeg)!
 - Clone the repo and navigate to its directory
 - Run `npm install`
 - Run `npm start`
-- Open `http://localhost:3000` in your browser
-- To play with another device on the same network, find the local IP of the machine running the server and connect to it
-  on port 3000. (It should look something like `http://XXX.XXX.XXX.XXX:3000` in your browser)
+- Open `http://localhost` in your browser
+- To play with another device on the same network, find the local IP of the machine running the server and connect to
+- it. (It should look something like `http://XXX.XXX.XXX.XXX/` in your browser)
 
 # How to Play
 
