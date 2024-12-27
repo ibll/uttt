@@ -13,6 +13,8 @@ let client_events_path = '';
 
 export let ws;
 let ws_opened = false;
+let attempts = 0;
+let interval;
 
 export let prepared = false;
 
@@ -28,17 +30,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	status.display("Connecting to server...");
 	connect();
-	setInterval(tryConnect, 5000);
+	interval = setInterval(tryConnect, 1000);
 });
 
 // Websocket
 
 window.addEventListener('popstate', function() {
 	const urlParams = new URLSearchParams(window.location.search);
-	const game_id = urlParams.get('room');
-	
-	if (!game_id) return;
-	if (game_id && game_id !== game_id ) server.join(game_id);
+	const param_id = urlParams.get('room');
+
+	if (game_id && param_id) {
+		window.location.reload();
+	}
+	if (!param_id) return;
+	if (game_id && param_id !== game_id ) server.join(param_id);
 });
 
 function connect() {
@@ -91,8 +96,18 @@ function connect() {
 
 function tryConnect(){
 	if(!ws || ws.readyState === WebSocket.CLOSED) {
+		if (attempts > 10) {
+			clearInterval(interval);
+			interval = setInterval(tryConnect, 10000);
+		}
+		attempts++;
+
 		status.display("Trying to reconnect to server...", Infinity)
 		connect();
+
+	} else if (attempts > 0) {
+		clearInterval(interval);
+		interval = setInterval(tryConnect, 1000);
 	}
 }
 
