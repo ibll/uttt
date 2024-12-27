@@ -96,6 +96,7 @@ function connect() {
 
 function tryConnect(){
 	if(!ws || ws.readyState === WebSocket.CLOSED) {
+		console.log(attempts);
 		if (attempts > 10) {
 			clearInterval(interval);
 			interval = setInterval(tryConnect, 10000);
@@ -106,6 +107,7 @@ function tryConnect(){
 		connect();
 
 	} else if (attempts > 0) {
+		attempts = 0;
 		clearInterval(interval);
 		interval = setInterval(tryConnect, 1000);
 	}
