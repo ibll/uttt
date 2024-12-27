@@ -14,12 +14,12 @@ const CLIENT_EVENTS = fetchEventsIn(ABSOLUTE_CLIENT_EVENTS_DIR);
 
 const connected_current = io.counter({
 	name: 'Connected Clients — Current',
-	id: 'connected_current'
+	id: 'app/connected_current'
 });
 
 const connected_unique = io.counter({
 	name: 'Connected Clients — Unique',
-	id: 'connected_unique',
+	id: 'app/connected_unique',
 });
 
 export function createWSS(server) {

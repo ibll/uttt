@@ -8,24 +8,24 @@ const player_pieces = {
 
 const rooms_created = io.counter({
 	name: 'Rooms Created — Total',
-	id: 'rooms_created'
+	id: 'app/rooms_created'
 });
 
 const rooms_created_hour = io.meter({
 	name: 'Rooms Created — Past Hour',
-	id: 'rooms_created',
+	id: 'app/rooms_created_hour',
 	timeframe: 3600,
 	samples: 3600
 });
 
 const pieces_placed = io.counter({
 	name: 'Pieces Placed — Total',
-	id: 'piece_placed'
+	id: 'app/pieces_placed'
 });
 
 const pieces_placed_hour = io.meter({
 	name: 'Pieces Placed — Past Hour',
-	id: 'pieces_placed_hour',
+	id: 'app/pieces_placed_hour',
 	timeframe: 3600,
 	samples: 3600
 });
