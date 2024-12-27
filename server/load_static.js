@@ -27,7 +27,9 @@ export default function loadStatic(req, res) {
 
 		const headers = { 'Content-Type': contentType };
 
-		if (contentType.startsWith('image/')) {
+		const cache_types = ['image/', 'video/', 'audio/', 'font/'];
+
+		if (cache_types.some(type => contentType.startsWith(type))) {
 			headers['Cache-Control'] = 'public, max-age=31536000';
 		}
 

@@ -429,6 +429,11 @@ button.status-block {
 	max-width: 90%
 }
 
+#how-to-play video {
+	width: 20rem;
+	max-width: 90%
+}
+
 /*align pieces in cells*/
 .grid svg {
 	width: 100%;

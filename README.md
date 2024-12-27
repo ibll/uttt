@@ -43,9 +43,9 @@ In the example below, X played her first move in the bottom-left of a mini-board
 only being within the bottom-left board!
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-1-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-1-light.png">
-    <img alt="A tic-tac-toe board with tic-tac-toe boards in each cell. One of the mini-boards has an X in the bottom-left corner, and the entire bottom-left mini board is highlighted green." src="client/assets/tutorial-1-light.png" width="400">
+	<source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-1-dark.png">
+	<source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-1-light.png">
+	<img alt="A tic-tac-toe board with tic-tac-toe boards in each cell. One of the mini-boards has an X in the bottom-left corner, and the entire bottom-left mini board is highlighted green." src="client/assets/tutorial-1-light.png" width="400">
 </picture>
 
 This means that the most important aspect of your turn might not be where your piece goes, but where your opponent can
@@ -55,11 +55,10 @@ One last thing for Ultimate Tic-Tac-Toe: sending your opponent to a board that's
 anywhere! This makes games end much faster than they start, as it gets harder and harder to avoid giving your opponent
 the opportunity to go anywhere they'd like!
 
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-2-dark.gif">
-    <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-2-light.gif">
-    <img alt="A gif demonstrating that being sent to a claimed board lets you go anywhere." src="client/assets/tutorial-2-light.gif" width="400">
-</picture>
+<video autoplay loop muted playsinline title="A gif demonstrating that being sent to a claimed board lets you go anywhere.">
+	<source media="(prefers-color-scheme: dark)" src="client/assets/tutorial-2-dark.webm">
+	<source media="(prefers-color-scheme: light)" src="client/assets/tutorial-2-light.webm">
+</video>
 
 ## Ultimate ULTIMATE Tic-Tac-Toe
 
@@ -73,23 +72,21 @@ board by placing her piece in the **top-right** cell, we zoom out to the rest of
 Her opponent must then play in the **right-centre** UTTT board, in the **top-right** TTT board. Play would then continue
 in the right-centre board until another board is won.
 
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-3-dark.gif">
-    <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-3-light.gif">
-    <img alt="A gif demonstrating multi-level sending." src="client/assets/tutorial-3-light.gif" width="400">
-</picture>
+<video autoplay loop muted playsinline title="A video demonstrating multi-level sending.">
+	<source media="(prefers-color-scheme: dark)" src="client/assets/tutorial-3-dark.webm">
+	<source media="(prefers-color-scheme: light)" src="client/assets/tutorial-3-light.webm">
+</video>
 
 ## Endless Mode
 
-If you're feeling particularly masochistic, you can start an endless game! There are no winners, only losers. The game begins
-with a classic 3x3 Tic-Tac-Toe game.  When won, this board is shrunken down to one ninth of the next layer. This happens
-until the game is unplayably small, your browser crashes, or somebody quits.
+If you're feeling particularly masochistic, you can start an endless game! There are no winners, only losers. The game
+begins with a classic 3x3 Tic-Tac-Toe game. When won, this board is shrunken down to one ninth of the next layer. This
+happens until the game is unplayably small, your browser crashes, or somebody quits.
 
-Notice that the previous board shrinks to the **last cell** that was won. In the example below, X plays in the **middle right** cell.
-That board then becomes the **middle right** sub-board.
+Notice that the previous board shrinks to the **last cell** that was won. In the example below, X plays in the **middle
+right** cell. That board then becomes the **middle right** sub-board.
 
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="client/assets/tutorial-4-dark.gif">
-    <source media="(prefers-color-scheme: light)" srcset="client/assets/tutorial-4-light.gif">
-    <img alt="A gif demonstrating endless mode." src="client/assets/tutorial-4-light.gif" width="400">
-</picture>
+<video autoplay loop muted playsinline title="A video demonstrating endless mode.">
+	<source media="(prefers-color-scheme: dark)" src="client/assets/tutorial-4-dark.webm">
+	<source media="(prefers-color-scheme: light)" src="client/assets/tutorial-4-light.webm">
+</video>
