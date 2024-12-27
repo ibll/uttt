@@ -165,6 +165,12 @@ export class Game {
 
 				if (this.endless) {
 					console.log(`${winner_piece} won layer ${this.board_depth} in endless game ${this.game_id}`);
+
+					// Don't want to tell clients about any pieces to place,
+					// we're about to send them entirely new board information
+					// and could end up double-sending pieces
+					this.queued_pieces = [];
+
 					this.expand();
 					already_set_active = true;
 				} else {
