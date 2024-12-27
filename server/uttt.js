@@ -84,12 +84,6 @@ export class Game {
 		this.active_grids[this.board_depth][0] = true;
 	}
 
-	getNextActivePlayer() {
-		let player = this.players[this.active_player];
-		if (this.players[0] === this.players[1]) player = null;
-		return player;
-	}
-
 	getClientPiece(ws) {
 		const connection_id = ws.connection_id || null;
 		// If both this.players are on one device, indicate that
