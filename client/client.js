@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	statusBarSetMyLinks();
 
-	status.display("Connecting to server...");
 	connect();
 	interval = setInterval(tryConnect, 1000);
 });
@@ -51,7 +50,7 @@ function connect() {
 	else if (location.protocol === 'http:') ws = new WebSocket(`ws://${host}:${port}`);
 
 	ws.onopen = () => {
-		status.display("Connected to server!");
+		if (attempts > 0) status.display("Connected to server!");
 		ws_opened = true;
 	}
 	ws.onclose = () => {
