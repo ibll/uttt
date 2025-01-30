@@ -30,7 +30,7 @@ function createGameID(length) {
 }
 
 export function join(ws, game_id, automatic) {
-	game_id = game_id.trim().toLowerCase();
+	game_id = game_id?.trim().toLowerCase();
 	const game = games[game_id];
 
 	// Reset client if it's automatically on a game that no longer exists

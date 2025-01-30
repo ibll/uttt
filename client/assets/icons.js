@@ -24,3 +24,8 @@ icons.both = `
 		<circle cx="147.5" cy="147.5" r="34.5" stroke="var(--blue)" stroke-width="18"/>
 	</svg>
 `
+icons.heart = `
+	<svg fill="none" height="300" viewBox="0 0 300 300" width="300" xmlns="http://www.w3.org/2000/svg">
+		<path d="m141.295 121.107c-4.202 13.512-79.6576-100.2172-110.9516-15.202-31.29407 85.016 116.6416 158.208 120.6246 157.082s188.902-132.872 97.865-198.1819c-91.038-65.310002-103.336 42.7889-107.538 56.3019z" stroke="var(--red)" stroke-width="30"/>
+	</svg>
+`
