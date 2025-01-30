@@ -43,6 +43,16 @@ export function join(ws, game_id, automatic) {
 	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.active_player === 0 ? 'cross' : 'nought', game.moves, game.start_time, game.end_time, game.endless);
 }
 
+export function pruneOldGames() {
+	const now = Date.now();
+	const old_games = Object.keys(games).filter(game_id => games[game_id].last_interaction < now - 1000 * 60 * 60 * 36);
+	old_games.forEach(game_id => {
+		console.log(`Pruning game ${game_id}`);
+		delete games[game_id];
+	});
+	console.log(`Pruned ${old_games.length} games`);
+}
+
 export class Game {
 	constructor(game_id, size) {
 		this.game_id = game_id;
@@ -58,6 +68,7 @@ export class Game {
 		this.subscribers = [];
 		this.last_cell = undefined;
 		this.endless = false;
+		this.last_interaction = Date.now();
 
 		if (size === 0) {
 			this.board_depth = 1;
@@ -120,6 +131,9 @@ export class Game {
 
 		// Start game timer if necessary
 		if (!this.start_time) this.start_time = Date.now();
+
+		// Update last interaction time
+		this.last_interaction = Date.now();
 
 		// Place the piece
 		if (!this.board_state[cell_layer]) this.board_state[cell_layer] = {};

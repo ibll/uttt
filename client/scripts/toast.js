@@ -8,10 +8,10 @@ let display_queue;
 let remove_timeout;
 let fade_timeout;
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	toast_element = document.getElementById('toast');
 
-	toast_element.addEventListener("click", function() {
+	toast_element.addEventListener("click", function () {
 		toast_API.display();
 	});
 
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 const toast_API = {}
 
-toast_API.display = function(message, length, force_retrigger) {
+toast_API.display = function (message, length, force_retrigger) {
 	if (!length) length = 5000;
 	if (!toast_element) return display_queue = message;
 
