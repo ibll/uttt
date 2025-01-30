@@ -39,7 +39,7 @@ export function join(ws, game_id, automatic) {
 		else return client.display(ws, `Room '${game_id}' doesn't exist!`);
 	}
 
-	game.subscribers.push(ws);
+	if (!game.subscribers.includes(ws)) game.subscribers.push(ws);
 	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.active_player === 0 ? 'cross' : 'nought', game.moves, game.start_time, game.end_time, game.endless);
 }
 
@@ -122,7 +122,7 @@ export class Game {
 		// Assign this.players on the first two turns
 		if (this.players[this.active_player] === undefined) {
 			this.players[this.active_player] = connection_id;
-			client.registerPiece(ws, this.getClientPiece(ws));
+			client.registerPiece(ws, this.game_id, this.getClientPiece(ws));
 		}
 
 		// Ensure only the allowed player is placing
@@ -201,7 +201,7 @@ export class Game {
 		if (cell_layer === 0) {
 			this.active_player = 1 - this.active_player;
 			this.subscribers.forEach(subscriber => {
-				client.pieceUpdate(subscriber, this.queued_pieces, this.active_grids, this.active_player === 0 ? 'cross' : 'nought', this.moves);
+				client.pieceUpdate(subscriber, this.game_id, this.queued_pieces, this.active_grids, this.active_player === 0 ? 'cross' : 'nought', this.moves);
 			});
 			this.queued_pieces = [];
 		}

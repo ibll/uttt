@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import {v4 as uuidv4} from "uuid";
 import {WebSocketServer} from "ws";
-
 import clients from "./events/outgoing.js";
 
 const __dirname = import.meta.dirname;
