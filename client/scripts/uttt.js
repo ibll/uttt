@@ -1,7 +1,15 @@
 import server from '../events/outgoing.js';
 import status from "./toast.js";
 import {icons} from "../assets/icons.js";
-import {addLeaveButton, adjustTitleText, resetStartButton} from "../client.js";
+import {
+	addLeaveButton,
+	adjustTitleText,
+	how_to_play,
+	removeLeaveButton,
+	resetPieceMarker,
+	resetStartButton,
+	statusBarSetMyLinks
+} from "../client.js";
 import status_bar from "./status_bar.js";
 
 export let game_id;
@@ -18,31 +26,45 @@ let my_piece;
 
 let time_interval;
 
+const board = document.getElementById('board');
 window.getBoardState = () => board_state;
 
 export function updateState(payload) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const room_param = urlParams.get('room');
+	const url = new URL(window.location);
 
-	// Server said game doesn't exist anymore, exit lobby
+	// Exit lobby
+	if (!payload?.game_id) {
+		game_id = undefined;
 
-	if (!payload.game_id && room_param) {
-		console.log('Game no longer exists, exiting lobby');
+		if (url.searchParams.has('room')) {
+			url.searchParams.delete('room');
+			history.pushState({path: url.href, game_id}, '', url);
+			document.title = "Ultimate Tic Tac Toe";
+		}
 
-		const url = new URL(window.location);
-		url.searchParams.delete('room');
-		window.location.href = url.toString();
+		board.innerHTML = '';
+		board.classList.remove('grid');
+		board.classList.remove('played');
+		board.appendChild(how_to_play);
+
+		removeLeaveButton();
+		resetPieceMarker();
+		statusBarSetMyLinks();
 
 		return;
 	}
 
+	// Joining new room
 	if (game_id !== payload.game_id) {
 		game_id = payload.game_id;
+
 		status.display(`Joined game ${game_id}`)
 
-		const url = new URL(window.location);
-		url.searchParams.set('room', game_id);
-		history.pushState({}, '', url);
+		if (url.searchParams.get('room') !== game_id) {
+			url.searchParams.set('room', game_id);
+			history.pushState({path: url.href, game_id}, '', url);
+			document.title = "Ultimate Tic Tac Toe | Room " + game_id;
+		}
 	}
 
 	board_depth = payload.board_depth;
@@ -79,7 +101,7 @@ export function setPiece(piece) {
 }
 
 export function createBoard(depth) {
-	const board = document.getElementById('board');
+	if (!game_id) board.removeChild(how_to_play);
 	board.classList.add('grid');
 	board.classList.remove('played');
 	board.innerHTML = '';
@@ -110,7 +132,7 @@ function createBoardInCell(outerCell, layer, depth) {
 			}
 
 			cell.style.borderWidth = layer / 2 + 'px';
-			cell.style.setProperty('--overlay-radius', `${layer*2}px`);
+			cell.style.setProperty('--overlay-radius', `${layer * 2}px`);
 			cell.style.borderColor = `var(--c${layer})`
 
 			if (i === 0) cell.classList.add('top');
@@ -139,7 +161,7 @@ export function place(cell_layer, cell_number, player, moves) {
 	let cell;
 
 	if (cell_layer >= board_depth) {
-		cell = document.getElementById('board');
+		cell = board;
 	} else {
 		cell = document.getElementById(`cell.${cell_layer}.${cell_number}`);
 	}
@@ -147,8 +169,8 @@ export function place(cell_layer, cell_number, player, moves) {
 	if (cell) {
 		if ((board_depth === 1 && cell_layer < board_depth) || cell_layer < board_depth - 1) {
 			let piece_marker = 'dash';
-			if(player === 0) piece_marker = 'cross'
-			if(player === 1) piece_marker = 'nought'
+			if (player === 0) piece_marker = 'cross'
+			if (player === 1) piece_marker = 'nought'
 			cell.innerHTML = icons[piece_marker];
 		} else if (cell_layer < board_depth) {
 			let colour = '--text';
@@ -160,7 +182,7 @@ export function place(cell_layer, cell_number, player, moves) {
 
 			overlay.style.outline = `var(${colour}) solid ${cell_layer * 2}px`;
 			if (cell_layer !== board_depth) overlay.style.backgroundColor = `var(${colour}-trans)`;
-			overlay.style.borderRadius = (20/board_depth) + 2*cell_layer + 'px';
+			overlay.style.borderRadius = (20 / board_depth) + 2 * cell_layer + 'px';
 
 			cell.prepend(overlay);
 		}
@@ -175,7 +197,7 @@ export function place(cell_layer, cell_number, player, moves) {
 
 		if (endless) return;
 		if (player == null) status.display('Draw!', Infinity);
-		else  status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
+		else status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
 	}
 
 }
@@ -211,7 +233,7 @@ export function setActiveGrids(active_grids, next_piece) {
 
 function makeGridActive(level, grid_num) {
 	if (level === 1) {
-		const grid = document.getElementById(`cell.${level}.${grid_num}`) || document.getElementById('board');
+		const grid = document.getElementById(`cell.${level}.${grid_num}`) || board;
 		if (!grid) return;
 		grid.querySelectorAll('.cell:not(.played)').forEach(cell => {
 			cell.tabIndex = 0;

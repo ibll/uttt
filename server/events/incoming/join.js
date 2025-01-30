@@ -1,4 +1,4 @@
-import { join } from '../../uttt.js'
+import {join} from '../../uttt.js'
 
 export default async (ws, payload) => {
 	console.log(`${ws.connection_id} requesting to join game ${payload.game_id}`);

@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import mime from 'mime';
 import url from 'url';
-import { domain } from '../index.js';
-import { games } from './uttt.js';
+import {domain} from '../index.js';
+import {games} from './uttt.js';
 
 const __dirname = import.meta.dirname;
 const client_dir = path.resolve(__dirname, '../client');
@@ -18,14 +18,14 @@ export default function loadStatic(req, res) {
 			const errorPage = err.code === 'ENOENT' ? '404.html' : '500.html';
 			const statusCode = err.code === 'ENOENT' ? 404 : 500;
 			fs.readFile(path.join(client_dir, errorPage), (error, errorContent) => {
-				res.writeHead(statusCode, { 'Content-Type': 'text/html' });
+				res.writeHead(statusCode, {'Content-Type': 'text/html'});
 				res.end(errorContent || `Server Error: ${err.code}`, 'utf-8');
 			});
 
 			return;
 		}
 
-		const headers = { 'Content-Type': contentType };
+		const headers = {'Content-Type': contentType};
 
 		const cache_types = ['image/', 'video/', 'audio/', 'font/'];
 

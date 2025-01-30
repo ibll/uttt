@@ -1,5 +1,5 @@
 import http from 'http';
-import loadStatic  from "./server/load_static.js";
+import loadStatic from "./server/load_static.js";
 import {createWSS} from "./server/wss.js";
 
 export const domain = `uttt.ibll.dev`;
