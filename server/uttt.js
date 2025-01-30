@@ -133,7 +133,7 @@ export class Game {
 		if (cell_layer === 0) this.moves++;
 
 		const piece = connection_id ? this.active_player : null;
-		this.queued_pieces.push({ cell_layer, cell_number, piece });
+		this.queued_pieces.push({cell_layer, cell_number, piece});
 
 		// Win the grid if necessary
 		let already_set_active = false;
@@ -198,7 +198,7 @@ export class Game {
 	findNextActiveGrid(grid_layer, grid_number, pos_in_grid, previous_cells) {
 		const cell_layer = grid_layer - 1;
 		const cell_number = grid_number * 9;
-		const next_number = cell_number  + pos_in_grid;
+		const next_number = cell_number + pos_in_grid;
 
 		this.active_grids = {};
 		if (!this.active_grids[cell_layer]) this.active_grids[cell_layer] = {};
@@ -244,7 +244,7 @@ export class Game {
 	checkWhoWonGrid(grid_layer, grid_number) {
 		const cell_layer = grid_layer - 1;
 		const first_cell_number = grid_number * 9;
-		const cells = Array.from({ length: 9 }, (_, i) => this.board_state[cell_layer]?.[first_cell_number + i]);
+		const cells = Array.from({length: 9}, (_, i) => this.board_state[cell_layer]?.[first_cell_number + i]);
 
 		const lines = [
 			[cells[0], cells[1], cells[2]], // rows
@@ -276,7 +276,7 @@ export class Game {
 		const new_board_depth = this.board_depth + 1;
 		const new_board_state = {};
 		const new_active_grids = {};
-		new_active_grids[new_board_depth] = { 0: true };
+		new_active_grids[new_board_depth] = {0: true};
 
 		let sub_cell_shift = this.last_cell;
 		while (sub_cell_shift >= 9) {
