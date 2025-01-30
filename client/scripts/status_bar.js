@@ -2,7 +2,7 @@ let status_bar_element = document.getElementById('status-bar');
 
 const status_bar_API = {}
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	status_bar_element = document.getElementById('status-bar');
 });
 

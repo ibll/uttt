@@ -1,9 +1,8 @@
 import server from './events/outgoing.js';
 import status from './scripts/toast.js'
-import Cookie from './modules/js.cookie.mjs';
+import Cookies from './modules/js.cookie.mjs';
 import {game_id, statusBarSetGameInfo, updateState} from "./scripts/uttt.js";
 import status_bar from "./scripts/status_bar.js";
-import Cookies from "./modules/js.cookie.mjs";
 import {icons} from "./assets/icons.js";
 
 const host = window.location.hostname;
@@ -19,7 +18,7 @@ let interval;
 
 export let prepared = false;
 
-export let connection_id = Cookie.get('connection_id');
+export let connection_id = Cookies.get('connection_id');
 
 export function setConnectionID(new_connection_id) {
 	connection_id = new_connection_id;
