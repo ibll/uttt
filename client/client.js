@@ -1,9 +1,9 @@
 import server from './events/outgoing.js';
 import status from './scripts/toast.js'
-import Cookie from './modules/js.cookie.mjs';
-import {game_id, statusBarSetGameInfo} from "./scripts/uttt.js";
+import Cookies from './modules/js.cookie.mjs';
+import {game_id, statusBarSetGameInfo, updateState} from "./scripts/uttt.js";
 import status_bar from "./scripts/status_bar.js";
-import Cookies from "./modules/js.cookie.mjs";
+import {icons} from "./assets/icons.js";
 
 const host = window.location.hostname;
 const port = window.location.port;
@@ -18,32 +18,35 @@ let interval;
 
 export let prepared = false;
 
-export let connection_id = Cookie.get('connection_id');
+export let connection_id = Cookies.get('connection_id');
+
 export function setConnectionID(new_connection_id) {
 	connection_id = new_connection_id;
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	adjustTitleText();
-
 	statusBarSetMyLinks();
+	resetPieceMarker();
 
 	connect();
 	interval = setInterval(tryConnect, 1000);
 });
 
-// Websocket
+window.addEventListener('popstate', function () {
+	let url = new URL(window.location);
+	const url_params = new URLSearchParams(url.search);
 
-window.addEventListener('popstate', function() {
-	const urlParams = new URLSearchParams(window.location.search);
-	const param_id = urlParams.get('room');
+	const param_id = url_params.get('room');
 
-	if (game_id && param_id) {
-		window.location.reload();
+	if (!param_id) {
+		updateState();
+	} else if (param_id !== game_id) {
+		server.join(param_id, true);
 	}
-	if (!param_id) return;
-	if (game_id && param_id !== game_id ) server.join(param_id);
 });
+
+// Websocket
 
 function connect() {
 	if (location.protocol === 'https:') ws = new WebSocket(`wss://${host}:${port}`);
@@ -93,8 +96,8 @@ function connect() {
 	};
 }
 
-function tryConnect(){
-	if(!ws || ws.readyState === WebSocket.CLOSED) {
+function tryConnect() {
+	if (!ws || ws.readyState === WebSocket.CLOSED) {
 		console.log(attempts);
 		if (attempts > 10) {
 			clearInterval(interval);
@@ -114,11 +117,13 @@ function tryConnect(){
 
 // Elements
 
+export const how_to_play = document.getElementById('how-to-play');
 const title_text = document.getElementById('title-text');
 const join_code_input = document.getElementById('join-code');
 const join_button = document.getElementById('join');
 const start_button = document.getElementById('start');
 const leave_button = document.getElementById("leave");
+const piece_marker = document.getElementById("piece-marker");
 
 // Resize Observers
 
@@ -126,12 +131,13 @@ const titleTextResizeObserver = new ResizeObserver(adjustTitleText);
 titleTextResizeObserver.observe(title_text);
 
 export function adjustTitleText() {
-	const titleText = document.getElementById('title-text');
+	const title_text = document.getElementById('title-text');
 
-	if (titleText.offsetWidth < 220) titleText.textContent = 'UTTT';
-	else if (titleText.offsetWidth < 360) titleText.textContent = 'Ultimate TTT';
-	else titleText.textContent = 'Ultimate Tic-Tac-Toe';
+	if (title_text.offsetWidth < 220) title_text.textContent = 'UTTT';
+	else if (title_text.offsetWidth < 360) title_text.textContent = 'Ultimate TTT';
+	else title_text.textContent = 'Ultimate Tic-Tac-Toe';
 }
+
 const startButtonResizeObserver = new ResizeObserver(adjustStartButton);
 startButtonResizeObserver.observe(start_button);
 
@@ -167,7 +173,7 @@ start_button.addEventListener("click", () => {
 });
 
 leave_button.addEventListener("click", () => {
-	window.location.href = '/';
+	updateState();
 });
 
 export function resetStartButton() {
@@ -176,14 +182,16 @@ export function resetStartButton() {
 }
 
 export function addLeaveButton() {
-	const leaveButton = document.getElementById('leave');
-	if (leaveButton) leaveButton.classList.remove('hidden')
-
-	const startButton = document.getElementById('start');
-	if (startButton) startButton.classList.remove('right')
+	if (leave_button) leave_button.classList.remove('hidden')
+	if (start_button) start_button.classList.remove('right')
 }
 
-function statusBarSetMyLinks() {
+export function removeLeaveButton() {
+	if (leave_button) leave_button.classList.add('hidden')
+	if (start_button) start_button.classList.add('right')
+}
+
+export function statusBarSetMyLinks() {
 	status_bar.reset();
 	status_bar.addBlock('', 'my site', `<a href="https://ibll.dev/">ibll.dev</a>`)
 	status_bar.addBlock('', 'made by', `Isbell!`)
@@ -196,4 +204,8 @@ function statusBarSetChooseSize() {
 	status_bar.addBlock('', 'ultimate', '2 layers', server.start, 2);
 	status_bar.addBlock('', 'nightmare', '3 layers', server.start, 3);
 	status_bar.addBlock('', 'endless', 'good luck', server.start, 0);
+}
+
+export function resetPieceMarker() {
+	piece_marker.innerHTML = icons.heart;
 }

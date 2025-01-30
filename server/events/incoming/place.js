@@ -1,4 +1,4 @@
-import { games } from '../../uttt.js';
+import {games} from '../../uttt.js';
 
 export default async (ws, payload) => {
 	const game_id = payload.game_id;

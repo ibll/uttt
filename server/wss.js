@@ -18,7 +18,7 @@ const connected_current = io.counter({
 });
 
 export function createWSS(server) {
-	const wss = new WebSocketServer({ server });
+	const wss = new WebSocketServer({server});
 	wss.on('connection', wssConnection);
 	return wss;
 }
@@ -49,7 +49,7 @@ async function wssConnection(ws, response) {
 			let payload = JSON.parse(data)
 			if (!payload.type) return;
 
-			const filePath = path.join(__dirname, SERVER_EVENTS_DIR,  payload.type + '.js');
+			const filePath = path.join(__dirname, SERVER_EVENTS_DIR, payload.type + '.js');
 			fs.readFile(filePath, (err) => {
 				if (!ws.connection_id) {
 					console.error(`Client does not have a connection id. ${payload}`);

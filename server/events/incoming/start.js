@@ -1,4 +1,4 @@
-import { createGame, join } from '../../uttt.js';
+import {createGame, join} from '../../uttt.js';
 
 export default async (ws, payload) => {
 	const size = parseInt(payload.size);
