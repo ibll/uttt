@@ -28,12 +28,12 @@ client_API.updateState = function (ws, game_id, board_depth, board_state, active
 	});
 }
 
-client_API.registerPiece = function (ws, piece) {
-	sendToClient(ws, {type: "register_piece", piece});
+client_API.registerPiece = function (ws, room, piece) {
+	sendToClient(ws, {type: "register_piece", room, piece});
 }
 
-client_API.pieceUpdate = function (ws, pieces, active_grids, next_piece, moves) {
-	sendToClient(ws, {type: "piece_update", pieces, active_grids, next_piece, moves});
+client_API.pieceUpdate = function (ws, room, pieces, active_grids, next_piece, moves) {
+	sendToClient(ws, {type: "piece_update", room, pieces, active_grids, next_piece, moves});
 };
 
 export default client_API;
