@@ -11,6 +11,7 @@
 	"license": "ISC",
 	"description": "",
 	"dependencies": {
+		"@pm2/io": "^6.1.0",
 		"js-cookie": "^3.0.5",
 		"mime": "^4.0.4",
 		"node-cron": "^3.0.3",
