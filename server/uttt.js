@@ -50,7 +50,8 @@ export function pruneOldGames() {
 		console.log(`Pruning game ${game_id}`);
 		delete games[game_id];
 	});
-	console.log(`Pruned ${old_games.length} games`);
+
+	if (old_games.length > 0) console.log(`Pruned ${old_games.length} games`);
 }
 
 export class Game {
