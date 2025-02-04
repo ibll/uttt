@@ -39,6 +39,8 @@ export function join(ws, game_id, automatic) {
 		else return client.display(ws, `Room '${game_id}' doesn't exist!`);
 	}
 
+	console.log(`${ws.connection_id} joining game ${game_id}`);
+
 	if (!game.subscribers.includes(ws)) game.subscribers.push(ws);
 	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.active_player === 0 ? 'cross' : 'nought', game.moves, game.start_time, game.end_time, game.endless);
 }
