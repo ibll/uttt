@@ -50,6 +50,8 @@ export function updateState(payload) {
 		removeLeaveButton();
 		resetPieceMarker();
 		statusBarSetMyLinks();
+		resetStartButton();
+
 
 		return;
 	}
