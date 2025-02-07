@@ -1,10 +1,5 @@
 import client from './events/outgoing.js';
 
-const player_pieces = {
-	0: 'X',
-	1: 'O'
-}
-
 export let games = {};
 
 export function createGame(size) {
@@ -39,7 +34,7 @@ export function join(ws, game_id, automatic) {
 		else return client.display(ws, `Room '${game_id}' doesn't exist!`);
 	}
 
-	console.log(`${ws.connection_id} joining game ${game_id}`);
+	console.log(`${game_id}: Joined by ${ws.connection_id}`);
 
 	if (!game.subscribers.includes(ws)) game.subscribers.push(ws);
 	client.updateState(ws, game_id, game.board_depth, game.board_state, game.active_grids, game.getClientPiece(ws), game.active_player === 0 ? 'cross' : 'nought', game.moves, game.start_time, game.end_time, game.endless);
@@ -48,12 +43,13 @@ export function join(ws, game_id, automatic) {
 export function pruneOldGames() {
 	const now = Date.now();
 	const old_games = Object.keys(games).filter(game_id => games[game_id].last_interaction < now - 1000 * 60 * 60 * 36);
+
+	if (old_games.length > 0) console.log(`Pruning ${old_games.length} games`);
+
 	old_games.forEach(game_id => {
-		console.log(`Pruning game ${game_id}`);
+		console.log(`\tPruning game ${game_id}`);
 		delete games[game_id];
 	});
-
-	if (old_games.length > 0) console.log(`Pruned ${old_games.length} games`);
 }
 
 export class Game {
@@ -78,7 +74,7 @@ export class Game {
 			this.endless = true;
 		}
 
-		console.log(`Creating game ${game_id} with size ${size}`);
+		console.log(`${game_id}: Created with size ${size}`);
 
 		// Set all grids active
 		if (!this.active_grids[this.board_depth]) this.active_grids[this.board_depth] = {};
@@ -172,10 +168,8 @@ export class Game {
 
 			// Don't set an active grid if the game is over
 			if (grid_layer >= this.board_depth) {
-				const winner_piece = ws?.connection_id !== undefined ? player_pieces[winner] : null;
-
 				if (this.endless) {
-					console.log(`${winner_piece} won layer ${this.board_depth} in endless game ${this.game_id}`);
+					console.log(`${this.game_id}: Layer ${this.board_depth} won by ${connection_id}`);
 
 					// Don't want to tell clients about any pieces to place,
 					// we're about to send them entirely new board information
@@ -185,7 +179,7 @@ export class Game {
 					this.expand();
 					already_set_active = true;
 				} else {
-					console.log(`${winner_piece} won game ${this.game_id}`);
+					console.log(`${this.game_id}: Won by ${connection_id}`);
 					this.active_grids = {};
 					this.end_time = Date.now();
 					const already_set_active = true;
