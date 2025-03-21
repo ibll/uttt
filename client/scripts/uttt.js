@@ -159,7 +159,7 @@ function createBoardInCell(outerCell, layer, depth) {
 				}
 			}
 
-			cell.style.borderWidth = layer / board_depth + 'px';
+			cell.style.borderWidth = layer / board_depth * 2 + 'px';
 			cell.style.setProperty('--overlay-radius', `${layer / board_depth / 2}px`);
 			cell.style.borderColor = `var(--c${layer})`
 
