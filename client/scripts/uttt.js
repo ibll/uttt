@@ -26,7 +26,10 @@ let my_piece;
 
 let time_interval;
 
-const board = document.getElementById('board');
+let panzoom;
+
+const main = document.querySelector('main')
+let board;
 window.getBoardState = () => board_state;
 
 export function updateState(payload) {
@@ -42,16 +45,16 @@ export function updateState(payload) {
 			document.title = "Ultimate Tic Tac Toe";
 		}
 
-		board.innerHTML = '';
-		board.classList.remove('grid');
-		board.classList.remove('played');
-		board.appendChild(how_to_play);
+		main.innerHTML = '';
+		main.appendChild(how_to_play);
 
 		removeLeaveButton();
 		resetPieceMarker();
 		statusBarSetMyLinks();
 		resetStartButton();
 
+		main.removeEventListener('wheel', panzoom.zoomWithWheel);
+		document.removeEventListener('pointerdown', panzoom.handleDown);
 
 		return;
 	}
@@ -83,7 +86,29 @@ export function updateState(payload) {
 	statusBarSetGameInfo();
 	setPiece(payload.client_piece)
 
+	document.getElementById('secondary-panel').appendChild(how_to_play);
+
+	main.innerHTML = '';
+
 	createBoard(board_depth);
+
+	panzoom = Panzoom(board, {
+		maxScale: board_depth*4/3,
+		minScale: 1,
+		exclude: Array.from(document.querySelectorAll(".button-panel")),
+		excludeClass: 'active',
+	})
+
+	panzoom.zoom(1, {animate: true});
+
+	main.addEventListener('wheel', panzoom.zoomWithWheel);
+	document.addEventListener('pointerdown', panzoom.handleDown);
+	document.addEventListener('pointerup', function () {
+		if (!isElementPartiallyInView(board)) panzoom.reset();
+	});
+	document.addEventListener('resize', function () {
+		if (!isElementPartiallyInView(board)) panzoom.reset();
+	});
 
 	for (const layer in board_state) {
 		for (const cell_id in board_state[layer]) {
@@ -103,10 +128,11 @@ export function setPiece(piece) {
 }
 
 export function createBoard(depth) {
-	if (!game_id) board.removeChild(how_to_play);
+	board = document.createElement('div');
+	board.id = 'board';
 	board.classList.add('grid');
-	board.classList.remove('played');
-	board.innerHTML = '';
+	main.appendChild(board);
+
 	won = false;
 
 	if (!board_depth) return;
@@ -133,8 +159,8 @@ function createBoardInCell(outerCell, layer, depth) {
 				}
 			}
 
-			cell.style.borderWidth = layer / 2 + 'px';
-			cell.style.setProperty('--overlay-radius', `${layer * 2}px`);
+			cell.style.borderWidth = layer / board_depth + 'px';
+			cell.style.setProperty('--overlay-radius', `${layer / board_depth / 2}px`);
 			cell.style.borderColor = `var(--c${layer})`
 
 			if (i === 0) cell.classList.add('top');
@@ -182,9 +208,9 @@ export function place(cell_layer, cell_number, player, moves) {
 			const overlay = document.createElement('div');
 			overlay.classList.add('overlay');
 
-			overlay.style.outline = `var(${colour}) solid ${cell_layer * 2}px`;
+			overlay.style.outline = `var(${colour}) solid ${cell_layer}px`;
 			if (cell_layer !== board_depth) overlay.style.backgroundColor = `var(${colour}-trans)`;
-			overlay.style.borderRadius = (20 / board_depth) + 2 * cell_layer + 'px';
+			overlay.style.borderRadius = (cell_layer / board_depth * 16) + 'px';
 
 			cell.prepend(overlay);
 		}
@@ -228,6 +254,15 @@ export function setActiveGrids(active_grids, next_piece) {
 
 	for (const layer in active_grids) {
 		for (const grid_num in active_grids[layer]) {
+			const target = document.getElementById("cell." + layer + "." + grid_num)
+
+			if (!target) {
+				// Base level zoom
+				panzoom.reset()
+			} else {
+				if (!isElementFullyInView(target, 50)) panzoom.reset();
+			}
+
 			makeGridActive(parseInt(layer), parseInt(grid_num));
 		}
 	}
@@ -287,4 +322,24 @@ function getTimeString(interval) {
 
 function getTimeSegment(number) {
 	return number.toString().padStart(2, '0');
+}
+
+function isElementFullyInView(el, allowance = 20) {
+	const rect = el.getBoundingClientRect();
+	return (
+		rect.top >= -allowance &&
+		rect.left >= -allowance &&
+		rect.bottom <= ((window.innerHeight || document.documentElement.clientHeight) + allowance) &&
+		rect.right <= ((window.innerWidth || document.documentElement.clientWidth) + allowance)
+	);
+}
+
+function isElementPartiallyInView(el) {
+	const rect = el.getBoundingClientRect();
+	return (
+		rect.top < window.innerHeight &&
+		rect.left < window.innerWidth &&
+		rect.bottom > 0 &&
+		rect.right > 0
+	);
 }

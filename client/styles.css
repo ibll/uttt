@@ -65,16 +65,16 @@
 html {
 	height: 100dvh;
 
-	&::-webkit-scrollbar {
+	*::-webkit-scrollbar {
 		width: 0.5rem;
 		height: 0.5rem;
 	}
 
-	&::-webkit-scrollbar-track {
+	*::-webkit-scrollbar-track {
 		background-color: var(--popup);
 	}
 
-	&::-webkit-scrollbar-thumb {
+	*::-webkit-scrollbar-thumb {
 		max-width: 0.25rem;
 		background: var(--highlight);
 		border-radius: 1rem;
@@ -92,6 +92,8 @@ body {
 	align-content: center;
 	flex-direction: column;
 	align-items: stretch;
+
+	overflow: clip;
 
 	color: var(--text);
 	background-color: var(--background);
@@ -366,12 +368,27 @@ button.status-block {
 	}
 }
 
-/* * * * * * */
+/* * * * */
 /* BOARD */
-/* * * * * * */
+/* * * * */
+
+main {
+	overflow-y: scroll !important;
+
+	&:has(> #board) {
+		overflow: visible !important;
+	}
+
+	width: 100%;
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
 
 #board {
-	width: 100%;
+	/*width: 100%;*/
 	height: 100%;
 
 	margin: auto;
@@ -379,23 +396,10 @@ button.status-block {
 
 	box-sizing: border-box;
 	border-style: none;
-}
 
-/*board in game mode*/
-#board.grid {
 	width: auto;
 	max-height: 98vmin;
 	aspect-ratio: 1 / 1;
-}
-
-/*board in tutorial mode*/
-#board:not(.grid) {
-	max-height: 98vmin;
-	aspect-ratio: 1 / 1;
-
-	display: flex;
-	flex-direction: column;
-	align-items: center;
 }
 
 /* * * * * **/
@@ -403,6 +407,7 @@ button.status-block {
 /** * * * * */
 
 #how-to-play {
+	margin: auto;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -572,6 +577,9 @@ button.status-block {
 	}
 
 	.panel {
+		box-shadow: 0 0.5rem 2rem 0.1rem #00000040;
+		background: linear-gradient(to bottom, var(--background) 0%, var(--background-trans) 100%);
+
 		width: 25%;
 		max-width: calc(50vw - 50vmin);
 		height: 100%;
@@ -594,6 +602,10 @@ button.status-block {
 
 	#secondary-panel {
 		display: block;
+
+		&:has(> #how-to-play) {
+			overflow-y: scroll;
+		}
 	}
 
 	#top-bar {
@@ -668,16 +680,11 @@ button.status-block {
 
 	border-style: solid;
 
-	.top {
-		border-top: none;
-	}
+	border-top: none;
+	border-left: none;
 
 	.bottom {
 		border-bottom: none;
-	}
-
-	.left {
-		border-left: none;
 	}
 
 	.right {
@@ -685,6 +692,10 @@ button.status-block {
 	}
 
 	transition: background-color 0.25s ease-out;
+
+	.active:not(.played) {
+		cursor: pointer !important;
+	}
 
 	.active:not(.played) {
 		background-color: var(--green-trans) !important;
