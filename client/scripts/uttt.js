@@ -182,7 +182,7 @@ export function place(cell_layer, cell_number, player, moves) {
 			const overlay = document.createElement('div');
 			overlay.classList.add('overlay');
 
-			overlay.style.outline = `var(${colour}) solid ${cell_layer * 2}px`;
+			overlay.style.outline = `var(${colour}) solid ${cell_layer}px`;
 			if (cell_layer !== board_depth) overlay.style.backgroundColor = `var(${colour}-trans)`;
 			overlay.style.borderRadius = (20 / board_depth) + 2 * cell_layer + 'px';
 

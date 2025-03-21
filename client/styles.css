@@ -668,16 +668,11 @@ button.status-block {
 
 	border-style: solid;
 
-	.top {
-		border-top: none;
-	}
+	border-top: none;
+	border-left: none;
 
 	.bottom {
 		border-bottom: none;
-	}
-
-	.left {
-		border-left: none;
 	}
 
 	.right {
