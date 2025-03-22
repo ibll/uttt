@@ -655,7 +655,7 @@ main {
 
 	.panel {
 		box-shadow: 0 0.5rem 2rem 0.1rem var(--shadow);
-		border: 2px solid var(--border-trans);
+		border-right: 2px solid var(--border-trans);
 		background: linear-gradient(to bottom, var(--background) -50%, var(--background-trans) 100%);
 		backdrop-filter: blur(5px);
 		margin-right: 0;
