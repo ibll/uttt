@@ -99,6 +99,7 @@ body {
 	overflow-y: scroll;
 
 	&:has(#board) {
+		height: calc(100vh - var(--header-clearance) - var(--toast-clearance));
 		overflow: clip;
 	}
 
