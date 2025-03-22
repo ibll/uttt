@@ -3,14 +3,15 @@ import status from "./toast.js";
 import {icons} from "../assets/icons.js";
 import {
 	addLeaveButton,
-	adjustTitleText,
+	adjustTitleText, brief_tutorial,
 	how_to_play,
 	removeLeaveButton,
 	resetPieceMarker,
 	resetStartButton,
-	statusBarSetMyLinks
+	statusBarSetMyLinks, tutorial_dialog
 } from "../client.js";
 import status_bar from "./status_bar.js";
+import Cookie from "../modules/js.cookie.mjs";
 
 export let game_id;
 export let board_depth;
@@ -55,9 +56,19 @@ export function updateState(payload) {
 
 		main.removeEventListener('wheel', panzoom.zoomWithWheel);
 		document.removeEventListener('pointerdown', panzoom.handleDown);
+		main.style.touchAction = 'auto';
 
 		return;
 	}
+
+	// Show dialog if first time joining a game with this tab
+	const tutorial_shown = Cookie.get("tutorial-shown");
+	if (!tutorial_shown) {
+		Cookie.set("tutorial-shown", true, {expires: 365});
+		tutorial_dialog.showModal();
+	}
+
+	brief_tutorial.scrollTo(0, 0);
 
 	// Joining new room
 	if (game_id !== payload.game_id) {
@@ -86,7 +97,7 @@ export function updateState(payload) {
 	statusBarSetGameInfo();
 	setPiece(payload.client_piece)
 
-	document.getElementById('secondary-panel').appendChild(how_to_play);
+	how_to_play.remove();
 
 	main.innerHTML = '';
 
@@ -95,7 +106,7 @@ export function updateState(payload) {
 	panzoom = Panzoom(board, {
 		maxScale: board_depth*4/3,
 		minScale: 1,
-		exclude: Array.from(document.querySelectorAll(".button-panel")),
+		exclude: Array.from(document.querySelectorAll(".button-panel, #tutorial-dialog")),
 		excludeClass: 'active',
 	})
 
