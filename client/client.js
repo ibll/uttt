@@ -195,13 +195,11 @@ brief_tutorial_dismiss.addEventListener("click", () => {
 });
 
 title_box.addEventListener("click", () => {
-	tutorial_dialog.showModal();
-	brief_tutorial.scrollTo(0, 0);
+	showBriefTutorial();
 })
 
 show_tutorial.addEventListener("click", () => {
-	tutorial_dialog.showModal();
-	brief_tutorial.scrollTo(0, 0);
+	showBriefTutorial();
 });
 
 // Game button handlers
@@ -212,14 +210,16 @@ export function resetStartButton() {
 }
 
 export function addLeaveButton() {
-	if (leave_button) leave_button.classList.remove('hidden')
-	if (start_button) start_button.classList.remove('right')
+	if (leave_button) leave_button.classList.remove('hidden');
+	if (start_button) start_button.classList.remove('right');
 }
 
 export function removeLeaveButton() {
-	if (leave_button) leave_button.classList.add('hidden')
-	if (start_button) start_button.classList.add('right')
+	if (leave_button) leave_button.classList.add('hidden');
+	if (start_button) start_button.classList.add('right');
 }
+
+// UI controls
 
 export function statusBarSetMyLinks() {
 	status_bar.reset();
@@ -238,4 +238,10 @@ function statusBarSetChooseSize() {
 
 export function resetPieceMarker() {
 	piece_marker.innerHTML = icons.heart;
+}
+
+export function showBriefTutorial() {
+	Cookies.set("tutorial-shown", true, {expires: 365});
+	tutorial_dialog.showModal();
+	brief_tutorial.scrollTo(0, 0);
 }

@@ -3,12 +3,13 @@ import status from "./toast.js";
 import {icons} from "../assets/icons.js";
 import {
 	addLeaveButton,
-	adjustTitleText, brief_tutorial,
+	adjustTitleText,
 	how_to_play,
 	removeLeaveButton,
 	resetPieceMarker,
 	resetStartButton,
-	statusBarSetMyLinks, tutorial_dialog
+	showBriefTutorial,
+	statusBarSetMyLinks
 } from "../client.js";
 import status_bar from "./status_bar.js";
 import Cookie from "../modules/js.cookie.mjs";
@@ -46,14 +47,18 @@ export function updateState(payload) {
 			document.title = "Ultimate Tic Tac Toe";
 		}
 
+		// Delete board and re-add big tutorial
 		main.innerHTML = '';
 		main.appendChild(how_to_play);
 
+		// Reset UI
 		removeLeaveButton();
 		resetPieceMarker();
 		statusBarSetMyLinks();
 		resetStartButton();
+		toast.display();
 
+		// Remove panzoom effects when not in a game
 		main.removeEventListener('wheel', panzoom.zoomWithWheel);
 		document.removeEventListener('pointerdown', panzoom.handleDown);
 		main.style.touchAction = 'auto';
@@ -65,12 +70,7 @@ export function updateState(payload) {
 
 	// Show dialog if first time joining a game with this tab
 	const tutorial_shown = Cookie.get("tutorial-shown");
-	if (!tutorial_shown) {
-		Cookie.set("tutorial-shown", true, {expires: 365});
-		tutorial_dialog.showModal();
-	}
-
-	brief_tutorial.scrollTo(0, 0);
+	if (!tutorial_shown) showBriefTutorial()
 
 	// Joining new room
 	if (game_id !== payload.game_id) {
@@ -100,13 +100,12 @@ export function updateState(payload) {
 	setPiece(payload.client_piece)
 
 	how_to_play.remove();
-
 	main.innerHTML = '';
 
 	createBoard(board_depth);
 
 	panzoom = Panzoom(board, {
-		maxScale: board_depth*4/3,
+		maxScale: board_depth * 4 / 3,
 		minScale: 1,
 		exclude: Array.from(document.querySelectorAll(".button-panel, #tutorial-dialog")),
 		excludeClass: 'active',
