@@ -709,7 +709,7 @@ main {
 		padding: 0 4px;
 		flex-direction: column;
 
-		#room {
+		#room, #made-by {
 			order: -1;
 		}
 	}
