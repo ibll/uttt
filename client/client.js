@@ -130,6 +130,12 @@ const start_button = document.getElementById('start');
 const leave_button = document.getElementById("leave");
 const piece_marker = document.getElementById("piece-marker");
 
+// Prevent resizing through tutorial popup
+
+tutorial_dialog.addEventListener('wheel', function (event) {
+	event.stopPropagation();
+});
+
 // Resize Observers
 
 const titleTextResizeObserver = new ResizeObserver(adjustTitleText);

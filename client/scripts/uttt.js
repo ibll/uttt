@@ -37,6 +37,12 @@ window.getBoardState = () => board_state;
 export function updateState(payload) {
 	const url = new URL(window.location);
 
+	document.removeEventListener('wheel', panzoom?.zoomWithWheel);
+	document.removeEventListener('pointerdown', panzoom?.handleDown);
+	main.style.touchAction = 'auto';
+	main.style.overflow = 'visible';
+	main.style.userSelect = 'auto';
+
 	// Exit lobby
 	if (!payload?.game_id) {
 		game_id = undefined;
@@ -57,13 +63,6 @@ export function updateState(payload) {
 		statusBarSetMyLinks();
 		resetStartButton();
 		toast.display();
-
-		// Remove panzoom effects when not in a game
-		document.removeEventListener('wheel', panzoom.zoomWithWheel);
-		document.removeEventListener('pointerdown', panzoom.handleDown);
-		main.style.touchAction = 'auto';
-		main.style.overflow = 'visible';
-		main.style.userSelect = 'auto';
 
 		return;
 	}
@@ -112,10 +111,6 @@ export function updateState(payload) {
 	})
 
 	panzoom.zoom(1, {animate: true});
-
-	// Ensure we only have one listener for each event
-	document.removeEventListener('wheel', panzoom.zoomWithWheel);
-	document.removeEventListener('pointerdown', panzoom.handleDown);
 
 	document.addEventListener('wheel', panzoom.zoomWithWheel);
 	document.addEventListener('pointerdown', panzoom.handleDown);
