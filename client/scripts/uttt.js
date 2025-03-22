@@ -57,6 +57,8 @@ export function updateState(payload) {
 		main.removeEventListener('wheel', panzoom.zoomWithWheel);
 		document.removeEventListener('pointerdown', panzoom.handleDown);
 		main.style.touchAction = 'auto';
+		main.style.overflow = 'visible';
+		main.style.userSelect = 'auto';
 
 		return;
 	}
