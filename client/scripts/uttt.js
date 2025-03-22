@@ -50,7 +50,7 @@ export function updateState(payload) {
 		if (url.searchParams.has('room')) {
 			url.searchParams.delete('room');
 			history.pushState({path: url.href, game_id}, '', url);
-			document.title = "Ultimate Tic Tac Toe";
+			document.title = "Ultimate Tic-Tac-Toe";
 		}
 
 		// Delete board and re-add big tutorial
@@ -80,7 +80,7 @@ export function updateState(payload) {
 		if (url.searchParams.get('room') !== game_id) {
 			url.searchParams.set('room', game_id);
 			history.pushState({path: url.href, game_id}, '', url);
-			document.title = "Ultimate Tic Tac Toe | Room " + game_id;
+			document.title = "Ultimate Tic-Tac-Toe | Room " + game_id;
 		}
 	}
 
