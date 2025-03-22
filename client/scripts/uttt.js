@@ -59,7 +59,7 @@ export function updateState(payload) {
 		toast.display();
 
 		// Remove panzoom effects when not in a game
-		main.removeEventListener('wheel', panzoom.zoomWithWheel);
+		document.removeEventListener('wheel', panzoom.zoomWithWheel);
 		document.removeEventListener('pointerdown', panzoom.handleDown);
 		main.style.touchAction = 'auto';
 		main.style.overflow = 'visible';
@@ -113,7 +113,11 @@ export function updateState(payload) {
 
 	panzoom.zoom(1, {animate: true});
 
-	main.addEventListener('wheel', panzoom.zoomWithWheel);
+	// Ensure we only have one listener for each event
+	document.removeEventListener('wheel', panzoom.zoomWithWheel);
+	document.removeEventListener('pointerdown', panzoom.handleDown);
+
+	document.addEventListener('wheel', panzoom.zoomWithWheel);
 	document.addEventListener('pointerdown', panzoom.handleDown);
 	document.addEventListener('pointerup', function () {
 		if (!isElementPartiallyInView(board)) panzoom.reset();
