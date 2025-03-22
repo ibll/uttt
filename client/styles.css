@@ -747,6 +747,12 @@ main {
 	}
 }
 
+@media (min-aspect-ratio: 9/6) and (max-height: 500px) {
+	#optional-tools {
+		display: none;
+	}
+}
+
 .grid {
 	width: 33.3%;
 	height: 33.3%;
