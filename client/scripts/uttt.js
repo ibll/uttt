@@ -29,6 +29,7 @@ let time_interval;
 let panzoom;
 
 const main = document.querySelector('main')
+const tutorial_dialog = document.getElementById('tutorial-dialog')
 let board;
 window.getBoardState = () => board_state;
 
@@ -59,6 +60,9 @@ export function updateState(payload) {
 		return;
 	}
 
+	// Show dialog if first time joining a game with this tab
+	if (!game_id) tutorial_dialog.showModal()
+
 	// Joining new room
 	if (game_id !== payload.game_id) {
 		game_id = payload.game_id;
@@ -86,7 +90,7 @@ export function updateState(payload) {
 	statusBarSetGameInfo();
 	setPiece(payload.client_piece)
 
-	document.getElementById('secondary-panel').appendChild(how_to_play);
+	how_to_play.remove();
 
 	main.innerHTML = '';
 
@@ -95,7 +99,7 @@ export function updateState(payload) {
 	panzoom = Panzoom(board, {
 		maxScale: board_depth*4/3,
 		minScale: 1,
-		exclude: Array.from(document.querySelectorAll(".button-panel")),
+		exclude: Array.from(document.querySelectorAll(".button-panel, #tutorial-dialog")),
 		excludeClass: 'active',
 	})
 

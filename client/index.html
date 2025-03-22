@@ -7,8 +7,8 @@
 	<link rel="stylesheet" href="./styles.css">
 	<script type="module" src="./client.js"></script>
 	<meta name="viewport" content="width=device-width, user-scalable=no">
-	<meta name="mobile-web-app-capable" content="yes" >
-	<link rel="manifest" href="./manifest.json" />
+	<meta name="mobile-web-app-capable" content="yes">
+	<link rel="manifest" href="./manifest.json"/>
 	<meta name="theme-color" content="var(--background)">
 	<link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
 	<!--Don't edit following lines for serveStatic replacement-->
@@ -32,10 +32,14 @@
 		<div class="button-panel">
 			<button id='start' class="left right">New Room...</button>
 			<button id='leave' class="right square  hidden">
-				<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M36.249 55.6213C21.0043 66.4837 51.4936 233.764 53.9657 244.627C56.4378 255.489 151.427 276.116 174.5 276.116C197.573 276.116 165.848 92.324 160.903 82.7651C149.807 65.0303 50 55.6213 36.249 55.6213ZM36.249 55.6213C52.1803 46.3521 135.481 20.3136 141.5 24.5C147.519 28.6864 149.5 65 149.5 65" stroke="var(--red)" stroke-width="30" stroke-linecap="round"/>
-					<path d="M186 157.5L268.5 149.5M268.5 149.5C267 143.5 244.5 104 228.5 94.5M268.5 149.5C269.583 156 236.5 217.5 236.5 217.5" stroke="var(--red)" stroke-width="30" stroke-linecap="round"/>
-					<path d="M144 187.5C144 185.9 141 182.5 144 184" stroke="var(--red)" stroke-width="30" stroke-linecap="round"/>
+				<svg width="300" height="300" viewBox="0 0 300 300" fill="none"
+				     xmlns="http://www.w3.org/2000/svg">
+					<path d="M36.249 55.6213C21.0043 66.4837 51.4936 233.764 53.9657 244.627C56.4378 255.489 151.427 276.116 174.5 276.116C197.573 276.116 165.848 92.324 160.903 82.7651C149.807 65.0303 50 55.6213 36.249 55.6213ZM36.249 55.6213C52.1803 46.3521 135.481 20.3136 141.5 24.5C147.519 28.6864 149.5 65 149.5 65"
+					      stroke="var(--red)" stroke-width="30" stroke-linecap="round"/>
+					<path d="M186 157.5L268.5 149.5M268.5 149.5C267 143.5 244.5 104 228.5 94.5M268.5 149.5C269.583 156 236.5 217.5 236.5 217.5"
+					      stroke="var(--red)" stroke-width="30" stroke-linecap="round"/>
+					<path d="M144 187.5C144 185.9 141 182.5 144 184" stroke="var(--red)"
+					      stroke-width="30" stroke-linecap="round"/>
 				</svg>
 			</button>
 		</div>
@@ -49,15 +53,18 @@
 </div>
 
 <main>
-	<div id="how-to-play">
+	<div id="how-to-play" class="text-content">
 		<h1><label for="join-code">Join Game</label></h1>
 
 		<div class="button-panel">
 			<input type="text" id="join-code" class="left" name="Join with Code" placeholder="Room Code">
 			<button aria-label="Join" id="join" class="right square">
-				<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M21 143.679C92.1308 170.458 197.8 152.634 278.234 142.39" stroke="var(--highlight)" stroke-width="30" stroke-linecap="round"/>
-					<path d="M194.468 55.6679C194.468 55.6679 277.782 117.043 281.191 141.983C283.503 158.906 198.344 248.881 198.344 248.881" stroke="var(--highlight)" stroke-width="30" stroke-linecap="round"/>
+				<svg width="300" height="300" viewBox="0 0 300 300" fill="none"
+				     xmlns="http://www.w3.org/2000/svg">
+					<path d="M21 143.679C92.1308 170.458 197.8 152.634 278.234 142.39"
+					      stroke="var(--highlight)" stroke-width="30" stroke-linecap="round"/>
+					<path d="M194.468 55.6679C194.468 55.6679 277.782 117.043 281.191 141.983C283.503 158.906 198.344 248.881 198.344 248.881"
+					      stroke="var(--highlight)" stroke-width="30" stroke-linecap="round"/>
 				</svg>
 			</button>
 		</div>
@@ -115,13 +122,16 @@
 		</p>
 
 		<p>
-			The gif below begins zoomed in on the top-centre board before X has her turn. When she wins the small
-			<i>right-centre</i> board by placing her piece in the <i>top-right</i> cell, we zoom out to the rest of
+			The gif below begins zoomed in on the top-centre board before X has her turn. When she wins the
+			small
+			<i>right-centre</i> board by placing her piece in the <i>top-right</i> cell, we zoom out to the
+			rest of
 			the board.
 		</p>
 
 		<p>
-			Her opponent must then play in the <i>right-centre</i> UTTT board, in the <i>top-right</i> TTT board.
+			Her opponent must then play in the <i>right-centre</i> UTTT board, in the <i>top-right</i> TTT
+			board.
 			Play would then continue in the right-centre board until another board is won.
 		</p>
 
@@ -134,13 +144,17 @@
 		<h1>Endless Mode</h1>
 
 		<p>
-			If you're feeling particularly masochistic, you can start an endless game! There are no winners, only losers.
-			The game begins with a classic 3x3 Tic-Tac-Toe game.  When won, this board is shrunken down to one ninth
-			of the next layer. This happens until the game is unplayably small, your browser crashes, or somebody quits.
+			If you're feeling particularly masochistic, you can start an endless game! There are no winners,
+			only losers.
+			The game begins with a classic 3x3 Tic-Tac-Toe game. When won, this board is shrunken down to
+			one ninth
+			of the next layer. This happens until the game is unplayably small, your browser crashes, or
+			somebody quits.
 		</p>
 
 		<p>
-			Notice that the previous board shrinks to the <i>last cell</i> that was won. In the example below, X plays in the <i>middle right</i> cell.
+			Notice that the previous board shrinks to the <i>last cell</i> that was won. In the example
+			below, X plays in the <i>middle right</i> cell.
 			That board then becomes the <i>middle right</i> sub-board.
 		</p>
 
@@ -153,6 +167,54 @@
 </main>
 
 <div class="panel" id="secondary-panel"></div>
+
+<dialog id="tutorial-dialog">
+	<div id="brief-tutorial">
+		<div class="slide">
+			<picture>
+				<source media="(prefers-color-scheme: dark)" srcset="./assets/brief-title-dark.png">
+				<source media="(prefers-color-scheme: light)" srcset="./assets/brief-title-light.png">
+				<img alt="Ultimate Tic-TacToe — You control your opponent's next move"
+				     src="./assets/brief-title-light.png" draggable="false">
+			</picture>
+		</div>
+		<div class="slide">
+			<picture>
+				<source media="(prefers-color-scheme: dark)" srcset="./assets/brief-1-dark.png">
+				<source media="(prefers-color-scheme: light)" srcset="./assets/brief-1-light.png">
+				<img alt="X played top left, so O must play in the top left board. (legal moves are green)"
+				     src="./assets/brief-1-light.png" draggable="false">
+			</picture>
+		</div>
+		<div class="slide">
+			<picture>
+				<source media="(prefers-color-scheme: dark)" srcset="./assets/brief-2-dark.png">
+				<source media="(prefers-color-scheme: light)" srcset="./assets/brief-2-light.png">
+				<img alt="Win small boards to claim them" src="./assets/brief-2-light.png" draggable="false">
+			</picture>
+		</div>
+		<div class="slide">
+			<picture>
+				<source media="(prefers-color-scheme: dark)" srcset="./assets/brief-3-dark.png">
+				<source media="(prefers-color-scheme: light)" srcset="./assets/brief-3-light.png">
+				<img alt="O sent X to a claimed board, so X gets to place anywhere..."
+				     src="./assets/brief-3-light.png" draggable="false">
+			</picture>
+		</div>
+		<div class="slide">
+			<picture>
+				<source media="(prefers-color-scheme: dark)" srcset="./assets/brief-4-dark.png">
+				<source media="(prefers-color-scheme: light)" srcset="./assets/brief-4-light.png">
+				<img alt="Get three-in-a-row to win!" src="./assets/brief-4-light.png" draggable="false">
+			</picture>
+			<div class="button-panel">
+				<button id="brief-tutorial-dismiss" class="left right">
+					<label>Let's go!</label>
+				</button>
+			</div>
+		</div>
+	</div>
+</dialog>
 
 <div id="toast"></div>
 

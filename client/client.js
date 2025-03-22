@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	interval = setInterval(tryConnect, 1000);
 });
 
+window.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false})
+
 window.addEventListener('popstate', function () {
 	let url = new URL(window.location);
 	const url_params = new URLSearchParams(url.search);
@@ -117,7 +119,9 @@ function tryConnect() {
 
 // Elements
 
+export const tutorial_dialog = document.getElementById('tutorial-dialog');
 export const how_to_play = document.getElementById('how-to-play');
+const brief_tutorial_dismiss = document.getElementById('brief-tutorial-dismiss');
 const title_text = document.getElementById('title-text');
 const join_code_input = document.getElementById('join-code');
 const join_button = document.getElementById('join');
@@ -147,6 +151,15 @@ export function adjustStartButton() {
 	else start_button.textContent = 'New Room...';
 }
 
+// Modal close
+
+tutorial_dialog.addEventListener('pointerdown', function(event) {
+	// If the clicked element is the modal overlay (and not the inner modal content)
+	if (event.target === tutorial_dialog) {
+		tutorial_dialog.close()
+	}
+});
+
 // Buttons
 
 join_code_input.addEventListener("keyup", (event) => {
@@ -175,6 +188,12 @@ start_button.addEventListener("click", () => {
 leave_button.addEventListener("click", () => {
 	updateState();
 });
+
+brief_tutorial_dismiss.addEventListener("click", () => {
+	tutorial_dialog.close()
+});
+
+// Game button handlers
 
 export function resetStartButton() {
 	start_button.textContent = 'New Room...';
