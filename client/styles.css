@@ -139,7 +139,7 @@ a {
 	align-content: center;
 
 	margin-right: calc(0.5rem + 1px);
-	body:has(> #board) & {
+	body:has(#board) & {
 		margin-right: 0;
 	}
 
