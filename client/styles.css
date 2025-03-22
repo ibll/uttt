@@ -86,7 +86,7 @@ html {
 
 body {
 	margin: 0;
-	height: calc(100vh - var(--header-clearance) - var(--toast-clearance));
+	height: calc(100vh - var(--toast-clearance));
 	padding-top: var(--header-clearance);
 	min-height: fit-content;
 

@@ -1,11 +1,13 @@
 {
-	"name": "UTTT",
+	"name": "Ultimate Tic-Tac-Toe",
+	"short_name": "UTTT",
+	"display": "standalone",
 	"start_url": "/",
 	"icons": [
 		{
 			"src": "assets/pwa.png",
 			"type": "img/png",
-			"sizes": "200x200",
+			"sizes": "256x256",
 			"purpose": "any"
 		}
 	]
