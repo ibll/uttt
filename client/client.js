@@ -33,8 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	interval = setInterval(tryConnect, 1000);
 });
 
-window.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false})
-
 window.addEventListener('popstate', function () {
 	let url = new URL(window.location);
 	const url_params = new URLSearchParams(url.search);
@@ -120,8 +118,11 @@ function tryConnect() {
 // Elements
 
 export const tutorial_dialog = document.getElementById('tutorial-dialog');
+export const brief_tutorial = document.getElementById('brief-tutorial');
 export const how_to_play = document.getElementById('how-to-play');
 const brief_tutorial_dismiss = document.getElementById('brief-tutorial-dismiss');
+const show_tutorial = document.getElementById('show-tutorial');
+const title_box = document.getElementById('title-box');
 const title_text = document.getElementById('title-text');
 const join_code_input = document.getElementById('join-code');
 const join_button = document.getElementById('join');
@@ -153,7 +154,7 @@ export function adjustStartButton() {
 
 // Modal close
 
-tutorial_dialog.addEventListener('pointerdown', function(event) {
+tutorial_dialog.addEventListener('pointerdown', function (event) {
 	// If the clicked element is the modal overlay (and not the inner modal content)
 	if (event.target === tutorial_dialog) {
 		tutorial_dialog.close()
@@ -190,7 +191,17 @@ leave_button.addEventListener("click", () => {
 });
 
 brief_tutorial_dismiss.addEventListener("click", () => {
-	tutorial_dialog.close()
+	tutorial_dialog.close();
+});
+
+title_box.addEventListener("click", () => {
+	tutorial_dialog.showModal();
+	brief_tutorial.scrollTo(0, 0);
+})
+
+show_tutorial.addEventListener("click", () => {
+	tutorial_dialog.showModal();
+	brief_tutorial.scrollTo(0, 0);
 });
 
 // Game button handlers

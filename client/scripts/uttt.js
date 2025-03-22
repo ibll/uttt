@@ -3,14 +3,15 @@ import status from "./toast.js";
 import {icons} from "../assets/icons.js";
 import {
 	addLeaveButton,
-	adjustTitleText,
+	adjustTitleText, brief_tutorial,
 	how_to_play,
 	removeLeaveButton,
 	resetPieceMarker,
 	resetStartButton,
-	statusBarSetMyLinks
+	statusBarSetMyLinks, tutorial_dialog
 } from "../client.js";
 import status_bar from "./status_bar.js";
+import Cookie from "../modules/js.cookie.mjs";
 
 export let game_id;
 export let board_depth;
@@ -29,7 +30,6 @@ let time_interval;
 let panzoom;
 
 const main = document.querySelector('main')
-const tutorial_dialog = document.getElementById('tutorial-dialog')
 let board;
 window.getBoardState = () => board_state;
 
@@ -56,12 +56,19 @@ export function updateState(payload) {
 
 		main.removeEventListener('wheel', panzoom.zoomWithWheel);
 		document.removeEventListener('pointerdown', panzoom.handleDown);
+		main.style.touchAction = 'auto';
 
 		return;
 	}
 
 	// Show dialog if first time joining a game with this tab
-	if (!game_id) tutorial_dialog.showModal()
+	const tutorial_shown = Cookie.get("tutorial-shown");
+	if (!tutorial_shown) {
+		Cookie.set("tutorial-shown", true, {expires: 365});
+		tutorial_dialog.showModal();
+	}
+
+	brief_tutorial.scrollTo(0, 0);
 
 	// Joining new room
 	if (game_id !== payload.game_id) {

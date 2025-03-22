@@ -66,6 +66,7 @@
 
 html {
 	height: 100dvh;
+	overflow: clip;
 
 	*::-webkit-scrollbar {
 		width: 0.5rem;
@@ -94,8 +95,6 @@ body {
 	align-content: center;
 	flex-direction: column;
 	align-items: stretch;
-
-	/*overflow: clip;*/
 
 	&:has(#board) {
 		overflow: clip;
@@ -169,9 +168,14 @@ a {
 }
 
 #title-box {
+	cursor: pointer;
 	display: flex;
 	flex-direction: row;
 	width: 100%;
+}
+
+#title-box:hover {
+	color: var(--label);
 }
 
 #piece-marker {
@@ -376,6 +380,10 @@ button.status-block {
 	}
 }
 
+#optional-tools {
+	display: none;
+}
+
 /* * * * */
 /* BOARD */
 /* * * * */
@@ -499,10 +507,6 @@ main {
 /* BOARD */
 /* * * * */
 
-.grid * {
-	user-select: none;
-}
-
 /*align pieces in cells*/
 .grid svg {
 	width: 100%;
@@ -589,7 +593,8 @@ main {
 /*Move toast to the edge*/
 @media (orientation: landscape) {
 	#toast {
-		left: 1rem;
+		left: revert;
+		right: 1rem;
 		transform: none;
 	}
 }
@@ -668,6 +673,7 @@ main {
 
 	#secondary-panel {
 		display: block;
+		opacity: 0;
 
 		&:has(> #how-to-play) {
 			overflow-y: scroll;
@@ -706,6 +712,11 @@ main {
 
 	#start {
 		width: 100%;
+	}
+
+	#optional-tools {
+		display: block;
+		margin-top: auto;
 	}
 
 	#board:not(.grid) {;
