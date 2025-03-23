@@ -86,7 +86,7 @@ html {
 
 body {
 	margin: 0;
-	height: calc(100vh - var(--toast-clearance));
+	height: calc(100vh - var(--header-clearance));
 	padding-top: var(--header-clearance);
 	min-height: fit-content;
 
@@ -99,7 +99,6 @@ body {
 	overflow-y: scroll;
 
 	&:has(#board) {
-		height: calc(100vh - var(--header-clearance) - var(--toast-clearance));
 		overflow: clip;
 	}
 
@@ -405,6 +404,8 @@ main {
 	width: 100%;
 	height: 100%;
 	margin: 0;
+	padding-bottom: var(--toast-clearance);
+	box-sizing: border-box;
 
 	display: flex;
 	flex-direction: column;
@@ -600,17 +601,13 @@ main {
 
 /*Move toast to the edge*/
 @media (orientation: landscape) {
+	:root {
+		--toast-clearance: 0rem;
+	}
 	#toast {
 		left: revert;
 		right: 1rem;
 		transform: none;
-	}
-}
-
-/*Toast is to the side and height is short enough to remove the gap*/
-@media (min-height: 640px) and (orientation: landscape) {
-	:root {
-		--toast-clearance: 0rem;
 	}
 }
 
