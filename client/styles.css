@@ -30,7 +30,7 @@
 	--highlight-trans: var(--rosewater-trans);
 
 	--header-clearance: 10rem;
-	--toast-clearance: 5rem;
+	--toast-clearance: 4.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -86,7 +86,7 @@ html {
 
 body {
 	margin: 0;
-	height: calc(100vh - var(--header-clearance));
+	height: calc(100dvh - var(--header-clearance));
 	padding-top: var(--header-clearance);
 	min-height: fit-content;
 
@@ -410,7 +410,7 @@ main {
 	width: 100%;
 	height: 100%;
 	margin: 0;
-	padding-bottom: var(--toast-clearance);
+padding-bottom: calc(var(--toast-clearance) + env(safe-area-inset-bottom)) !important;
 	box-sizing: border-box;
 
 	display: flex;
@@ -590,7 +590,7 @@ main {
 
 	z-index: 100;
 	position: fixed;
-	bottom: env(safe-area-inset-bottom, 1rem);
+	bottom: calc(1rem + env(safe-area-inset-bottom));
 	left: 50%;
 	transform: translateX(-50%);
 
