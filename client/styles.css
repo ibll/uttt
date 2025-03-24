@@ -590,7 +590,7 @@ main {
 
 	z-index: 100;
 	position: fixed;
-	bottom: 1rem;
+	bottom: env(safe-area-inset-bottom, 1rem);
 	left: 50%;
 	transform: translateX(-50%);
 
