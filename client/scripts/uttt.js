@@ -235,8 +235,9 @@ export function place(cell_layer, cell_number, player, moves) {
 		if (!end_time) end_time = Date.now();
 
 		if (endless) return;
-		if (player == null) status.display('Draw!', Infinity);
-		else status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
+
+		if (player == null) status.display('Draw!', Infinity, 'both');
+		else status.display(`${player === 0 ? 'Cross' : 'Nought'} wins!`, Infinity, player === 0 ? 'cross' : 'nought');
 	}
 
 }
@@ -257,10 +258,12 @@ export function setActiveGrids(active_grids, next_piece) {
 	if (!active_grids) return;
 
 	if (!won) {
-		if (next_piece === my_piece && next_piece !== undefined)
-			status.display("Your turn!", Infinity, true);
+		if (my_piece === next_piece && next_piece !== undefined)
+			status.display("Your turn!", Infinity, null, true);
+		else if (my_piece === 'both')
+			status.display(`${toTitleCase(next_piece)}'s turn!`, Infinity, next_piece, true);
 		else if (next_piece !== null)
-			status.display('', Infinity, true);
+			status.display('', Infinity, null, true);
 	}
 
 	for (const layer in active_grids) {
@@ -353,4 +356,8 @@ function isElementPartiallyInView(el) {
 		rect.bottom > 0 &&
 		rect.right > 0
 	);
+}
+
+function toTitleCase(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
 }
