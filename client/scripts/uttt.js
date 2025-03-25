@@ -75,7 +75,7 @@ export function updateState(payload) {
 	if (game_id !== payload.game_id) {
 		game_id = payload.game_id;
 
-		status.display(`Joined game ${game_id}`)
+		status.display(`Joined game ${game_id}`, null, 'arrow')
 
 		if (url.searchParams.get('room') !== game_id) {
 			url.searchParams.set('room', game_id);
@@ -235,8 +235,12 @@ export function place(cell_layer, cell_number, player, moves) {
 		if (!end_time) end_time = Date.now();
 
 		if (endless) return;
-		if (player == null) status.display('Draw!', Infinity);
-		else status.display(`${player === 0 ? 'X' : 'O'} wins!`, Infinity);
+
+		const piece = player === 0 ? 'cross' : 'nought';
+
+		if (player == null) status.display('Draw!', Infinity, 'both');
+		else if (my_piece === piece) status.display(`You win!`, Infinity, 'heart');
+		else status.display(`${toTitleCase(piece)} wins!`, Infinity, piece);
 	}
 
 }
@@ -257,10 +261,12 @@ export function setActiveGrids(active_grids, next_piece) {
 	if (!active_grids) return;
 
 	if (!won) {
-		if (next_piece === my_piece && next_piece !== undefined)
-			status.display("Your turn!", Infinity, true);
-		else if (next_piece !== null)
-			status.display('', Infinity, true);
+		if (my_piece === next_piece && next_piece !== undefined)
+			status.display("Your turn!", Infinity, null, true);
+		else if (my_piece === 'both')
+			status.display(`${toTitleCase(next_piece)}'s turn!`, Infinity, next_piece, true);
+		else if (next_piece !== null && moves > 1)
+			status.display('', Infinity, null, true);
 	}
 
 	for (const layer in active_grids) {
@@ -353,4 +359,8 @@ function isElementPartiallyInView(el) {
 		rect.bottom > 0 &&
 		rect.right > 0
 	);
+}
+
+function toTitleCase(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
 }
