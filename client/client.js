@@ -159,12 +159,13 @@ export function adjustStartButton() {
 
 // Modal close
 
-tutorial_dialog.addEventListener('pointerdown', function (event) {
+tutorial_dialog.addEventListener('mousedown', function (event) {
 	// If the clicked element is the modal overlay (and not the inner modal content)
 	if (event.target === tutorial_dialog) {
 		tutorial_dialog.close()
 	}
 });
+
 
 // Buttons
 
