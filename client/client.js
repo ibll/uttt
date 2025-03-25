@@ -53,11 +53,10 @@ function connect() {
 	else if (location.protocol === 'http:') ws = new WebSocket(`ws://${host}:${port}`);
 
 	ws.onopen = () => {
-		if (attempts > 0) status.display("Connected to server!");
+		if (attempts > 0) status.display("Connected to server!", null, 'happy');
 		ws_opened = true;
 	}
 	ws.onclose = () => {
-		if (ws_opened) status.display("Disconnected from server!", 5000);
 		ws_opened = false;
 		prepared = false;
 	}
@@ -105,7 +104,7 @@ function tryConnect() {
 		}
 		attempts++;
 
-		status.display("Trying to reconnect to server...", Infinity)
+		status.display("Trying to reconnect to server...", Infinity, 'dead')
 		connect();
 
 	} else if (attempts > 0) {

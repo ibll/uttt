@@ -70,8 +70,6 @@ toast_API.display = function (message, duration, icon, force_retrigger) {
 			fade_stages = Math.max(Math.ceil((difference / quick_speed) * DEFAULT_FADE_STAGES), 1);
 		}
 
-		console.log(fade_time, fade_stages);
-
 		glitchIn(message, fade_time, fade_stages);
 		toast_element.classList.add('active');
 
@@ -126,8 +124,6 @@ function glitchInStep(stages, stage, num_stages, timeout) {
 
 	if (stages[stage] !== '')
 		toast_text.innerHTML = stages[stage];
-
-	console.log(stages[stage]);
 
 	clearTimeout(fade_timeout);
 	fade_timeout = setTimeout(() => {

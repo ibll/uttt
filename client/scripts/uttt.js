@@ -75,7 +75,7 @@ export function updateState(payload) {
 	if (game_id !== payload.game_id) {
 		game_id = payload.game_id;
 
-		status.display(`Joined game ${game_id}`)
+		status.display(`Joined game ${game_id}`, null, 'arrow')
 
 		if (url.searchParams.get('room') !== game_id) {
 			url.searchParams.set('room', game_id);
@@ -236,8 +236,11 @@ export function place(cell_layer, cell_number, player, moves) {
 
 		if (endless) return;
 
+		const piece = player === 0 ? 'cross' : 'nought';
+
 		if (player == null) status.display('Draw!', Infinity, 'both');
-		else status.display(`${player === 0 ? 'Cross' : 'Nought'} wins!`, Infinity, player === 0 ? 'cross' : 'nought');
+		else if (my_piece === piece) status.display(`You win!`, Infinity, 'heart');
+		else status.display(`${toTitleCase(piece)} wins!`, Infinity, piece);
 	}
 
 }
@@ -262,7 +265,7 @@ export function setActiveGrids(active_grids, next_piece) {
 			status.display("Your turn!", Infinity, null, true);
 		else if (my_piece === 'both')
 			status.display(`${toTitleCase(next_piece)}'s turn!`, Infinity, next_piece, true);
-		else if (next_piece !== null)
+		else if (next_piece !== null && moves > 1)
 			status.display('', Infinity, null, true);
 	}
 
