@@ -21,101 +21,102 @@ export let prepared = false;
 export let connection_id = Cookies.get('connection_id');
 
 export function setConnectionID(new_connection_id) {
-  connection_id = new_connection_id;
+    connection_id = new_connection_id;
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  adjustTitleText();
-  statusBarSetMyLinks();
-  resetPieceMarker();
+    adjustTitleText();
+    statusBarSetMyLinks();
+    resetPieceMarker();
 
-  connect();
-  interval = setInterval(tryConnect, 1000);
+    connect();
+    interval = setInterval(tryConnect, 1000);
 });
 
 window.addEventListener('popstate', function () {
-  let url = new URL(window.location);
-  const url_params = new URLSearchParams(url.search);
+    let url = new URL(window.location);
+    const url_params = new URLSearchParams(url.search);
 
-  const param_id = url_params.get('room');
+    const param_id = url_params.get('room');
 
-  if (!param_id) {
-    updateState();
-  } else if (param_id !== game_id) {
-    server.join(param_id, true);
-  }
+    if (!param_id) {
+        updateState();
+    } else if (param_id !== game_id) {
+        server.join(param_id, true);
+    }
 });
 
 // Websocket
 
 function connect() {
-  if (location.protocol === 'https:') ws = new WebSocket(`wss://${host}:${port}`);
-  else if (location.protocol === 'http:') ws = new WebSocket(`ws://${host}:${port}`);
+    if (location.protocol === 'https:') ws = new WebSocket(`wss://${host}:${port}`);
+    else if (location.protocol === 'http:') ws = new WebSocket(`ws://${host}:${port}`);
 
-  ws.onopen = () => {
-    if (attempts > 0) status.display("Connected to server!", null, 'happy');
-    ws_opened = true;
-  }
-  ws.onclose = () => {
-    ws_opened = false;
-    prepared = false;
-  }
-
-  ws.onmessage = async (event) => {
-    let payload = {};
-    try {
-      payload = JSON.parse(event.data);
-    } catch {
-      console.error('Invalid JSON:', event.data);
+    ws.onopen = () => {
+        if (attempts > 0) status.display("Connected to server!", null, 'happy');
+        ws_opened = true;
+    }
+    ws.onclose = () => {
+        ws_opened = false;
+        prepared = false;
     }
 
-    if (payload.type === 'prepare_client') {
-      client_events = payload.client_events;
-      client_events_path = payload.client_events_path;
+    ws.onmessage = async (event) => {
+        let payload = {};
+        try {
+            payload = JSON.parse(event.data);
+        } catch {
+            console.error('Invalid JSON:', event.data);
+        }
 
-    if (payload.type === 'prepare_client') {
-      client_events = payload.client_events;
-      client_events_path = payload.client_events_path;
+        if (payload.type === 'prepare_client') {
+            client_events = payload.client_events;
+            client_events_path = payload.client_events_path;
+        }
 
-      Cookies.set('connection_id', payload.connection_id, { expires: 7 });
-      setConnectionID(payload.connection_id);
-      console.log('Connecting with id ', payload.connection_id)
+        if (payload.type === 'prepare_client') {
+            client_events = payload.client_events;
+            client_events_path = payload.client_events_path;
 
-      const urlParams = new URLSearchParams(window.location.search);
-      let game_id = urlParams.get('room')
-      if (game_id) server.join(game_id, true);
+            Cookies.set('connection_id', payload.connection_id, { expires: 7 });
+            setConnectionID(payload.connection_id);
+            console.log('Connecting with id ', payload.connection_id)
 
-      prepared = true;
-      server.process_message_queue();
+            const urlParams = new URLSearchParams(window.location.search);
+            let game_id = urlParams.get('room')
+            if (game_id) server.join(game_id, true);
 
-      return
-    }
+            prepared = true;
+            server.process_message_queue();
 
-    if (!client_events.includes(payload.type)) return;
+            return
+        }
 
-    import(`${client_events_path}/${payload.type}.js`).then((event) => {
-      event.default(ws, payload)
-    });
-  };
+        if (!client_events.includes(payload.type)) return;
+
+        import(`${client_events_path}/${payload.type}.js`).then((event) => {
+            event.default(ws, payload)
+        });
+    };
 }
 
 function tryConnect() {
-  if (!ws || ws.readyState === WebSocket.CLOSED) {
-    console.log(attempts);
-    if (attempts > 10) {
-      clearInterval(interval);
-      interval = setInterval(tryConnect, 10000);
+    if (!ws || ws.readyState === WebSocket.CLOSED) {
+        console.log(attempts);
+        if (attempts > 10) {
+            clearInterval(interval);
+            interval = setInterval(tryConnect, 10000);
+        }
+        attempts++;
+
+        status.display("Trying to reconnect to server...", Infinity, 'dead')
+        connect();
+
+    } else if (attempts > 0) {
+        attempts = 0;
+        clearInterval(interval);
+        interval = setInterval(tryConnect, 1000);
     }
-    attempts++;
-
-    status.display("Trying to reconnect to server...", Infinity, 'dead')
-    connect();
-
-  } else if (attempts > 0) {
-    attempts = 0;
-    clearInterval(interval);
-    interval = setInterval(tryConnect, 1000);
-  }
 }
 
 // Elements
@@ -136,7 +137,7 @@ const piece_marker = document.getElementById("piece-marker");
 // Prevent resizing through tutorial popup
 
 tutorial_dialog.addEventListener('wheel', function (event) {
-  event.stopPropagation();
+    event.stopPropagation();
 });
 
 // Resize Observers
@@ -145,126 +146,126 @@ const titleTextResizeObserver = new ResizeObserver(adjustTitleText);
 titleTextResizeObserver.observe(title_text);
 
 export function adjustTitleText() {
-  const title_text = document.getElementById('title-text');
+    const title_text = document.getElementById('title-text');
 
-  if (title_text.offsetWidth < 220) title_text.textContent = 'UTTT';
-  else if (title_text.offsetWidth < 360) title_text.textContent = 'Ultimate TTT';
-  else title_text.textContent = 'Ultimate Tic-Tac-Toe';
+    if (title_text.offsetWidth < 220) title_text.textContent = 'UTTT';
+    else if (title_text.offsetWidth < 360) title_text.textContent = 'Ultimate TTT';
+    else title_text.textContent = 'Ultimate Tic-Tac-Toe';
 }
 
 const startButtonResizeObserver = new ResizeObserver(adjustStartButton);
 startButtonResizeObserver.observe(start_button);
 
 export function adjustStartButton() {
-  if (start_button.classList.contains('enabled')) return;
-  if (start_button.offsetWidth < 120) start_button.textContent = 'New...';
-  else start_button.textContent = 'New Room...';
+    if (start_button.classList.contains('enabled')) return;
+    if (start_button.offsetWidth < 120) start_button.textContent = 'New...';
+    else start_button.textContent = 'New Room...';
 }
 
 // Modal close
 
 tutorial_dialog.addEventListener('mousedown', function (event) {
-  // If the clicked element is the modal overlay (and not the inner modal content)
-  if (event.target === tutorial_dialog) {
-    tutorial_dialog.close()
-  }
+    // If the clicked element is the modal overlay (and not the inner modal content)
+    if (event.target === tutorial_dialog) {
+        tutorial_dialog.close()
+    }
 });
 
 
 // Buttons
 
 document.addEventListener('keydown', (event) => {
-  if (
-    event.target.tagName === 'INPUT' ||
-    event.target.tagName === 'TEXTAREA' ||
-    event.target.isContentEditable
-  ) return;
+    if (
+        event.target.tagName === 'INPUT' ||
+        event.target.tagName === 'TEXTAREA' ||
+        event.target.isContentEditable
+    ) return;
 
-  if (event.key === '/' && join_button) {
-    event.preventDefault();
-    join_code_input.focus();
-  }
+    if (event.key === '/' && join_button) {
+        event.preventDefault();
+        join_code_input.focus();
+    }
 });
 
 join_code_input.addEventListener("keydown", (event) => {
-  if (event.key === 'Enter') join_button.click();
+    if (event.key === 'Enter') join_button.click();
 });
 
 join_button.addEventListener("click", () => {
-  const code = join_code_input.value;
-  if (!code) return;
-  server.join(code);
+    const code = join_code_input.value;
+    if (!code) return;
+    server.join(code);
 });
 
 start_button.addEventListener("click", () => {
-  if (!start_button.classList.contains('enabled')) {
-    start_button.textContent = 'Cancel';
-    start_button.classList.add('enabled');
+    if (!start_button.classList.contains('enabled')) {
+        start_button.textContent = 'Cancel';
+        start_button.classList.add('enabled');
 
-    statusBarSetChooseSize();
-  } else {
-    resetStartButton()
-    if (game_id) statusBarSetGameInfo();
-    else statusBarSetMyLinks();
-  }
+        statusBarSetChooseSize();
+    } else {
+        resetStartButton()
+        if (game_id) statusBarSetGameInfo();
+        else statusBarSetMyLinks();
+    }
 });
 
 leave_button.addEventListener("click", () => {
-  updateState();
+    updateState();
 });
 
 brief_tutorial_dismiss.addEventListener("click", () => {
-  tutorial_dialog.close();
+    tutorial_dialog.close();
 });
 
 title_box.addEventListener("click", () => {
-  showBriefTutorial();
+    showBriefTutorial();
 })
 
 show_tutorial.addEventListener("click", () => {
-  showBriefTutorial();
+    showBriefTutorial();
 });
 
 // Game button handlers
 
 export function resetStartButton() {
-  start_button.textContent = 'New Room...';
-  start_button.classList.remove('enabled');
+    start_button.textContent = 'New Room...';
+    start_button.classList.remove('enabled');
 }
 
 export function addLeaveButton() {
-  if (leave_button) leave_button.classList.remove('hidden');
-  if (start_button) start_button.classList.remove('right');
+    if (leave_button) leave_button.classList.remove('hidden');
+    if (start_button) start_button.classList.remove('right');
 }
 
 export function removeLeaveButton() {
-  if (leave_button) leave_button.classList.add('hidden');
-  if (start_button) start_button.classList.add('right');
+    if (leave_button) leave_button.classList.add('hidden');
+    if (start_button) start_button.classList.add('right');
 }
 
 // UI controls
 
 export function statusBarSetMyLinks() {
-  status_bar.reset();
-  status_bar.addBlock('', 'my site', `<a href="https://ibll.dev/">ibll.dev</a>`)
-  status_bar.addBlock('made-by', 'made by', `Isbell!`)
-  status_bar.addBlock('', 'github', `<a href="https://github.com/ibll/uttt/">ibll/uttt</a>`)
+    status_bar.reset();
+    status_bar.addBlock('', 'my site', `<a href="https://ibll.dev/">ibll.dev</a>`)
+    status_bar.addBlock('made-by', 'made by', `Isbell!`)
+    status_bar.addBlock('', 'github', `<a href="https://github.com/ibll/uttt/">ibll/uttt</a>`)
 }
 
 function statusBarSetChooseSize() {
-  status_bar.reset();
-  status_bar.setActive(true);
-  status_bar.addBlock('', 'ultimate', '2 layers', server.start, 2);
-  status_bar.addBlock('', 'nightmare', '3 layers', server.start, 3);
-  status_bar.addBlock('', 'endless', 'good luck', server.start, 0);
+    status_bar.reset();
+    status_bar.setActive(true);
+    status_bar.addBlock('', 'ultimate', '2 layers', server.start, 2);
+    status_bar.addBlock('', 'nightmare', '3 layers', server.start, 3);
+    status_bar.addBlock('', 'endless', 'good luck', server.start, 0);
 }
 
 export function resetPieceMarker() {
-  piece_marker.innerHTML = icons.heart;
+    piece_marker.innerHTML = icons.heart;
 }
 
 export function showBriefTutorial() {
-  Cookies.set("tutorial-shown", true, { expires: 365 });
-  tutorial_dialog.showModal();
-  brief_tutorial.scrollTo(0, 0);
+    Cookies.set("tutorial-shown", true, { expires: 365 });
+    tutorial_dialog.showModal();
+    brief_tutorial.scrollTo(0, 0);
 }

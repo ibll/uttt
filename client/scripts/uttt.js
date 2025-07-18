@@ -86,7 +86,6 @@ export function updateState(payload) {
 
   board_depth = payload.board_depth;
   board_state = payload.board_state;
-  active_grids = payload.active_grids;
   moves = payload.moves;
   start_time = payload.start_time;
   end_time = payload.end_time;
@@ -128,7 +127,7 @@ export function updateState(payload) {
     }
   }
 
-  setActiveGrids(active_grids, payload.next_player_id);
+  setActiveGrids(payload.active_layer, payload.active_grid_num, payload.next_player_id);
 }
 
 export function setPiece(piece) {
@@ -250,7 +249,7 @@ export function setMoves(new_moves) {
   status_bar.updateBlock('move', moves);
 }
 
-export function setActiveGrids(active_grids, next_piece) {
+export function setActiveGrids(layer, grid_num, next_piece) {
   document.querySelectorAll('.grid.active').forEach(grid => {
     grid.querySelectorAll('.cell').forEach(cell => {
       cell.tabIndex = -1;
@@ -269,20 +268,16 @@ export function setActiveGrids(active_grids, next_piece) {
       status.display('', Infinity, null, true);
   }
 
-  for (const layer in active_grids) {
-    for (const grid_num in active_grids[layer]) {
-      const target = document.getElementById("cell." + layer + "." + grid_num)
+  const target = document.getElementById("cell." + layer + "." + grid_num)
 
-      if (!target) {
-        // Base level zoom
-        panzoom.reset()
-      } else {
-        if (!isElementFullyInView(target, 50)) panzoom.reset();
-      }
-
-      makeGridActive(parseInt(layer), parseInt(grid_num));
-    }
+  if (!target) {
+    // Base level zoom
+    panzoom.reset()
+  } else {
+    if (!isElementFullyInView(target, 50)) panzoom.reset();
   }
+
+  makeGridActive(parseInt(layer), parseInt(grid_num));
 }
 
 function makeGridActive(level, grid_num) {
