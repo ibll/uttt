@@ -16,7 +16,7 @@ export function createTCS() {
 async function tcsConnection(socket) {
   socket.send = (msg) => {
     console.log("sending " + msg + "\n");
-    socket.write(msg);
+    socket.write(msg + "\n");
   }
 
   console.log(`New client connected`)
