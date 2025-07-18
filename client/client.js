@@ -69,7 +69,9 @@ function connect() {
       console.error('Invalid JSON:', event.data);
     }
 
-    console.log(payload)
+    if (payload.type === 'prepare_client') {
+      client_events = payload.client_events;
+      client_events_path = payload.client_events_path;
 
     if (payload.type === 'prepare_client') {
       client_events = payload.client_events;
@@ -171,7 +173,20 @@ tutorial_dialog.addEventListener('mousedown', function (event) {
 
 // Buttons
 
-join_code_input.addEventListener("keyup", (event) => {
+document.addEventListener('keydown', (event) => {
+  if (
+    event.target.tagName === 'INPUT' ||
+    event.target.tagName === 'TEXTAREA' ||
+    event.target.isContentEditable
+  ) return;
+
+  if (event.key === '/' && join_button) {
+    event.preventDefault();
+    join_code_input.focus();
+  }
+});
+
+join_code_input.addEventListener("keydown", (event) => {
   if (event.key === 'Enter') join_button.click();
 });
 
