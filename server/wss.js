@@ -1,8 +1,8 @@
 import io from "@pm2/io";
 import fs from "fs";
 import path from "path";
-import {v4 as uuidv4} from "uuid";
-import {WebSocketServer} from "ws";
+import { v4 as uuidv4 } from "uuid";
+import { WebSocketServer } from "ws";
 import clients from "./events/outgoing.js";
 
 const __dirname = import.meta.dirname;
@@ -18,9 +18,9 @@ const connected_current = io.counter({
 });
 
 export function createWSS(server) {
-	const wss = new WebSocketServer({server});
-	wss.on('connection', wssConnection);
-	return wss;
+    const wss = new WebSocketServer({ server });
+    wss.on('connection', wssConnection);
+    return wss;
 }
 
 async function wssConnection(ws, response) {
@@ -38,16 +38,16 @@ async function wssConnection(ws, response) {
 		ws.connection_id = connection_id
 	}
 
-	clients.prepareClient(ws, CLIENT_EVENTS, CLIENT_EVENTS_DIR, ws.connection_id);
+    clients.prepareClient(ws, CLIENT_EVENTS, CLIENT_EVENTS_DIR, ws.connection_id);
 
-	// console.log(`Client connected: ${ws.connection_id}`);
+    // console.log(`Client connected: ${ws.connection_id}`);
 
-	// Add event listeners for the connection
+    // Add event listeners for the connection
 
-	ws.on('message', async (data) => {
-		try {
-			let payload = JSON.parse(data)
-			if (!payload.type) return;
+    ws.on('message', async (data) => {
+        try {
+            let payload = JSON.parse(data)
+            if (!payload.type) return;
 
 			const filePath = path.join(__dirname, SERVER_EVENTS_DIR, payload.type + '.js');
 			fs.readFile(filePath, (err) => {
@@ -71,5 +71,5 @@ async function wssConnection(ws, response) {
 }
 
 function fetchEventsIn(dir) {
-	return fs.readdirSync(dir).filter(file => file.endsWith('.js')).map(file => file.slice(0, -3));
+    return fs.readdirSync(dir).filter(file => file.endsWith('.js')).map(file => file.slice(0, -3));
 }
