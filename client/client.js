@@ -72,11 +72,6 @@ function connect() {
         if (payload.type === 'prepare_client') {
             client_events = payload.client_events;
             client_events_path = payload.client_events_path;
-        }
-
-        if (payload.type === 'prepare_client') {
-            client_events = payload.client_events;
-            client_events_path = payload.client_events_path;
 
             Cookies.set('connection_id', payload.connection_id, { expires: 7 });
             setConnectionID(payload.connection_id);
