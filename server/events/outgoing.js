@@ -1,7 +1,7 @@
 const client_API = {};
 
 function sendToClient(ws, message) {
-  console.log(message)
+  // console.log(message)
   ws.send(JSON.stringify(message));
 }
 

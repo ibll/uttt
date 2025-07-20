@@ -92,7 +92,7 @@ export class Game {
     return null;
   }
 
-  place(cell_layer, cell_number, ws, previous_cells) {
+  place(ws, cell_layer, cell_number, previous_cells) {
     const cell_layer_size = Math.pow(9, this.board_depth - cell_layer)
     const grid_layer = cell_layer + 1;
     const grid_number = Math.floor(cell_number / 9);
@@ -160,9 +160,9 @@ export class Game {
 
       let set_active;
       if (winner !== null) {
-        set_active = this.place(grid_layer, grid_number, ws, previous_cells);
+        set_active = this.place(ws, grid_layer, grid_number, previous_cells);
       } else {
-        set_active = this.place(grid_layer, grid_number, null, previous_cells)
+        set_active = this.place(null, grid_layer, grid_number, previous_cells)
       }
 
       if (set_active) already_set_active = true;
