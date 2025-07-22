@@ -12,6 +12,14 @@ client_API.prepareClient = function (ws, client_events, client_events_path, conn
     sendToClient(ws, { type: "prepare_client", client_events, client_events_path, connection_id });
 }
 
+client_API.clearBoard = function (ws, game_id) {
+    sendToClient(ws, {
+        type: "update_state",
+        game_id,
+        nonexistant: true,
+    });
+}
+
 client_API.updateState = function (ws, game_id, board_depth, board_state, active_layer, active_grid_num, client_piece, next_player_id, moves, start_time, end_time, endless) {
     sendToClient(ws, {
         type: "update_state",

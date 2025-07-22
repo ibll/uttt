@@ -44,7 +44,7 @@ export function updateState(payload) {
     main.style.userSelect = 'auto';
 
     // Exit lobby
-    if (!payload?.game_id) {
+    if (!payload?.game_id || payload?.nonexistant) {
         game_id = undefined;
 
         if (url.searchParams.has('room')) {
@@ -262,7 +262,7 @@ export function setActiveGrids(layer, grid_num, next_piece) {
     if (!won) {
         if (my_piece === next_piece && next_piece !== undefined)
             status.display("Your turn!", Infinity, null, true);
-        else if (my_piece === 'both')
+        else if (my_piece === 'both' || (my_piece == null && moves > 1))
             status.display(`${toTitleCase(next_piece)}'s turn!`, Infinity, next_piece, true);
         else if (next_piece !== null && moves > 1)
             status.display('', Infinity, null, true);
