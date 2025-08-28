@@ -243,7 +243,7 @@ export function removeLeaveButton() {
 export function statusBarSetMyLinks() {
     status_bar.reset();
     status_bar.addBlock('', 'my site', `<a href="https://ibll.dev/">ibll.dev</a>`)
-    status_bar.addBlock('made-by', 'made by', `Isbell!`)
+    status_bar.addBlock('', 'app', `<a href="https://github.com/ibll/uttt-client/releases">download</a>`)
     status_bar.addBlock('', 'github', `<a href="https://github.com/ibll/uttt/">ibll/uttt</a>`)
 }
 
